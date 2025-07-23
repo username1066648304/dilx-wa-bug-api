@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>WhatsApp Bug Trigger</title>
+  <title>Bug Trigger</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     * {
@@ -10,86 +10,79 @@
       padding: 0;
       box-sizing: border-box;
     }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      color: #e0ffe0;
-      height: 100vh;
+    body, html {
+      height: 100%;
       overflow: hidden;
-      position: relative;
+      font-family: 'Segoe UI', sans-serif;
     }
-    video.background {
+    video.bg {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
+      min-width: 100%;
+      min-height: 100%;
       object-fit: cover;
       z-index: -1;
     }
-    .container {
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background: rgba(0, 0, 0, 0.7);
-      padding: 20px 30px;
-      border-radius: 12px;
-      max-width: 500px;
-      width: 90%;
-      box-shadow: 0 0 15px #00ffaa;
-      margin: 60px auto;
+      z-index: 0;
     }
-    select, input {
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 90%;
+      max-width: 500px;
+      margin: auto;
+      top: 10%;
+      background: rgba(0, 255, 128, 0.1);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #00ff88;
+      color: #ccffcc;
+    }
+    select, input, button {
       width: 100%;
       margin: 10px 0;
       padding: 12px;
       border: none;
       border-radius: 8px;
       font-size: 16px;
-      background: #222;
-      color: #fff;
+      background: #111;
+      color: #00ffcc;
     }
     button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
       background: #00ffaa;
       color: #000;
-      cursor: pointer;
       font-weight: bold;
     }
     button:hover {
-      background: #00cc88;
+      background: #00dd88;
+    }
+    .notif, .result {
+      margin-top: 10px;
+      font-size: 14px;
     }
     .result {
-      margin-top: 20px;
-      background: #1a1a1a;
-      padding: 15px;
-      border-radius: 8px;
       white-space: pre-wrap;
-      word-break: break-word;
-      border: 1px solid #333;
-    }
-    .notif {
-      margin-top: 10px;
-      color: #00ff99;
-      font-size: 14px;
-      text-align: center;
-    }
-    .copy-btn {
-      background: #333;
-      color: #fff;
-      border: 1px solid #555;
-      margin-top: 10px;
+      background: #00000080;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #00ff88;
     }
   </style>
 </head>
 <body>
-
-  <!-- Background video -->
-  <video class="background" autoplay muted loop playsinline>
-    <source src="/background.mp4" type="video/mp4">
-    Your browser does not support the video tag.
+  <video class="bg" autoplay muted loop>
+    <source src="lightning.mp4" type="video/mp4" />
+    Browser anda tidak menyokong video background.
   </video>
+  <div class="overlay"></div>
 
   <div class="container">
     <label for="type">Pilih Jenis Bug</label>
@@ -101,14 +94,12 @@
     </select>
 
     <label for="target">Nombor Target (tanpa +)</label>
-    <input type="text" id="target" placeholder="Contoh: 60123456789" />
+    <input type="text" id="target" placeholder="60123456789" />
 
     <button onclick="triggerBug()">🚀 Kirim Trigger</button>
-
     <div class="notif" id="notif"></div>
-
-    <div class="result" id="result">⬅️ Hasil trigger akan muncul di sini...</div>
-    <button class="copy-btn" onclick="copyResult()">📋 Copy Result</button>
+    <div class="result" id="result">⬅️ Hasil akan muncul di sini...</div>
+    <button onclick="copyResult()">📋 Salin</button>
   </div>
 
   <script>
@@ -119,7 +110,7 @@
       const result = document.getElementById("result");
 
       if (!target || isNaN(target)) {
-        notif.textContent = "❌ Sila masukkan nombor yang sah.";
+        notif.textContent = "❌ Masukkan nombor yang sah.";
         return;
       }
 
@@ -148,6 +139,5 @@
       document.getElementById("notif").textContent = "📋 Disalin ke clipboard!";
     }
   </script>
-
 </body>
 </html>
