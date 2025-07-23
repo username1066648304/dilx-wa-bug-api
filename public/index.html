@@ -2,24 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Bug Trigger UI</title>
+  <title>DilxVXII Bug Trigger</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
     video.bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; }
     .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 16, 8, 0.65); z-index: -2; }
+
+    .logo-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .logo-wrapper img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 3px solid #00ff88;
+      box-shadow: 0 0 20px #00ff88;
+    }
+
     .container {
       position: relative;
       z-index: 1;
       width: 90%; max-width: 480px;
-      margin: 60px auto;
+      margin: 30px auto;
       background: rgba(0, 24, 0, 0.8);
       padding: 25px 20px;
       border-radius: 12px;
       box-shadow: 0 0 25px #00ff88;
       color: #ccffcc;
+      margin-top: 20px;
     }
+
     select, input, button {
       width: 100%;
       margin: 12px 0;
@@ -30,7 +47,9 @@
       background: #001100;
       color: #aaffaa;
     }
+
     select, input { background: #002200; }
+
     button {
       background: #00ff88;
       color: #000;
@@ -38,7 +57,9 @@
       cursor: pointer;
       transition: background 0.2s;
     }
+
     button:hover { background: #00dd70; }
+
     .notif { margin-top: 8px; font-size: 14px; color: #bfffcf; }
     .result {
       margin-top: 12px;
@@ -53,12 +74,17 @@
 </head>
 <body>
 
-  <!-- Video background (green lightning) -->
+  <!-- Video background -->
   <video class="bg" autoplay muted loop playsinline>
     <source src="lightning.mp4" type="video/mp4" />
     Your browser doesn’t support HTML5 video.
   </video>
   <div class="overlay"></div>
+
+  <!-- Logo -->
+  <div class="logo-wrapper">
+    <img src="logo.png" alt="DilxVXII Logo" />
+  </div>
 
   <!-- UI Container -->
   <div class="container">
