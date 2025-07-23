@@ -33,7 +33,8 @@
 
 .logo {
   margin-top: 30px;
-  margin-left: -30px;
+  margin-left: 10px;
+  align-self: flex-start;
   width: 100px;
   height: 100px;
   background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
@@ -42,12 +43,12 @@
   box-shadow: 0 0 15px #00ffaa;
 }
 
-.status {
-  margin-top: -80px;
-  margin-left: 90px;
+.status-label {
+  align-self: flex-start;
+  margin-left: 130px;
+  margin-top: -90px;
   font-size: 20px;
   color: #00ffaa;
-  font-weight: bold;
 }
 
 .container {
@@ -57,7 +58,7 @@
   max-width: 500px;
   width: 90%;
   box-shadow: 0 0 25px #00ffaa;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
 select, input {
@@ -71,14 +72,29 @@ select, input {
   color: #fff;
 }
 
-.result {
-  margin-top: 20px;
-  background: #1a1a1a;
-  padding: 15px;
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  font-size: 16px;
+  border: none;
   border-radius: 8px;
-  white-space: pre-wrap;
-  word-break: break-word;
-  border: 1px solid #333;
+  background: #00ffaa;
+  color: #000;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+button:hover {
+  background: #00cc88;
+}
+
+.notif {
+  margin-top: 10px;
+  color: #00ff99;
+  font-size: 14px;
+  text-align: center;
 }
 
 .user-status {
@@ -88,38 +104,23 @@ select, input {
   color: #88ffcc;
 }
 
-.welcome {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.logout {
+.top-bar {
   margin-top: 10px;
-  display: block;
-  padding: 10px 20px;
-  border: none;
-  background: #ff6666;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
+  text-align: center;
+  font-size: 16px;
+  color: #d1ffd1;
 }
 
   </style>
 </head>
 <body>  <!-- VIDEO BACKGROUND -->  <video autoplay muted loop id="bg-video">
     <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4">
-  </video>  <!-- LOGO & STATUS -->  <div style="display: flex; align-items: center; gap: 20px;">
-    <div class="logo"></div>
-    <div class="status">Connected</div>
-  </div>  <!-- WELCOME TEXT -->  <div class="welcome">
-    Welcome, DilxVXII
-    <button class="logout">Logout</button>
-  </div>  <!-- PANEL UI -->  <div class="container">
-    <label for="target">Target Number (no +)</label>
-    <input type="text" id="target" placeholder="Example: 60123456789" /><label for="type">Select Bug Type</label>
+  </video>  <!-- LOGO -->  <div class="logo"></div>
+  <div class="status-label">Connected</div>  <!-- PANEL UI -->  <div class="container">
+    <div class="top-bar">Welcome, Dilx | <button onclick="logout()">Logout</button></div><label for="target">Target Number (no +)</label>
+<input type="text" id="target" placeholder="Example: 60123456789" />
+
+<label for="type">Select Bug Type</label>
 <select id="type">
   <option value="xcombo">XCombo</option>
   <option value="xforceclose">XForceClose</option>
@@ -127,7 +128,7 @@ select, input {
   <option value="xviewonce">XViewOnce</option>
 </select>
 
-<div class="result" id="result">⬅️ Trigger result will appear here...</div>
+<div class="notif" id="notif"></div>
 
 <div class="user-status">
   Logged in as: <b>Dilx</b><br />
@@ -135,6 +136,34 @@ select, input {
 </div>
 
   </div>  <script>
-    // You can connect this to backend later
+    async function triggerBug() {
+      const type = document.getElementById("type").value;
+      const target = document.getElementById("target").value.trim();
+      const notif = document.getElementById("notif");
+
+      if (!target || isNaN(target)) {
+        notif.textContent = "Please enter a valid number.";
+        return;
+      }
+
+      notif.textContent = "Sending request...";
+
+      try {
+        const res = await fetch(`/api/trigger?type=${type}&target=${target}`);
+        const data = await res.json();
+
+        if (data.success) {
+          notif.textContent = "Successfully executed!";
+        } else {
+          notif.textContent = "Error: " + (data.error || "Unknown error");
+        }
+      } catch (e) {
+        notif.textContent = "Failed to connect to API.";
+      }
+    }
+
+    function logout() {
+      alert("Logging out...");
+    }
   </script></body>
 </html>
