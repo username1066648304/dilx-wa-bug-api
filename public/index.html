@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DilxVXII - WhatsApp Bug Trigger</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      background: #0a0a0a;
+      color: #e0ffe0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #00ffaa;
+      margin-bottom: 5px;
+      font-size: 28px;
+    }
+    .tagline {
+      color: #999;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .container {
+      background: #121212;
+      padding: 20px 30px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 0 15px #00ffaa;
+    }
+    select, input {
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      background: #222;
+      color: #fff;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #00ffaa;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #00cc88;
+    }
+    .result {
+      margin-top: 20px;
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid #333;
+    }
+    .notif {
+      margin-top: 10px;
+      color: #00ff99;
+      font-size: 14px;
+      text-align: center;
+    }
+    .copy-btn {
+      background: #333;
+      color: #fff;
+      border: 1px solid #555;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔰 DilxVXII</h1>
+  <div class="tagline">Powerful WhatsApp Bug Trigger Tool</div>
+
+  <div class="container">
+    <label for="type">Pilih Jenis Bug</label>
+    <select id="type">
+      <option value="xcombo">XCombo</option>
+      <option value="xforceclose">XForceClose</option>
+      <option value="xinvisible">XInvisible</option>
+      <option value="xviewonce">XViewOnce</option>
+    </select>
+
+    <label for="target">Nombor Target (tanpa +)</label>
+    <input type="text" id="target" placeholder="Contoh: 60123456789" />
+
+    <button onclick="triggerBug()">🚀 Kirim Trigger</button>
+
+    <div class="notif" id="notif"></div>
+
+    <div class="result" id="result">⬅️ Hasil trigger akan muncul di sini...</div>
+    <button class="copy-btn" onclick="copyResult()">📋 Copy Result</button>
+  </div>
+
+  <script>
+    async function triggerBug() {
+      const type = document.getElementById("type").value;
+      const target = document.getElementById("target").value.trim();
+      const notif = document.getElementById("notif");
+      const result = document.getElementById("result");
+
+      if (!target || isNaN(target)) {
+        notif.textContent = "❌ Sila masukkan nombor yang sah.";
+        return;
+      }
+
+      notif.textContent = "⏳ Menghantar...";
+      result.textContent = "";
+
+      try {
+        const res = await fetch(`/api/trigger?type=${type}&target=${target}`);
+        const data = await res.json();
+
+        if (data.success) {
+          notif.textContent = "✅ Berjaya dihantar!";
+          result.textContent = JSON.stringify(data, null, 2);
+        } else {
+          notif.textContent = "⚠️ Error: " + (data.error || "Unknown error");
+        }
+      } catch (e) {
+        notif.textContent = "❌ Gagal sambung ke API.";
+        result.textContent = e.toString();
+      }
+    }
+
+    function copyResult() {
+      const text = document.getElementById("result").textContent;
+      navigator.clipboard.writeText(text);
+      document.getElementById("notif").textContent = "📋 Disalin ke clipboard!";
+    }
+  </script>
+
+</body>
+</html>
