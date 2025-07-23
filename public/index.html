@@ -31,10 +31,14 @@
   filter: brightness(0.6) contrast(1.4) saturate(1.5);
 }
 
-.logo {
+.top-section {
+  display: flex;
+  align-items: center;
   margin-top: 30px;
-  margin-right: auto;
-  margin-left: 30px;
+  gap: 20px;
+}
+
+.logo {
   width: 100px;
   height: 100px;
   background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
@@ -43,30 +47,10 @@
   box-shadow: 0 0 15px #00ffaa;
 }
 
-.status-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 90%;
-  max-width: 500px;
-  margin-top: 10px;
-  padding: 0 30px;
-  font-size: 16px;
-}
-
-.status-bar .left {
-  color: #00ffaa;
+.welcome {
+  font-size: 32px;
   font-weight: bold;
-}
-
-.status-bar .right button {
-  background: #00ffaa;
-  border: none;
-  color: #000;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
+  color: #ffffff;
 }
 
 .container {
@@ -90,35 +74,36 @@ select, input {
   color: #fff;
 }
 
-button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
+.user-status {
+  margin-top: 18px;
+  text-align: center;
   font-size: 16px;
-  border: none;
-  border-radius: 8px;
-  background: #00ffaa;
-  color: #000;
-  cursor: pointer;
-  font-weight: bold;
-  text-transform: uppercase;
+  color: #88ffcc;
 }
 
-button:hover {
-  background: #00cc88;
+.logout-btn {
+  background: transparent;
+  color: #00ffaa;
+  border: 1px solid #00ffaa;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.logout-btn:hover {
+  background: #00ffaa;
+  color: #000;
 }
 
   </style>
 </head>
 <body>  <!-- VIDEO BACKGROUND -->  <video autoplay muted loop id="bg-video">
     <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4">
-  </video>  <!-- LOGO -->  <div class="logo"></div>  <!-- STATUS BAR -->  <div class="status-bar">
-    <div class="left">
-      Connected | Welcome, Dilx | Expired on: 31/12/2025
-    </div>
-    <div class="right">
-      <button onclick="logout()">Logout</button>
-    </div>
+  </video>  <!-- TOP SECTION WITH LOGO AND WELCOME -->  <div class="top-section">
+    <div class="logo"></div>
+    <div class="welcome">Welcome, Dilx</div>
   </div>  <!-- PANEL UI -->  <div class="container">
     <label for="target">Target Number (no +)</label>
     <input type="text" id="target" placeholder="Example: 60123456789" /><label for="type">Select Bug Type</label>
@@ -129,35 +114,12 @@ button:hover {
   <option value="xviewonce">XViewOnce</option>
 </select>
 
-<button onclick="triggerBug()">Execute</button>
+<div class="user-status">
+  Connected<br />
+  Expired on: <b>31/12/2025</b>
+</div>
 
-  </div>  <script>
-    async function triggerBug() {
-      const type = document.getElementById("type").value;
-      const target = document.getElementById("target").value.trim();
+<button class="logout-btn">Logout</button>
 
-      if (!target || isNaN(target)) {
-        alert("Please enter a valid number.");
-        return;
-      }
-
-      try {
-        const res = await fetch(`/api/trigger?type=${type}&target=${target}`);
-        const data = await res.json();
-
-        if (data.success) {
-          alert("Successfully executed!");
-        } else {
-          alert("Error: " + (data.error || "Unknown error"));
-        }
-      } catch (e) {
-        alert("Failed to connect to API.");
-        console.error(e);
-      }
-    }
-
-    function logout() {
-      alert("Logged out!");
-    }
-  </script></body>
+  </div></body>
 </html>
