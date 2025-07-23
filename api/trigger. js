@@ -1,0 +1,37 @@
+export default async function handler(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ message: "Only POST allowed" });
+
+  const { target, type } = req.body;
+  console.log(`📲 Trigger received: ${type} → ${target}`);
+
+  if (!target || !type) return res.status(400).json({ message: "Missing target or type" });
+
+  try {
+    if (type === "forceclose") {
+      await DilxForceClose(target);
+    } else if (type === "invisible") {
+      await DilxInvisibleViewOnce(target);
+    } else if (type === "spam") {
+      await DilxSpamPairing(target);
+    } else {
+      return res.status(400).json({ message: "Unknown bug type" });
+    }
+
+    return res.json({ message: "Bug sent!" });
+  } catch (err) {
+    console.error("❌ Error:", err);
+    return res.status(500).json({ message: "Server error", error: err.message });
+  }
+}
+
+async function DilxForceClose(target) {
+  console.log(`💥 DilxForceClose ke ${target}`);
+}
+
+async function DilxInvisibleViewOnce(target) {
+  console.log(`👻 DilxInvisibleViewOnce ke ${target}`);
+}
+
+async function DilxSpamPairing(target) {
+  console.log(`🔁 DilxSpamPairing ke ${target}`);
+}
