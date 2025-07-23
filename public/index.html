@@ -5,33 +5,62 @@
   <title>DilxVXII - WhatsApp Bug Trigger</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    * {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      background: #0a0a0a;
-      color: #e0ffe0;
       font-family: 'Segoe UI', sans-serif;
+      color: #e0ffe0;
+    }
+
+    /* Video latar belakang */
+    #bg-video {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
+
+    /* Lapisan overlay gelap supaya content jelas */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: -1;
+    }
+
+    .page {
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 30px;
     }
+
     h1 {
       color: #00ffaa;
       margin-bottom: 5px;
       font-size: 28px;
     }
+
     .tagline {
       color: #999;
       margin-bottom: 20px;
       font-size: 14px;
     }
+
     .container {
-      background: #121212;
+      background: rgba(18, 18, 18, 0.9);
       padding: 20px 30px;
       border-radius: 12px;
       max-width: 500px;
       width: 100%;
       box-shadow: 0 0 15px #00ffaa;
     }
+
     select, input {
       width: 100%;
       margin: 10px 0;
@@ -42,6 +71,7 @@
       background: #222;
       color: #fff;
     }
+
     button {
       width: 100%;
       padding: 12px;
@@ -54,9 +84,11 @@
       cursor: pointer;
       font-weight: bold;
     }
+
     button:hover {
       background: #00cc88;
     }
+
     .result {
       margin-top: 20px;
       background: #1a1a1a;
@@ -66,12 +98,14 @@
       word-break: break-word;
       border: 1px solid #333;
     }
+
     .notif {
       margin-top: 10px;
       color: #00ff99;
       font-size: 14px;
       text-align: center;
     }
+
     .copy-btn {
       background: #333;
       color: #fff;
@@ -81,28 +115,38 @@
   </style>
 </head>
 <body>
+  <!-- Video Background -->
+  <video autoplay muted loop id="bg-video">
+    <source src="https://files.catbox.moe/g3hdtn.mp4" type="video/mp4" />
+  </video>
 
-  <h1>🔰 DilxVXII</h1>
-  <div class="tagline">Powerful WhatsApp Bug Trigger Tool</div>
+  <!-- Overlay Gelap -->
+  <div class="overlay"></div>
 
-  <div class="container">
-    <label for="type">Pilih Jenis Bug</label>
-    <select id="type">
-      <option value="xcombo">XCombo</option>
-      <option value="xforceclose">XForceClose</option>
-      <option value="xinvisible">XInvisible</option>
-      <option value="xviewonce">XViewOnce</option>
-    </select>
+  <!-- Konten UI -->
+  <div class="page">
+    <h1>🔰 DilxVXII</h1>
+    <div class="tagline">Powerful WhatsApp Bug Trigger Tool</div>
 
-    <label for="target">Nombor Target (tanpa +)</label>
-    <input type="text" id="target" placeholder="Contoh: 60123456789" />
+    <div class="container">
+      <label for="type">Pilih Jenis Bug</label>
+      <select id="type">
+        <option value="xcombo">XCombo</option>
+        <option value="xforceclose">XForceClose</option>
+        <option value="xinvisible">XInvisible</option>
+        <option value="xviewonce">XViewOnce</option>
+      </select>
 
-    <button onclick="triggerBug()">🚀 Kirim Trigger</button>
+      <label for="target">Nombor Target (tanpa +)</label>
+      <input type="text" id="target" placeholder="Contoh: 60123456789" />
 
-    <div class="notif" id="notif"></div>
+      <button onclick="triggerBug()">🚀 Kirim Trigger</button>
 
-    <div class="result" id="result">⬅️ Hasil trigger akan muncul di sini...</div>
-    <button class="copy-btn" onclick="copyResult()">📋 Copy Result</button>
+      <div class="notif" id="notif"></div>
+
+      <div class="result" id="result">⬅️ Hasil trigger akan muncul di sini...</div>
+      <button class="copy-btn" onclick="copyResult()">📋 Copy Result</button>
+    </div>
   </div>
 
   <script>
@@ -142,6 +186,5 @@
       document.getElementById("notif").textContent = "📋 Disalin ke clipboard!";
     }
   </script>
-
 </body>
 </html>
