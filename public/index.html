@@ -31,12 +31,11 @@
   filter: brightness(0.6) contrast(1.4) saturate(1.5);
 }
 
-.logo-container {
+.header {
   display: flex;
   align-items: center;
-  justify-content: center;
   margin-top: 30px;
-  gap: 20px;
+  gap: 15px;
 }
 
 .logo {
@@ -48,10 +47,10 @@
   box-shadow: 0 0 15px #00ffaa;
 }
 
-.status-text {
-  color: #00ffaa;
-  font-size: 16px;
-  white-space: nowrap;
+.server-status {
+  font-size: 24px;
+  font-weight: bold;
+  color: #00ff88;
 }
 
 .container {
@@ -128,9 +127,9 @@ button:hover {
 </head>
 <body>  <!-- VIDEO BACKGROUND -->  <video autoplay muted loop id="bg-video">
     <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4">
-  </video>  <!-- LOGO AND SERVER STATUS -->  <div class="logo-container">
+  </video>  <!-- HEADER: LOGO + STATUS -->  <div class="header">
     <div class="logo"></div>
-    <div class="status-text">🟢 Server Online</div>
+    <div class="server-status">🟢 Server Online</div>
   </div>  <!-- PANEL UI -->  <div class="container">
     <label for="type">Select Bug Type</label>
     <select id="type">
