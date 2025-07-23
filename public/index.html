@@ -3,29 +3,29 @@
   <meta charset="UTF-8" />
   <title>DilxVXII - WhatsApp Bug Trigger</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tourney:wght@700&display=swap" rel="stylesheet">
   <style>
-    @keyframes lightning {
-      0% { opacity: 0.1; }
-      25% { opacity: 0.8; }
-      50% { opacity: 0.2; }
-      75% { opacity: 1; }
-      100% { opacity: 0.1; }
-    }
     body {
       margin: 0;
       padding: 0;
-      background: url('https://files.catbox.moe/g3hdtn.mp4') no-repeat center center fixed;
-      background-size: cover;
-      font-family: 'Anton', sans-serif;
+      font-family: 'Tourney', sans-serif;
       color: #e0ffe0;
-      animation: lightning 5s infinite;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       min-height: 100vh;
-      backdrop-filter: blur(5px);
+    }
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100vw;
+      min-height: 100vh;
+      z-index: -1;
+      object-fit: cover;
+      opacity: 0.8;
+      filter: brightness(1.2) contrast(1.1);
     }
     .logo {
       margin-top: 30px;
@@ -93,13 +93,15 @@
     }
     .user-info {
       margin-top: 20px;
-      color: #00ffaa;
       text-align: center;
-      font-size: 16px;
+      font-size: 14px;
+      color: #aaffaa;
     }
   </style>
 </head>
-<body>  <div class="logo"></div>  <div class="container">
+<body>  <video autoplay muted loop playsinline id="bg-video">
+    <source src="https://files.catbox.moe/g3hdtn.mp4" type="video/mp4" />
+  </video>  <div class="logo"></div>  <div class="container">
     <label for="type">Select Bug Type</label>
     <select id="type">
       <option value="xcombo">XCombo</option>
@@ -109,18 +111,18 @@
     </select><label for="target">Target Number (without +)</label>
 <input type="text" id="target" placeholder="Example: 60123456789" />
 
-<button onclick="triggerBug()">🚀 Send Trigger</button>
+<button onclick="executeBug()">⚡ Execute</button>
 
 <div class="notif" id="notif"></div>
-
-<div class="result" id="result">⬅️ Trigger result will appear here...</div>
+<div class="result" id="result">⬅️ Trigger results will appear here...</div>
 <button class="copy-btn" onclick="copyResult()">📋 Copy Result</button>
+<div class="user-info">
+  Username: <strong>aidilhadiff</strong><br />
+  Expired: <strong>25 August 2025</strong>
+</div>
 
-  </div>  <div class="user-info">
-    Logged in as: <strong>Username</strong><br />
-    Expired: <strong>31-12-2025</strong>
   </div>  <script>
-    async function triggerBug() {
+    async function executeBug() {
       const type = document.getElementById("type").value;
       const target = document.getElementById("target").value.trim();
       const notif = document.getElementById("notif");
