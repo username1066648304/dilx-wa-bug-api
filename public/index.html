@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>DilxVXII Panel</title>
@@ -8,150 +7,153 @@
   <style>
     * {
       box-sizing: border-box;
-    }
+    }body {
+  margin: 0;
+  padding: 0;
+  font-family: "Tourney", sans-serif;
+  color: #d1ffd1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  backdrop-filter: blur(4px);
+}
 
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Tourney", sans-serif;
-      color: #d1ffd1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      backdrop-filter: blur(4px);
-    }
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  min-height: 100%;
+  z-index: -1;
+  object-fit: cover;
+  filter: brightness(0.6) contrast(1.4) saturate(1.5);
+}
 
-    #bg-video {
-      position: fixed;
-      top: 0;
-      left: 0;
-      min-width: 100%;
-      min-height: 100%;
-      z-index: -1;
-      object-fit: cover;
-      filter: brightness(0.6) contrast(1.4) saturate(1.5);
-    }
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
+  gap: 20px;
+}
 
-    .logo {
-      margin-top: 30px;
-      width: 100px;
-      height: 100px;
-      background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
-      background-size: contain;
-      border-radius: 50%;
-      box-shadow: 0 0 15px #00ffaa;
-    }
+.logo {
+  width: 100px;
+  height: 100px;
+  background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
+  background-size: contain;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #00ffaa;
+}
 
-    .container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 25px 30px;
-      border-radius: 14px;
-      max-width: 500px;
-      width: 90%;
-      box-shadow: 0 0 25px #00ffaa;
-      margin-top: 20px;
-    }
+.status-text {
+  color: #00ffaa;
+  font-size: 16px;
+  white-space: nowrap;
+}
 
-    select, input {
-      width: 100%;
-      margin: 12px 0;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      background: #111;
-      color: #fff;
-    }
+.container {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 25px 30px;
+  border-radius: 14px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 0 25px #00ffaa;
+  margin-top: 20px;
+}
 
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      background: #00ffaa;
-      color: #000;
-      cursor: pointer;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
+select, input {
+  width: 100%;
+  margin: 12px 0;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  background: #111;
+  color: #fff;
+}
 
-    button:hover {
-      background: #00cc88;
-    }
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  background: #00ffaa;
+  color: #000;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+}
 
-    .result {
-      margin-top: 20px;
-      background: #1a1a1a;
-      padding: 15px;
-      border-radius: 8px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      border: 1px solid #333;
-    }
+button:hover {
+  background: #00cc88;
+}
 
-    .notif {
-      margin-top: 10px;
-      color: #00ff99;
-      font-size: 14px;
-      text-align: center;
-    }
+.result {
+  margin-top: 20px;
+  background: #1a1a1a;
+  padding: 15px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border: 1px solid #333;
+}
 
-    .copy-btn {
-      background: #333;
-      color: #fff;
-      border: 1px solid #555;
-      margin-top: 10px;
-    }
+.notif {
+  margin-top: 10px;
+  color: #00ff99;
+  font-size: 14px;
+  text-align: center;
+}
 
-    .user-status {
-      margin-top: 18px;
-      text-align: center;
-      font-size: 14px;
-      color: #88ffcc;
-    }
+.copy-btn {
+  background: #333;
+  color: #fff;
+  border: 1px solid #555;
+  margin-top: 10px;
+}
+
+.user-status {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 14px;
+  color: #88ffcc;
+}
+
   </style>
 </head>
-<body>
-
-  <!-- VIDEO BACKGROUND -->
-  <video autoplay muted loop id="bg-video">
-    <source src="https://files.catbox.moe/g3hdtn.mp4" type="video/mp4">
-  </video>
-
-  <!-- LOGO -->
-  <div class="logo"></div>
-
-  <!-- PANEL UI -->
-  <div class="container">
+<body>  <!-- VIDEO BACKGROUND -->  <video autoplay muted loop id="bg-video">
+    <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4">
+  </video>  <!-- LOGO AND SERVER STATUS -->  <div class="logo-container">
+    <div class="logo"></div>
+    <div class="status-text">🟢 Server Online</div>
+  </div>  <!-- PANEL UI -->  <div class="container">
     <label for="type">Select Bug Type</label>
     <select id="type">
       <option value="xcombo">XCombo</option>
       <option value="xforceclose">XForceClose</option>
       <option value="xinvisible">XInvisible</option>
       <option value="xviewonce">XViewOnce</option>
-    </select>
+    </select><label for="target">Target Number (no +)</label>
+<input type="text" id="target" placeholder="Example: 60123456789" />
 
-    <label for="target">Target Number (no +)</label>
-    <input type="text" id="target" placeholder="Example: 60123456789" />
+<button onclick="triggerBug()">⚡ Execute</button>
 
-    <button onclick="triggerBug()">⚡ Execute</button>
+<div class="notif" id="notif"></div>
 
-    <div class="notif" id="notif"></div>
+<div class="result" id="result">⬅️ Trigger result will appear here...</div>
+<button class="copy-btn" onclick="copyResult()">📋 Copy Result</button>
 
-    <div class="result" id="result">⬅️ Trigger result will appear here...</div>
-    <button class="copy-btn" onclick="copyResult()">📋 Copy Result</button>
+<div class="user-status">
+  Logged in as: <b>Dilx</b><br />
+  Expired on: <b>31/12/2025</b>
+</div>
 
-    <div class="user-status">
-      Logged in as: <b>Dilx</b><br />
-      Expired on: <b>31/12/2025</b>
-    </div>
-  </div>
-
-  <script>
+  </div>  <script>
     async function triggerBug() {
       const type = document.getElementById("type").value;
       const target = document.getElementById("target").value.trim();
@@ -187,7 +189,5 @@
       navigator.clipboard.writeText(text);
       document.getElementById("notif").textContent = "📋 Copied to clipboard!";
     }
-  </script>
-
-</body>
+  </script></body>
 </html>
