@@ -2,92 +2,115 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>DilxVXII Bug Trigger</title>
+  <title>DilxVXII - WhatsApp Bug Trigger</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
-    video.bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; }
-    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 16, 8, 0.65); z-index: -2; }
-
-    .logo-wrapper {
+    body {
+      background: #000;
+      background: radial-gradient(ellipse at center, #003300 0%, #000000 100%);
+      color: #e0ffe0;
+      font-family: 'Segoe UI', sans-serif;
       display: flex;
-      justify-content: center;
-      margin-top: 30px;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      min-height: 100vh;
     }
 
-    .logo-wrapper img {
-      width: 90px;
-      height: 90px;
+    .logo {
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
-      border: 3px solid #00ff88;
-      box-shadow: 0 0 20px #00ff88;
+      margin-bottom: 10px;
+      border: 2px solid #00ffaa;
+      box-shadow: 0 0 25px #00ffaa;
+    }
+
+    h1 {
+      color: #00ffaa;
+      margin: 5px 0 10px;
+      font-size: 28px;
+    }
+
+    .tagline {
+      color: #999;
+      margin-bottom: 20px;
+      font-size: 14px;
+      text-align: center;
     }
 
     .container {
-      position: relative;
-      z-index: 1;
-      width: 90%; max-width: 480px;
-      margin: 30px auto;
-      background: rgba(0, 24, 0, 0.8);
-      padding: 25px 20px;
+      background: #121212;
+      padding: 20px 30px;
       border-radius: 12px;
-      box-shadow: 0 0 25px #00ff88;
-      color: #ccffcc;
-      margin-top: 20px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 0 15px #00ffaa;
     }
 
-    select, input, button {
+    select, input {
       width: 100%;
-      margin: 12px 0;
+      margin: 10px 0;
       padding: 12px;
       border: none;
       border-radius: 8px;
       font-size: 16px;
-      background: #001100;
-      color: #aaffaa;
+      background: #222;
+      color: #fff;
     }
-
-    select, input { background: #002200; }
 
     button {
-      background: #00ff88;
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #00ffaa;
       color: #000;
-      font-weight: bold;
       cursor: pointer;
-      transition: background 0.2s;
+      font-weight: bold;
     }
 
-    button:hover { background: #00dd70; }
+    button:hover {
+      background: #00cc88;
+    }
 
-    .notif { margin-top: 8px; font-size: 14px; color: #bfffcf; }
     .result {
-      margin-top: 12px;
-      background: #000a00;
-      padding: 12px;
+      margin-top: 20px;
+      background: #1a1a1a;
+      padding: 15px;
       border-radius: 8px;
-      border: 1px solid #00ff88;
       white-space: pre-wrap;
       word-break: break-word;
+      border: 1px solid #333;
+    }
+
+    .notif {
+      margin-top: 10px;
+      color: #00ff99;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .copy-btn {
+      background: #333;
+      color: #fff;
+      border: 1px solid #555;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Video background -->
-  <video class="bg" autoplay muted loop playsinline>
-    <source src="lightning.mp4" type="video/mp4" />
-    Your browser doesn’t support HTML5 video.
-  </video>
-  <div class="overlay"></div>
+  <!-- Logo Bulat -->
+  <img class="logo" src="https://files.catbox.moe/tje4sw.png" alt="DilxVXII Logo">
 
-  <!-- Logo -->
-  <div class="logo-wrapper">
-    <img src="logo.png" alt="DilxVXII Logo" />
-  </div>
+  <h1>🔰 DilxVXII</h1>
+  <div class="tagline">Powerful WhatsApp Bug Trigger Tool</div>
 
-  <!-- UI Container -->
   <div class="container">
+    <label for="type">Pilih Jenis Bug</label>
     <select id="type">
       <option value="xcombo">XCombo</option>
       <option value="xforceclose">XForceClose</option>
@@ -95,41 +118,52 @@
       <option value="xviewonce">XViewOnce</option>
     </select>
 
-    <input type="text" id="target" placeholder="60123456789" />
+    <label for="target">Nombor Target (tanpa +)</label>
+    <input type="text" id="target" placeholder="Contoh: 60123456789" />
 
-    <button onclick="triggerBug()">🚀 Kirim</button>
+    <button onclick="triggerBug()">🚀 Kirim Trigger</button>
 
     <div class="notif" id="notif"></div>
-    <div class="result" id="result">⬅️ Hasil muncul di sini</div>
+
+    <div class="result" id="result">⬅️ Hasil trigger akan muncul di sini...</div>
+    <button class="copy-btn" onclick="copyResult()">📋 Copy Result</button>
   </div>
 
   <script>
     async function triggerBug() {
       const type = document.getElementById("type").value;
       const target = document.getElementById("target").value.trim();
-      document.getElementById("notif").textContent = '';
-      document.getElementById("result").textContent = '';
+      const notif = document.getElementById("notif");
+      const result = document.getElementById("result");
 
       if (!target || isNaN(target)) {
-        document.getElementById("notif").textContent = "❌ Format nombor tak sah";
+        notif.textContent = "❌ Sila masukkan nombor yang sah.";
         return;
       }
 
-      document.getElementById("notif").textContent = "⏳ Menghantar…";
+      notif.textContent = "⏳ Menghantar...";
+      result.textContent = "";
 
       try {
         const res = await fetch(`/api/trigger?type=${type}&target=${target}`);
-        const json = await res.json();
-        if (json.success) {
-          document.getElementById("notif").textContent = "✅ Berjaya!";
-          document.getElementById("result").textContent = JSON.stringify(json, null, 2);
+        const data = await res.json();
+
+        if (data.success) {
+          notif.textContent = "✅ Berjaya dihantar!";
+          result.textContent = JSON.stringify(data, null, 2);
         } else {
-          document.getElementById("notif").textContent = "⚠️ " + (json.error || "Error");
+          notif.textContent = "⚠️ Error: " + (data.error || "Unknown error");
         }
-      } catch (err) {
-        document.getElementById("notif").textContent = "❌ Gagal sambung ke API";
-        document.getElementById("result").textContent = err;
+      } catch (e) {
+        notif.textContent = "❌ Gagal sambung ke API.";
+        result.textContent = e.toString();
       }
+    }
+
+    function copyResult() {
+      const text = document.getElementById("result").textContent;
+      navigator.clipboard.writeText(text);
+      document.getElementById("notif").textContent = "📋 Disalin ke clipboard!";
     }
   </script>
 
