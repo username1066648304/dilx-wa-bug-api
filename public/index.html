@@ -6,70 +6,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
-      background: #000;
-      background: radial-gradient(ellipse at center, #003300 0%, #000000 100%);
-      color: #e0ffe0;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #001100, #003300, #001100);
+      background-size: 400% 400%;
+      animation: bgAnimation 15s ease infinite;
+      color: #00ff99;
       font-family: 'Segoe UI', sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 30px;
+      justify-content: flex-start;
       min-height: 100vh;
     }
 
+    @keyframes bgAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     .logo {
-      width: 120px;
-      height: 120px;
+      width: 100px;
+      height: 100px;
+      margin-top: 40px;
       border-radius: 50%;
-      margin-bottom: 10px;
-      border: 2px solid #00ffaa;
-      box-shadow: 0 0 25px #00ffaa;
+      box-shadow: 0 0 25px #00ff99;
     }
 
     h1 {
       color: #00ffaa;
-      margin: 5px 0 10px;
+      margin-top: 15px;
+      margin-bottom: 5px;
       font-size: 28px;
+      text-shadow: 0 0 10px #00ffaa;
     }
 
     .tagline {
-      color: #999;
+      color: #aaa;
       margin-bottom: 20px;
       font-size: 14px;
-      text-align: center;
     }
 
     .container {
-      background: #121212;
-      padding: 20px 30px;
-      border-radius: 12px;
-      max-width: 500px;
+      background: rgba(0, 20, 0, 0.6);
+      padding: 25px 30px;
+      border-radius: 16px;
+      max-width: 480px;
       width: 100%;
-      box-shadow: 0 0 15px #00ffaa;
+      box-shadow: 0 0 20px #00ffaa;
+      backdrop-filter: blur(6px);
+    }
+
+    label {
+      font-size: 15px;
+      color: #ccffcc;
     }
 
     select, input {
       width: 100%;
-      margin: 10px 0;
+      margin: 10px 0 20px;
       padding: 12px;
       border: none;
       border-radius: 8px;
       font-size: 16px;
-      background: #222;
-      color: #fff;
+      background: #001f10;
+      color: #00ffcc;
+      box-shadow: inset 0 0 10px #00ffaa88;
     }
 
     button {
       width: 100%;
       padding: 12px;
-      margin-top: 10px;
       font-size: 16px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       background: #00ffaa;
       color: #000;
       cursor: pointer;
       font-weight: bold;
+      transition: background 0.3s ease;
     }
 
     button:hover {
@@ -78,12 +94,13 @@
 
     .result {
       margin-top: 20px;
-      background: #1a1a1a;
+      background: #001f1f;
       padding: 15px;
       border-radius: 8px;
       white-space: pre-wrap;
       word-break: break-word;
-      border: 1px solid #333;
+      border: 1px solid #003333;
+      color: #ccffcc;
     }
 
     .notif {
@@ -94,17 +111,17 @@
     }
 
     .copy-btn {
-      background: #333;
+      background: #003333;
       color: #fff;
-      border: 1px solid #555;
+      border: 1px solid #00ffaa;
       margin-top: 10px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Logo Bulat -->
-  <img class="logo" src="https://files.catbox.moe/tje4sw.png" alt="DilxVXII Logo">
+  <!-- LOGO -->
+  <img src="https://files.catbox.moe/tje4sw.png" alt="DilxVXII Logo" class="logo" />
 
   <h1>🔰 DilxVXII</h1>
   <div class="tagline">Powerful WhatsApp Bug Trigger Tool</div>
