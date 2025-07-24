@@ -77,3 +77,10 @@ body {
   font-size: 13px;
   color: #00ff99;
 }
+
+.error {
+  color: red;
+  font-size: 13px;
+  margin-top: 10px;
+  text-align: left;
+}
