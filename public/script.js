@@ -1,16 +1,14 @@
-document.getElementById("login-form").addEventListener("submit", function (e) {
+document.getElementById("login-form")?.addEventListener("submit", function (e) {
   e.preventDefault();
-  
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const errorMessage = document.getElementById("error-message");
+  const user = this.querySelector("input[type=text]").value.trim();
+  const pass = this.querySelector("input[type=password]").value.trim();
+  const err = document.getElementById("error-message");
 
-  if (username === "dilx" && password === "1") {
-    errorMessage.textContent = "";
-    console.log("Login success!");
-    // Redirect or trigger system here
-    alert("Login Berjaya!");
+  if (user === "dilx" && pass === "1") {
+    err.textContent = "";
+    sessionStorage.setItem("dilxUser", user);
+    window.location.href = "index.html"; // <-- Redirect ke halaman utama kamu
   } else {
-    errorMessage.textContent = "Username atau password salah!";
+    err.textContent = "Username atau password salah!";
   }
 });
