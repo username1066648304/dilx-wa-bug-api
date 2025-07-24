@@ -1,125 +1,202 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>DilxVXII Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Tourney:wdth,wght@100..900,100..900&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }body {
-  margin: 0;
-  padding: 0;
-  font-family: "Tourney", sans-serif;
-  color: #d1ffd1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  backdrop-filter: blur(4px);
-}
-
-#bg-video {
-  position: fixed;
-  top: 0;
-  left: 0;
-  min-width: 100%;
-  min-height: 100%;
-  z-index: -1;
-  object-fit: cover;
-  filter: brightness(0.6) contrast(1.4) saturate(1.5);
-}
-
-.top-section {
-  display: flex;
-  align-items: center;
-  margin-top: 30px;
-  gap: 20px;
-}
-
-.logo {
-  width: 100px;
-  height: 100px;
-  background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
-  background-size: contain;
-  border-radius: 50%;
-  box-shadow: 0 0 15px #00ffaa;
-}
-
-.welcome {
-  font-size: 32px;
-  font-weight: bold;
-  color: #ffffff;
-}
-
-.container {
-  background: rgba(0, 0, 0, 0.7);
-  padding: 25px 30px;
-  border-radius: 14px;
-  max-width: 500px;
-  width: 90%;
-  box-shadow: 0 0 25px #00ffaa;
-  margin-top: 20px;
-}
-
-select, input {
-  width: 100%;
-  margin: 12px 0;
-  padding: 14px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  background: #111;
-  color: #fff;
-}
-
-.user-status {
-  margin-top: 18px;
-  text-align: center;
-  font-size: 16px;
-  color: #88ffcc;
-}
-
-.logout-btn {
-  background: transparent;
-  color: #00ffaa;
-  border: 1px solid #00ffaa;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.logout-btn:hover {
-  background: #00ffaa;
-  color: #000;
-}
-
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      font-family: "Tourney", sans-serif;
+      color: #d1ffd1;
+      display: flex; flex-direction: column;
+      align-items: center; min-height: 100vh;
+      backdrop-filter: blur(4px);
+    }
+    #bg-video {
+      position: fixed; top: 0; left: 0;
+      min-width: 100%; min-height: 100%;
+      z-index: -1; object-fit: cover;
+      filter: brightness(0.6) contrast(1.4) saturate(1.5);
+    }
+    .top-section {
+      display: flex; align-items: center;
+      margin-top: 30px; gap: 20px;
+    }
+    .logo {
+      width:100px; height:100px;
+      background: url('https://files.catbox.moe/tje4sw.png') no-repeat center;
+      background-size: contain; border-radius:50%;
+      box-shadow:0 0 15px #00ffaa;
+    }
+    .welcome {
+      font-size: 32px; font-weight: bold; color: #fff;
+    }
+    .container {
+      background: rgba(0,0,0,0.7);
+      padding: 25px 30px; border-radius:14px;
+      max-width: 500px; width:90%;
+      box-shadow:0 0 25px #00ffaa;
+      margin-top:20px;
+    }
+    label, input, select, button {
+      width:100%; margin:8px 0; font-size:16px;
+    }
+    input, select {
+      padding:12px; border:none; border-radius:8px;
+      background:#111; color:#fff;
+    }
+    .btn {
+      padding:12px; border:none; border-radius:8px;
+      background:transparent; color:#00ffaa;
+      border:1px solid #00ffaa; cursor:pointer;
+    }
+    .btn:hover {
+      background:#00ffaa; color:#000;
+    }
+    .section {
+      margin-top:20px;
+      border-top:1px solid #222;
+      padding-top:20px;
+    }
+    pre { background:#111; padding:12px; border-radius:8px; color:#0f0; max-height:200px; overflow:auto; }
   </style>
+
+  <!-- JS FUNCTIONS -->
+  <script>
+    // ========== BUG TRIGGER ==========
+    async function triggerBug() {
+      const target = document.getElementById("target").value.trim();
+      const type   = document.getElementById("type").value;
+      if (!target) return alert("Please enter target number.");
+
+      const res = await fetch('/api/trigger-bug', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ target, type })
+      });
+      const d = await res.json();
+      alert(d.message || "Done");
+    }
+
+    // ========== PAIRING ==========
+    async function addPairing() {
+      const number = document.getElementById("pairing").value.trim();
+      if (!number) return alert("Please enter a number to pair.");
+      const res = await fetch('/api/pairing', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ number })
+      });
+      const d = await res.json();
+      alert(d.message || "Paired");
+    }
+
+    // ========== USER MANAGEMENT ==========
+    async function createUser() {
+      const u = document.getElementById("u_username").value;
+      const p = document.getElementById("u_password").value;
+      const r = document.getElementById("u_role").value;
+      const d = document.getElementById("u_duration").value;
+      if (!u||!p||!d) return alert("Isi semua field!");
+      const res = await fetch('/api/create-user', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ username:u,password:p,role:r,duration:d,creatorRole:"owner" })
+      });
+      const d1 = await res.json();
+      alert(d1.message);
+      listUser();
+    }
+
+    async function deleteUser() {
+      const u = document.getElementById("del_username").value.trim();
+      if (!u) return alert("Masukkan username untuk delete.");
+      const res = await fetch('/api/delete-user', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ username:u, role:"owner" })
+      });
+      const d2 = await res.json();
+      alert(d2.message);
+      listUser();
+    }
+
+    async function listUser() {
+      const res = await fetch('/api/list-user');
+      const d3 = await res.json();
+      if (!d3.success) return alert(d3.message);
+      const out = d3.users.map(u=>
+        `${u.username} | ${u.role} | Exp: ${new Date(u.expiry).toLocaleDateString()}`
+      ).join("\\n");
+      document.getElementById("user_list_box").textContent = out;
+    }
+
+    window.onload = () => {
+      listUser();
+    };
+  </script>
 </head>
-<body>  <!-- VIDEO BACKGROUND -->  <video autoplay muted loop id="bg-video">
+
+<body>
+  <video autoplay muted loop id="bg-video">
     <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4">
-  </video>  <!-- TOP SECTION WITH LOGO AND WELCOME -->  <div class="top-section">
+  </video>
+
+  <div class="top-section">
     <div class="logo"></div>
     <div class="welcome">Welcome, Dilx</div>
-  </div>  <!-- PANEL UI -->  <div class="container">
+  </div>
+
+  <div class="container">
+    <!-- BUG TRIGGER -->
     <label for="target">Target Number (no +)</label>
-    <input type="text" id="target" placeholder="Example: 60123456789" /><label for="type">Select Bug Type</label>
-<select id="type">
-  <option value="xcombo">XCombo</option>
-  <option value="xforceclose">XForceClose</option>
-  <option value="xinvisible">XInvisible</option>
-  <option value="xviewonce">XViewOnce</option>
-</select>
+    <input id="target" placeholder="60123456789">
+    <label for="type">Select Bug Type</label>
+    <select id="type">
+      <option value="xcombo">XCombo</option>
+      <option value="xforceclose">XForceClose</option>
+      <option value="xinvisible">XInvisible</option>
+      <option value="xviewonce">XViewOnce</option>
+    </select>
+    <button onclick="triggerBug()" class="btn">Trigger Bug</button>
 
-<div class="user-status">
-  Connected<br />
-  Expired on: <b>31/12/2025</b>
-</div>
+    <!-- PAIRING -->
+    <div class="section">
+      <h4>🔗 Pairing</h4>
+      <input id="pairing" placeholder="60123456789">
+      <button onclick="addPairing()" class="btn">Add Pairing</button>
+    </div>
 
-<button class="logout-btn">Logout</button>
+    <!-- USER MANAGEMENT -->
+    <div class="section">
+      <h4>👤 Create User</h4>
+      <input id="u_username" placeholder="Username">
+      <input id="u_password" type="password" placeholder="Password">
+      <select id="u_role">
+        <option value="user">User</option>
+        <option value="reseller">Reseller</option>
+        <option value="owner">Owner</option>
+      </select>
+      <input id="u_duration" placeholder="Duration (days)">
+      <button onclick="createUser()" class="btn">Create User</button>
+    </div>
 
-  </div></body>
+    <div class="section">
+      <h4>🗑️ Delete User</h4>
+      <input id="del_username" placeholder="Username">
+      <button onclick="deleteUser()" class="btn">Delete User</button>
+    </div>
+
+    <div class="section">
+      <h4>📋 List Users</h4>
+      <button onclick="listUser()" class="btn">Refresh List</button>
+      <pre id="user_list_box">Loading…</pre>
+    </div>
+
+    <button class="btn" style="margin-top:20px;">Logout</button>
+  </div>
+</body>
 </html>
