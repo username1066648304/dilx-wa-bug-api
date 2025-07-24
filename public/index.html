@@ -1,31 +1,24 @@
-
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Ultra Login</title>
-  <link rel="stylesheet" href="style.css"/>
-  <link rel="icon" href="https://files.catbox.moe/gwatpr.png" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <video autoplay muted loop id="bgVideo">
-    <source src="https://files.catbox.moe/eut77a.mp4" type="video/mp4" />
+  <video autoplay muted loop id="bg-video">
+    <source src="https://files.catbox.moe/eut77a.mp4" type="video/mp4">
   </video>
+
   <div class="login-box">
-    <img src="https://files.catbox.moe/gwatpr.png" class="logo"/>
-    <h2>Welcome to Ultra</h2>
-    <form>
-      <input type="text" placeholder="Username" required />
-      <input type="password" placeholder="Password" required />
-      <div class="remember">
-        <input type="checkbox" id="remember" />
-        <label for="remember">Remember Me</label>
-      </div>
-      <button type="submit">Login</button>
-    </form>
-    <p class="developer">Developer: dilxVXII</p>
+    <h2>Login to Ultra</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p id="error" style="color:red;margin-top:10px;"></p>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
