@@ -1,90 +1,60 @@
 
-body, html {
+body {
   margin: 0;
-  padding: 0;
   font-family: Arial, sans-serif;
   background-color: black;
   color: #0f0;
 }
-
-#bg-video {
+#bgVideo {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  right: 0;
+  bottom: 0;
+  min-width: 100%; 
+  min-height: 100%;
   z-index: -1;
+  object-fit: cover;
 }
-
-.login-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.6);
-  border: 2px solid #064d10;
+.login-box {
+  border: 2px solid #006400;
   border-radius: 10px;
-  padding: 30px;
+  background-color: rgba(0,0,0,0.85);
   width: 300px;
-}
-
-.login-title {
+  padding: 20px;
+  margin: 100px auto;
   text-align: center;
-  color: #0f0;
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
 }
-
+.brand {
+  font-size: 32px;
+  margin-bottom: 5px;
+}
+.developer {
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #0f0;
+}
 input[type="text"],
 input[type="password"] {
   width: 100%;
   padding: 10px;
   margin: 8px 0;
-  border: none;
-  border-radius: 5px;
+  background-color: #222;
+  border: 1px solid #006400;
+  color: #0f0;
 }
-
 button {
   width: 100%;
   padding: 10px;
-  background: #064d10;
+  background-color: #006400;
+  border: none;
   color: white;
   font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  margin-top: 10px;
+  cursor: pointer;
 }
-
-.remember-container {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  color: #aaa;
-  margin-top: 10px;
+.remember-box {
+  text-align: left;
+  margin-bottom: 10px;
 }
-
-.remember-container input {
-  margin-right: 5px;
-}
-
-.dashboard-title {
-  text-align: center;
-  margin-top: 50px;
-  font-size: 26px;
-}
-
-.menu-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 30px;
-}
-
-.menu-buttons button {
-  padding: 10px 20px;
-  background-color: #064d10;
-  color: white;
-  border: none;
-  border-radius: 5px;
+.error {
+  color: red;
+  font-size: 13px;
 }
