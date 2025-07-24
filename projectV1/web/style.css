@@ -122,3 +122,78 @@ form button:hover {
     font-size: 0.95em;
   }
 } 
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="date"] {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 1px solid #00ff00;
+  border-radius: 6px;
+  background-color: #111;
+  color: #00ff00;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus {
+  outline: none;
+  border-color: #33ff33;
+}
+
+button {
+  background-color: #00ff00;
+  color: black;
+  border: none;
+  padding: 12px 24px;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+button:hover {
+  background-color: #33ff33;
+}
+
+label {
+  color: #00ff00;
+  font-weight: bold;
+}
+
+p, h1, h2, h3, h4, h5 {
+  color: #00ff00;
+}
+
+video.bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+form {
+  position: relative;
+  z-index: 2;
+}
+
+.remember-container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  margin-bottom: 10px;
+  color: #00ff00;
+  font-size: 14px;
+}
+
+.remember-container input[type="checkbox"] {
+  margin-right: 6px;
+}
