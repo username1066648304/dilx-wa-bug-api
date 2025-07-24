@@ -1,202 +1,194 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>DilxVXII Panel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Tourney:wdth,wght@100..900,100..900&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; padding: 0;
-      font-family: "Tourney", sans-serif;
-      color: #d1ffd1;
-      display: flex; flex-direction: column;
-      align-items: center; min-height: 100vh;
-      backdrop-filter: blur(4px);
-    }
-    #bg-video {
-      position: fixed; top: 0; left: 0;
-      min-width: 100%; min-height: 100%;
-      z-index: -1; object-fit: cover;
-      filter: brightness(0.6) contrast(1.4) saturate(1.5);
-    }
-    .top-section {
-      display: flex; align-items: center;
-      margin-top: 30px; gap: 20px;
-    }
-    .logo {
-      width:100px; height:100px;
-      background: url('https://files.catbox.moe/tje4sw.png') no-repeat center;
-      background-size: contain; border-radius:50%;
-      box-shadow:0 0 15px #00ffaa;
-    }
-    .welcome {
-      font-size: 32px; font-weight: bold; color: #fff;
-    }
-    .container {
-      background: rgba(0,0,0,0.7);
-      padding: 25px 30px; border-radius:14px;
-      max-width: 500px; width:90%;
-      box-shadow:0 0 25px #00ffaa;
-      margin-top:20px;
-    }
-    label, input, select, button {
-      width:100%; margin:8px 0; font-size:16px;
-    }
-    input, select {
-      padding:12px; border:none; border-radius:8px;
-      background:#111; color:#fff;
-    }
-    .btn {
-      padding:12px; border:none; border-radius:8px;
-      background:transparent; color:#00ffaa;
-      border:1px solid #00ffaa; cursor:pointer;
-    }
-    .btn:hover {
-      background:#00ffaa; color:#000;
-    }
-    .section {
-      margin-top:20px;
-      border-top:1px solid #222;
-      padding-top:20px;
-    }
-    pre { background:#111; padding:12px; border-radius:8px; color:#0f0; max-height:200px; overflow:auto; }
-  </style>
+<!DOCTYPE html><html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DilxVXII Panel</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Share Tech Mono', monospace;
+        color: #00ffaa;
+        background: black url('https://i.gifer.com/YkMC.gif') center/cover no-repeat fixed;
+      }
+      .menu-btn {
+        position: fixed;
+        top: 25px;
+        left: 25px;
+        font-size: 32px;
+        cursor: pointer;
+        z-index: 1000;
+        color: #00ffaa;
+      }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -240px;
+        width: 200px;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        padding: 40px 20px;
+        box-shadow: 2px 0 10px #00ffaa;
+        transition: 0.3s ease;
+        z-index: 999;
+      }
+      .sidebar.open {
+        left: 0;
+      }
+      .sidebar a {
+        display: block;
+        margin: 20px 0;
+        color: #00ffaa;
+        text-decoration: none;
+        font-size: 16px;
+      }
+      .logo {
+        text-align: center;
+        margin-top: 80px;
+      }
+      .logo img {
+        width: 80px;
+        border-radius: 50%;
+      }
+      .container {
+        max-width: 400px;
+        margin: 120px auto;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px #00ffaa;
+        display: none;
+      }
+      .container.active {
+        display: block;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+      input, select {
+        width: 100%;
+        padding: 10px;
+        background: #111;
+        color: #00ffaa;
+        border: 1px solid #00ffaa;
+        border-radius: 5px;
+        margin-top: 5px;
+      }
+      .logout-btn {
+        width: 100%;
+        padding: 10px;
+        margin-top: 20px;
+        background: #00ffaa;
+        color: black;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .user-status {
+        margin-top: 20px;
+        font-size: 14px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="menu-btn" onclick="toggleSidebar()">☰</div>
+    <div class="sidebar" id="sidebar">
+      <a href="#" onclick="showSection('dashboard')">Dashboard</a>
+      <a href="#" onclick="showSection('createUser')">Create User</a>
+      <a href="#" onclick="showSection('pairing')">Pairing</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div><div class="logo">
+  <img src="https://i.ibb.co/gdx78bz/logo.png" alt="DilxVXII" />
+</div>
 
-  <!-- JS FUNCTIONS -->
-  <script>
-    // ========== BUG TRIGGER ==========
-    async function triggerBug() {
-      const target = document.getElementById("target").value.trim();
-      const type   = document.getElementById("type").value;
-      if (!target) return alert("Please enter target number.");
+<div class="container active" id="dashboard">
+  <label for="target">Target Number (no +)</label>
+  <input type="text" id="target" placeholder="60123456789" />
+  <label for="type">Select Bug Type</label>
+  <select id="type">
+    <option value="xcombo">XCombo</option>
+    <option value="xforceclose">XForceClose</option>
+    <option value="xinvisible">XInvisible</option>
+    <option value="xviewonce">XViewOnce</option>
+  </select>
+  <div class="user-status">Connected<br />Expired on: <b>31/12/2025</b></div>
+</div>
 
-      const res = await fetch('/api/trigger-bug', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ target, type })
-      });
-      const d = await res.json();
-      alert(d.message || "Done");
-    }
+<div class="container" id="createUser">
+  <label>Username</label>
+  <input type="text" id="newUsername" placeholder="New Username" />
+  <label>Password</label>
+  <input type="text" id="newPassword" placeholder="Password" />
+  <label>Role</label>
+  <select id="newRole">
+    <option value="user">User</option>
+    <option value="reseller">Reseller</option>
+    <option value="owner">Owner</option>
+  </select>
+  <label>Active Until (yyyy-mm-dd)</label>
+  <input type="date" id="expireDate" />
+  <button onclick="createUser()" class="logout-btn">Create</button>
+</div>
 
-    // ========== PAIRING ==========
-    async function addPairing() {
-      const number = document.getElementById("pairing").value.trim();
-      if (!number) return alert("Please enter a number to pair.");
-      const res = await fetch('/api/pairing', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ number })
-      });
-      const d = await res.json();
-      alert(d.message || "Paired");
-    }
+<div class="container" id="pairing">
+  <label>Pairing Number</label>
+  <input type="text" id="pairingNum" placeholder="60123456789" />
+  <button onclick="addPairing()" class="logout-btn">Add Pairing</button>
+</div>
 
-    // ========== USER MANAGEMENT ==========
-    async function createUser() {
-      const u = document.getElementById("u_username").value;
-      const p = document.getElementById("u_password").value;
-      const r = document.getElementById("u_role").value;
-      const d = document.getElementById("u_duration").value;
-      if (!u||!p||!d) return alert("Isi semua field!");
-      const res = await fetch('/api/create-user', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ username:u,password:p,role:r,duration:d,creatorRole:"owner" })
-      });
-      const d1 = await res.json();
-      alert(d1.message);
-      listUser();
-    }
+<script>
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
 
-    async function deleteUser() {
-      const u = document.getElementById("del_username").value.trim();
-      if (!u) return alert("Masukkan username untuk delete.");
-      const res = await fetch('/api/delete-user', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ username:u, role:"owner" })
-      });
-      const d2 = await res.json();
-      alert(d2.message);
-      listUser();
-    }
+  function showSection(id) {
+    const sections = ['dashboard', 'createUser', 'pairing'];
+    sections.forEach(sec => {
+      const el = document.getElementById(sec);
+      if (el) el.classList.remove('active');
+    });
+    const target = document.getElementById(id);
+    if (target) target.classList.add('active');
+    document.getElementById('sidebar').classList.remove('open');
+  }
 
-    async function listUser() {
-      const res = await fetch('/api/list-user');
-      const d3 = await res.json();
-      if (!d3.success) return alert(d3.message);
-      const out = d3.users.map(u=>
-        `${u.username} | ${u.role} | Exp: ${new Date(u.expiry).toLocaleDateString()}`
-      ).join("\\n");
-      document.getElementById("user_list_box").textContent = out;
-    }
+  function logout() {
+    alert("Logging out...");
+  }
 
-    window.onload = () => {
-      listUser();
-    };
-  </script>
-</head>
+  async function createUser() {
+    const username = document.getElementById('newUsername').value.trim();
+    const password = document.getElementById('newPassword').value.trim();
+    const role = document.getElementById('newRole').value;
+    const expired = document.getElementById('expireDate').value;
 
-<body>
-  <video autoplay muted loop id="bg-video">
-    <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4">
-  </video>
+    const res = await fetch('/api/create-user.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password, role, expired })
+    });
+    const data = await res.json();
+    alert(data.message || 'User Created');
+  }
 
-  <div class="top-section">
-    <div class="logo"></div>
-    <div class="welcome">Welcome, Dilx</div>
-  </div>
+  async function addPairing() {
+    const number = document.getElementById('pairingNum').value.trim();
+    if (!number) return alert("Enter number");
 
-  <div class="container">
-    <!-- BUG TRIGGER -->
-    <label for="target">Target Number (no +)</label>
-    <input id="target" placeholder="60123456789">
-    <label for="type">Select Bug Type</label>
-    <select id="type">
-      <option value="xcombo">XCombo</option>
-      <option value="xforceclose">XForceClose</option>
-      <option value="xinvisible">XInvisible</option>
-      <option value="xviewonce">XViewOnce</option>
-    </select>
-    <button onclick="triggerBug()" class="btn">Trigger Bug</button>
+    const res = await fetch('/api/pairing.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ number })
+    });
+    const data = await res.json();
+    alert(data.message || 'Pairing done');
+  }
+</script>
 
-    <!-- PAIRING -->
-    <div class="section">
-      <h4>🔗 Pairing</h4>
-      <input id="pairing" placeholder="60123456789">
-      <button onclick="addPairing()" class="btn">Add Pairing</button>
-    </div>
-
-    <!-- USER MANAGEMENT -->
-    <div class="section">
-      <h4>👤 Create User</h4>
-      <input id="u_username" placeholder="Username">
-      <input id="u_password" type="password" placeholder="Password">
-      <select id="u_role">
-        <option value="user">User</option>
-        <option value="reseller">Reseller</option>
-        <option value="owner">Owner</option>
-      </select>
-      <input id="u_duration" placeholder="Duration (days)">
-      <button onclick="createUser()" class="btn">Create User</button>
-    </div>
-
-    <div class="section">
-      <h4>🗑️ Delete User</h4>
-      <input id="del_username" placeholder="Username">
-      <button onclick="deleteUser()" class="btn">Delete User</button>
-    </div>
-
-    <div class="section">
-      <h4>📋 List Users</h4>
-      <button onclick="listUser()" class="btn">Refresh List</button>
-      <pre id="user_list_box">Loading…</pre>
-    </div>
-
-    <button class="btn" style="margin-top:20px;">Logout</button>
-  </div>
-</body>
+  </body>
 </html>
