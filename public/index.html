@@ -1,24 +1,25 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ultra Login</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <video autoplay muted loop id="bg-video">
-    <source src="https://files.catbox.moe/eut77a.mp4" type="video/mp4">
+    <source src="https://files.catbox.moe/eut77a.mp4" type="video/mp4" />
   </video>
-
-  <div class="login-box">
-    <h2>Login to Ultra</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <p id="error" style="color:red;margin-top:10px;"></p>
+  <div class="login-container">
+    <h2>Login to <span class="green">Ultra</span></h2>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <label><input type="checkbox" id="remember" /> Remember Me</label>
+      <button type="submit">Login</button>
+    </form>
+    <p class="dev">Developer: dilxVXII</p>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
