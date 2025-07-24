@@ -1,103 +1,79 @@
-body, html {
+* {
   margin: 0;
   padding: 0;
   font-family: 'Orbitron', sans-serif;
-  color: #00ff99;
-  background-color: black;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  background: black;
   overflow: hidden;
 }
 
 #bg-video {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   z-index: -1;
-  opacity: 0.2;
 }
 
-.dark-box {
-  background: rgba(0,0,0,0.8);
-  border: 1px solid #00ff99;
-  padding: 20px;
-  border-radius: 12px;
-  width: 300px;
+.logo-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.logo-container img {
+  width: 80px;
+  border-radius: 50%;
+  border: 2px solid lime;
+}
+
+.login-box {
+  width: 320px;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 30px;
   margin: 100px auto;
+  border-radius: 10px;
+  box-shadow: 0 0 15px lime;
   text-align: center;
+  color: white;
 }
 
-input, select {
+.login-box h2 {
+  margin-bottom: 20px;
+  color: #00ff00;
+}
+
+.login-box input {
   width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  background: #000;
-  color: #00ff99;
-  border: 1px solid #00ff99;
+  padding: 12px;
+  margin: 10px 0;
+  background: #111;
+  border: 1px solid lime;
+  color: white;
   border-radius: 5px;
 }
 
-button {
-  width: 100%;
-  padding: 10px;
-  background: #00ff99;
-  color: black;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-button:hover {
-  background: #00cc77;
-}
-
-.menu-toggle {
-  font-size: 24px;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  cursor: pointer;
-  color: #00ff99;
-}
-
-.side-menu {
-  position: absolute;
-  top: 40px;
-  left: 10px;
-  background: rgba(0, 0, 0, 0.95);
-  padding: 10px;
-  border-radius: 8px;
-}
-
-.side-menu a {
-  display: block;
-  color: #00ff99;
-  padding: 8px;
-  cursor: pointer;
-}
-
-.side-menu a:hover {
-  text-decoration: underline;
-}
-
-.panel-section {
-  margin-top: 60px;
-  padding: 20px;
-}
-
-.hidden {
-  display: none;
-}
-
-.remember-label {
-  display: flex;
-  align-items: center;
+.login-box .remember {
+  text-align: left;
+  margin: 10px 0;
   font-size: 14px;
-  margin: 5px 0 15px;
-  color: #ccc;
 }
 
-.welcome-text {
-  text-align: center;
-  margin-top: 40px;
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background: #00ff00;
+  color: black;
+  border: none;
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-box button:hover {
+  background: #00cc00;
 }
