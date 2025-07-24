@@ -1,51 +1,59 @@
 // database/db.js
+
 const fs = require('fs');
 const path = require('path');
+const DB_PATH = path.join(__dirname, 'users.json');
 
-const USERS_FILE = path.join(__dirname, 'users.json');
-
-// 🟢 Load semua user
 function loadUsers() {
-  if (!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, '[]');
-  const data = fs.readFileSync(USERS_FILE);
-  return JSON.parse(data);
+    try {
+        const data = fs.readFileSync(DB_PATH, 'utf-8');
+        return JSON.parse(data);
+    } catch (err) {
+        return [];
+    }
 }
 
-// 🔵 Simpan balik semua user
 function saveUsers(users) {
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+    fs.writeFileSync(DB_PATH, JSON.stringify(users, null, 2));
 }
 
-// 🔍 Cari user ikut username
 function findUser(username) {
-  const users = loadUsers();
-  return users.find(u => u.username === username);
+    const users = loadUsers();
+    return users.find(user => user.username === username);
 }
 
-// ➕ Tambah user baru
-function addUser(user) {
-  const users = loadUsers();
-  users.push(user);
-  saveUsers(users);
+function addUser({ username, password, role, expires }) {
+    const users = loadUsers();
+    users.push({ username, password, role, expires, device: null });
+    saveUsers(users);
 }
 
-// ❌ Padam user ikut username
 function deleteUser(username) {
-  const users = loadUsers().filter(u => u.username !== username);
-  saveUsers(users);
+    let users = loadUsers();
+    users = users.filter(user => user.username !== username);
+    saveUsers(users);
 }
 
-// 🕒 Check expired
+function updateDevice(username, deviceId) {
+    const users = loadUsers();
+    const user = users.find(u => u.username === username);
+    if (user) {
+        user.device = deviceId;
+        saveUsers(users);
+    }
+}
+
 function isExpired(user) {
-  if (!user.expiredAt) return false;
-  return new Date(user.expiredAt) < new Date();
+    const now = Date.now();
+    return now > new Date(user.expires).getTime();
 }
 
 module.exports = {
-  loadUsers,
-  saveUsers,
-  findUser,
-  addUser,
-  deleteUser,
-  isExpired
+    loadUsers,
+    saveUsers,
+    findUser,
+    addUser,
+    deleteUser,
+    updateDevice,
+    isExpired
 };
