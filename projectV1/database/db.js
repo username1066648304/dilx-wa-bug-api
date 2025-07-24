@@ -1,29 +1,51 @@
-const mongoose = require("mongoose");
+// database/db.js
+const fs = require('fs');
+const path = require('path');
 
-const userSchema = new mongoose.Schema({
-  username: String,
-  password: String,
-  role: String, // user | reseller | admin
-  expiresAt: Date,
-  pairedNumber: String
-});
+const USERS_FILE = path.join(__dirname, 'users.json');
 
-const User = mongoose.model("User", userSchema);
+// 🟢 Load semua user
+function loadUsers() {
+  if (!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, '[]');
+  const data = fs.readFileSync(USERS_FILE);
+  return JSON.parse(data);
+}
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(require("../config").MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    console.log("✅ MongoDB connected");
-  } catch (error) {
-    console.error("❌ MongoDB connection failed:", error.message);
-    process.exit(1);
-  }
-};
+// 🔵 Simpan balik semua user
+function saveUsers(users) {
+  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+}
+
+// 🔍 Cari user ikut username
+function findUser(username) {
+  const users = loadUsers();
+  return users.find(u => u.username === username);
+}
+
+// ➕ Tambah user baru
+function addUser(user) {
+  const users = loadUsers();
+  users.push(user);
+  saveUsers(users);
+}
+
+// ❌ Padam user ikut username
+function deleteUser(username) {
+  const users = loadUsers().filter(u => u.username !== username);
+  saveUsers(users);
+}
+
+// 🕒 Check expired
+function isExpired(user) {
+  if (!user.expiredAt) return false;
+  return new Date(user.expiredAt) < new Date();
+}
 
 module.exports = {
-  User,
-  connectDB
+  loadUsers,
+  saveUsers,
+  findUser,
+  addUser,
+  deleteUser,
+  isExpired
 };
