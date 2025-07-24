@@ -1,97 +1,84 @@
-
 body, html {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
-  color: white;
-  height: 100vh;
+  font-family: 'Ultra', sans-serif;
+  height: 100%;
   overflow: hidden;
+  background-color: black;
+  color: white;
 }
 
 #bg-video {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
   object-fit: cover;
   z-index: -1;
 }
 
+.logo-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
 .logo {
-  width: 80px;
-  margin: 20px auto;
-  display: block;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
 }
 
 .login-container {
   position: absolute;
-  top: 30%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -30%);
+  transform: translate(-50%, -50%);
   background: rgba(0, 0, 0, 0.6);
   padding: 30px;
-  border-radius: 10px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px #00ff00;
+  width: 300px;
+}
+
+.login-title {
+  font-size: 30px;
   text-align: center;
+  margin-bottom: 20px;
+  color: #00ff00;
 }
 
-.login-container input {
-  display: block;
-  margin: 10px auto;
-  padding: 10px;
-  width: 80%;
+input[type="text"], input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  background: #222;
+  color: #fff;
+  font-size: 16px;
 }
 
-.remember {
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #00ff00;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #00cc00;
+}
+
+.remember-container {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 6px;
-}
-
-.sidebar {
-  position: fixed;
-  left: -220px;
-  top: 0;
-  width: 200px;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  padding-top: 20px;
-  transition: 0.3s;
-  z-index: 10;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  text-align: center;
-}
-
-.sidebar ul li {
-  margin: 20px 0;
-  cursor: pointer;
-}
-
-.menu-toggle {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  font-size: 28px;
-  cursor: pointer;
-  z-index: 11;
-}
-
-.main {
-  padding: 20px;
-  margin-left: 0;
-  transition: 0.3s;
-}
-
-.section {
-  display: none;
-}
-
-.section.active {
-  display: block;
+  gap: 8px;
+  margin: 10px 0;
 }
