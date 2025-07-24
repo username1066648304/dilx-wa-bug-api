@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DilxVXII Panel</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -13,40 +13,39 @@
     <source src="assets/bg.mp4" type="video/mp4" />
   </video>
 
-  <!-- Logo -->
-  <div class="logo-container">
-    <img src="assets/logo.png" alt="Logo" class="logo" />
-  </div>
-
-  <!-- Sidebar (Menu Garis 3) -->
-  <div class="sidebar" id="sidebar">
-    <a href="#" onclick="navigateTo('pairing')">Pairing</a>
-    <a href="#" onclick="navigateTo('create-user')">Create User</a>
-    <a href="#" onclick="logout()">Logout</a>
-  </div>
-
-  <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
-
-  <!-- Main Container -->
-  <div class="main-content" id="main-content">
-    <h1>Welcome, <span id="username-display"></span></h1>
-    <div id="content-area">
-      <!-- Dynamic content goes here -->
-    </div>
-  </div>
-
-  <!-- Login Form -->
-  <div class="login-container" id="login-container">
+  <!-- Login Page -->
+  <div class="login-box" id="login-container">
+    <img src="assets/logo.png" class="logo" />
+    <h2>Login Panel</h2>
     <form id="login-form">
-      <h2>Login Panel</h2>
       <input type="text" id="username" placeholder="Username" required />
       <input type="password" id="password" placeholder="Password" required />
       <div class="remember-box">
         <input type="checkbox" id="remember" />
-        <label for="remember"><b>Remember Me</b></label>
+        <label for="remember">Remember me</label>
       </div>
       <button type="submit">Login</button>
     </form>
+  </div>
+
+  <!-- Main Page -->
+  <div class="main-content hidden" id="main-content">
+    <div class="logo-container">
+      <img src="assets/logo.png" class="logo" />
+    </div>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+    <div class="sidebar" id="sidebar">
+      <a href="#" onclick="navigateTo('pairing')">Pairing</a>
+      <a href="#" onclick="navigateTo('create-user')">Create User</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+
+    <div class="content">
+      <h1>Welcome, <span id="username-display"></span></h1>
+      <div id="content-area">
+        <!-- Dynamic content -->
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>
