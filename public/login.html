@@ -4,27 +4,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DilxVXII Login</title>
-  <link rel="stylesheet" href="style.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Blood&display=swap" rel="stylesheet"/>
+  <title>Login - DilxVXII</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <video autoplay muted loop id="bg-video">
     <source src="https://files.catbox.moe/eut77a.mp4" type="video/mp4" />
   </video>
-
-  <div class="login-box">
-    <h2>Login</h2>
-    <input type="text" id="username" placeholder="Username" />
-    <input type="password" id="password" placeholder="Password" />
-    <div class="remember-me">
-      <input type="checkbox" id="remember" />
-      <label for="remember">Remember Me</label>
-    </div>
-    <button onclick="login()">Ultra</button>
-    <p id="error-msg"></p>
+  <div class="login-container">
+    <h1 class="login-title">Ultra Login</h1>
+    <form id="login-form">
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <div class="remember-container">
+        <input type="checkbox" id="remember" />
+        <label for="remember">Remember me</label>
+      </div>
+      <button type="submit">Login</button>
+      <p id="error-msg"></p>
+    </form>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
