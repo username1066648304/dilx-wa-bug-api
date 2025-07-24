@@ -5,51 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DilxVXII Panel</title>
   <link rel="stylesheet" href="style.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet"/>
 </head>
 <body>
-  <video autoplay loop muted id="bg-video">
-    <source src="bg.mp4" type="video/mp4"/>
+
+  <!-- Background Video -->
+  <video autoplay muted loop id="bg-video">
+    <source src="assets/bg.mp4" type="video/mp4" />
   </video>
 
-  <div id="login-box" class="dark-box">
-    <h2 class="title">DilxVXII Login</h2>
-    <input type="text" id="username" placeholder="Username"/>
-    <input type="password" id="password" placeholder="Password"/>
-    <label class="remember-label">
-      <input type="checkbox" id="rememberMe"/> Remember Me
-    </label>
-    <button onclick="login()">Login</button>
+  <!-- Logo -->
+  <div class="logo-container">
+    <img src="assets/logo.png" alt="Logo" class="logo" />
   </div>
 
-  <div id="main-panel" class="hidden">
-    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-    <div id="side-menu" class="side-menu hidden">
-      <a onclick="showSection('pairing')">Pairing</a>
-      <a onclick="showSection('createUser')">Create User</a>
-      <a onclick="logout()">Logout</a>
-    </div>
+  <!-- Sidebar (Menu Garis 3) -->
+  <div class="sidebar" id="sidebar">
+    <a href="#" onclick="navigateTo('pairing')">Pairing</a>
+    <a href="#" onclick="navigateTo('create-user')">Create User</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
 
+  <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+
+  <!-- Main Container -->
+  <div class="main-content" id="main-content">
+    <h1>Welcome, <span id="username-display"></span></h1>
     <div id="content-area">
-      <h1 class="welcome-text">Welcome, <span id="userLabel"></span></h1>
-
-      <div id="pairing" class="panel-section hidden">
-        <input type="text" id="targetNumber" placeholder="Enter target number"/>
-        <button onclick="startPairing()">Start Pairing</button>
-      </div>
-
-      <div id="createUser" class="panel-section hidden">
-        <input type="text" id="newUsername" placeholder="New Username"/>
-        <input type="password" id="newPassword" placeholder="New Password"/>
-        <input type="text" id="duration" placeholder="Active Duration (e.g., 30d)"/>
-        <select id="role">
-          <option value="user">User</option>
-          <option value="reseller">Reseller</option>
-          <option value="owner">Owner</option>
-        </select>
-        <button onclick="createUser()">Create User</button>
-      </div>
+      <!-- Dynamic content goes here -->
     </div>
+  </div>
+
+  <!-- Login Form -->
+  <div class="login-container" id="login-container">
+    <form id="login-form">
+      <h2>Login Panel</h2>
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <div class="remember-box">
+        <input type="checkbox" id="remember" />
+        <label for="remember"><b>Remember Me</b></label>
+      </div>
+      <button type="submit">Login</button>
+    </form>
   </div>
 
   <script src="script.js"></script>
