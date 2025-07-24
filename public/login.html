@@ -15,8 +15,8 @@
   <div class="login-container">
     <h2>Welcome Back</h2>
     <form id="login-form">
-      <input type="text" placeholder="Username" required />
-      <input type="password" placeholder="Password" required />
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="password" id="password" placeholder="Password" required />
 
       <div class="remember-box">
         <input type="checkbox" id="remember" />
@@ -24,6 +24,7 @@
       </div>
 
       <button type="submit">Login</button>
+      <p id="error-message" class="error"></p>
     </form>
   </div>
 
