@@ -1,0 +1,19 @@
+{
+  "name": "dilx-ultra-web",
+  "version": "1.0.0",
+  "description": "Ultra Web Panel by dilxVXII",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "moment": "^2.29.4",
+    "node-fetch": "^3.3.2",
+    "qrcode": "^1.5.3",
+    "uuid": "^9.0.1"
+  }
+}
