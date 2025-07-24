@@ -1,4 +1,8 @@
-document.querySelector("form").addEventListener("submit", function (e) {
+document.getElementById("login-form").addEventListener("submit", function (e) {
   e.preventDefault();
-  alert("Login system belum dihubungkan ke API.");
+  const username = this.querySelector("input[type=text]").value;
+  const password = this.querySelector("input[type=password]").value;
+
+  console.log("Login attempt:", username, password);
+  // API login boleh sambung di sini
 });
