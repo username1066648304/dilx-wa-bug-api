@@ -1,192 +1,303 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>DilxVXII Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Tourney:wdth,wght@100..900,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tourney:wght@400&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
+      font-family: "Tourney", sans-serif;
     }
     body {
       margin: 0;
       padding: 0;
-      font-family: "Tourney", sans-serif;
       color: #d1ffd1;
-      display: flex;
+      background: #000;
+    }
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      object-fit: cover;
+      filter: brightness(0.6) contrast(1.4) saturate(1.5);
+    }
+
+    .login-container,
+    .app-container {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       flex-direction: column;
-      min-height: 100vh;
-      backdrop-filter: blur(4px);
-    }#bg-video {
-  position: fixed;
-  top: 0;
-  left: 0;
-  min-width: 100%;
-  min-height: 100%;
-  z-index: -1;
-  object-fit: cover;
-  filter: brightness(0.6) contrast(1.4) saturate(1.5);
-}
+    }
 
-.header {
-  display: flex;
-  align-items: center;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.6);
-}
+    .login-container.active,
+    .app-container.active {
+      display: flex;
+    }
 
-.menu-toggle {
-  font-size: 28px;
-  cursor: pointer;
-  margin-right: 20px;
-}
+    .login-box {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #00ffaa;
+    }
 
-.logo {
-  width: 60px;
-  height: 60px;
-  background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
-  background-size: contain;
-  border-radius: 50%;
-  box-shadow: 0 0 10px #00ffaa;
-}
+    input {
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #111;
+      color: #fff;
+      font-size: 16px;
+    }
 
-.welcome {
-  font-size: 24px;
-  margin-left: 10px;
-  color: white;
-}
+    label {
+      color: #aaffaa;
+    }
 
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: -250px;
-  width: 250px;
-  height: 100%;
-  background: #000000dd;
-  transition: left 0.3s;
-  padding-top: 60px;
-  z-index: 999;
-}
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 5px;
+      color: #aaffaa;
+      font-size: 14px;
+    }
 
-.sidebar.active {
-  left: 0;
-}
+    button {
+      background: #00ffaa;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
 
-.sidebar a {
-  display: block;
-  padding: 15px 20px;
-  text-decoration: none;
-  color: #00ffaa;
-  font-size: 18px;
-}
+    /* App Layout */
+    .top-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 20px;
+    }
 
-.sidebar a:hover {
-  background: #00ffaa;
-  color: black;
-}
+    .hamburger {
+      font-size: 24px;
+      cursor: pointer;
+      margin-right: 20px;
+    }
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  display: none;
-  z-index: 998;
-}
+    .logo {
+      width: 60px;
+      height: 60px;
+      background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
+      background-size: contain;
+      border-radius: 50%;
+      box-shadow: 0 0 12px #00ffaa;
+    }
 
-.overlay.active {
-  display: block;
-}
+    .welcome {
+      font-size: 24px;
+      margin-left: 15px;
+      color: #fff;
+    }
 
-.container {
-  margin: 30px auto;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  width: 90%;
-  max-width: 500px;
-  border-radius: 12px;
-  box-shadow: 0 0 15px #00ffaa;
-  color: white;
-}
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -200px;
+      width: 200px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      box-shadow: 0 0 15px #00ffaa;
+      transition: left 0.3s ease;
+      padding-top: 80px;
+    }
 
-input, select {
-  width: 100%;
-  margin: 12px 0;
-  padding: 14px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  background: #111;
-  color: #fff;
-}
+    .sidebar.active {
+      left: 0;
+    }
 
-button {
-  padding: 10px 20px;
-  border-radius: 8px;
-  background: #00ffaa;
-  border: none;
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
-}
+    .sidebar a {
+      display: block;
+      color: #00ffaa;
+      padding: 12px 20px;
+      text-decoration: none;
+      font-size: 18px;
+    }
 
-.user-status {
-  text-align: center;
-  margin-top: 20px;
-  color: #88ffcc;
-}
+    .sidebar a:hover {
+      background: #00ffaa;
+      color: #000;
+    }
 
+    .content {
+      margin-top: 20px;
+      padding: 20px;
+      width: 90%;
+      max-width: 600px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 12px;
+      box-shadow: 0 0 25px #00ffaa;
+      color: #fff;
+    }
+
+    .logout-btn {
+      margin-top: 30px;
+      background: transparent;
+      color: #00ffaa;
+      border: 1px solid #00ffaa;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background: #00ffaa;
+      color: #000;
+    }
   </style>
 </head>
 <body>
   <video autoplay muted loop id="bg-video">
     <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4" />
-  </video>  <div class="overlay" id="overlay"></div>
-  <div class="sidebar" id="sidebar">
-    <a href="#dashboard">Dashboard</a>
-    <a href="#create-user">Create User</a>
-    <a href="#pairing">Pairing</a>
-    <a href="#" onclick="logout()">Logout</a>
-  </div>  <div class="header">
-    <div class="menu-toggle" onclick="toggleMenu()">&#9776;</div>
-    <div class="logo"></div>
-    <div class="welcome">Welcome, Dilx</div>
-  </div>  <div class="container">
-    <label for="target">Target Number (no +)</label>
-    <input type="text" id="target" placeholder="Contoh: 60123456789"><label for="type">Select Bug Type</label>
-<select id="type">
-  <option value="xcombo">XCombo</option>
-  <option value="xforceclose">XForceClose</option>
-  <option value="xinvisible">XInvisible</option>
-  <option value="xviewonce">XViewOnce</option>
-</select>
+  </video>
 
-<button onclick="alert('Triggered!')">Trigger Bug</button>
+  <!-- LOGIN SECTION -->
+  <div class="login-container active" id="loginPage">
+    <div class="login-box">
+      <h2 style="text-align:center; color:#00ffaa;">DilxVXII Panel</h2>
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <div class="remember">
+        <input type="checkbox" id="rememberMe" />
+        <label for="rememberMe">Remember Me</label>
+      </div>
+      <button onclick="login()">Login</button>
+    </div>
+  </div>
 
-<div class="user-status">
-  Connected<br />
-  Expired on: <b>31/12/2025</b>
-</div>
+  <!-- APP PANEL SECTION -->
+  <div class="app-container" id="appPage">
+    <div class="top-bar">
+      <div class="hamburger" onclick="toggleSidebar()">☰</div>
+      <div class="logo"></div>
+      <div class="welcome" id="welcomeText">Welcome, User</div>
+    </div>
 
-  </div>  <script>
-    function toggleMenu() {
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('overlay');
-      sidebar.classList.toggle('active');
-      overlay.classList.toggle('active');
+    <div class="sidebar" id="sidebar">
+      <a href="#" onclick="showPage('trigger')">Trigger</a>
+      <a href="#" onclick="showPage('create')">Create User</a>
+      <a href="#" onclick="showPage('pairing')">Pairing</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+
+    <div class="content" id="contentBox">
+      <h3>Trigger Bug</h3>
+      <label>Target Number:</label>
+      <input type="text" placeholder="60123456789" />
+      <label>Bug Type:</label>
+      <select>
+        <option>XCombo</option>
+        <option>XForceClose</option>
+        <option>XInvisible</option>
+        <option>XViewOnce</option>
+      </select>
+    </div>
+  </div>
+
+  <script>
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const rememberMe = document.getElementById("rememberMe");
+    const welcomeText = document.getElementById("welcomeText");
+
+    window.onload = () => {
+      const saved = localStorage.getItem("dilx_remember");
+      if (saved) {
+        const user = JSON.parse(saved);
+        sessionStorage.setItem("user", user.username);
+        showApp(user.username);
+      }
+    };
+
+    function login() {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+      if (!username || !password) return alert("Isi username dan password");
+
+      if (rememberMe.checked) {
+        localStorage.setItem("dilx_remember", JSON.stringify({ username }));
+      }
+
+      sessionStorage.setItem("user", username);
+      showApp(username);
     }
 
-    document.getElementById('overlay').addEventListener('click', () => {
-      document.getElementById('sidebar').classList.remove('active');
-      document.getElementById('overlay').classList.remove('active');
-    });
+    function showApp(name) {
+      document.getElementById("loginPage").classList.remove("active");
+      document.getElementById("appPage").classList.add("active");
+      welcomeText.innerText = `Welcome, ${name}`;
+    }
 
     function logout() {
-      localStorage.removeItem('savedUser');
-      localStorage.removeItem('savedPass');
-      window.location.href = 'index.html';
+      sessionStorage.removeItem("user");
+      localStorage.removeItem("dilx_remember");
+      document.getElementById("appPage").classList.remove("active");
+      document.getElementById("loginPage").classList.add("active");
     }
-  </script></body>
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      sidebar.classList.toggle("active");
+    }
+
+    function showPage(type) {
+      const contentBox = document.getElementById("contentBox");
+      if (type === "trigger") {
+        contentBox.innerHTML = `
+          <h3>Trigger Bug</h3>
+          <label>Target Number:</label>
+          <input type="text" placeholder="60123456789" />
+          <label>Bug Type:</label>
+          <select>
+            <option>XCombo</option>
+            <option>XForceClose</option>
+            <option>XInvisible</option>
+            <option>XViewOnce</option>
+          </select>
+        `;
+      } else if (type === "create") {
+        contentBox.innerHTML = `
+          <h3>Create User</h3>
+          <input type="text" placeholder="Username" />
+          <input type="password" placeholder="Password" />
+          <select>
+            <option>User</option>
+            <option>Reseller</option>
+            <option>Owner</option>
+          </select>
+          <input type="number" placeholder="Active (days)" />
+          <button>Create</button>
+        `;
+      } else if (type === "pairing") {
+        contentBox.innerHTML = `
+          <h3>Pairing</h3>
+          <input type="text" placeholder="WhatsApp Number" />
+          <button>Pair Now</button>
+        `;
+      }
+    }
+  </script>
+</body>
 </html>
