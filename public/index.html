@@ -4,24 +4,17 @@
   <meta charset="UTF-8" />
   <title>DilxVXII Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Tourney:wdth,wght@100..900,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tourney:wght@600&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
     }
-
     body {
       margin: 0;
       padding: 0;
       font-family: "Tourney", sans-serif;
       color: #d1ffd1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      backdrop-filter: blur(4px);
-      background: #000;
+      background: transparent;
     }
 
     #bg-video {
@@ -35,72 +28,73 @@
       filter: brightness(0.6) contrast(1.4) saturate(1.5);
     }
 
-    .navbar {
-      width: 100%;
+    .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 25px;
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    .hamburger {
-      font-size: 28px;
-      cursor: pointer;
-      color: #00ffaa;
+      padding: 15px 20px;
     }
 
     .logo {
       width: 60px;
       height: 60px;
       background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
-      background-size: cover;
+      background-size: contain;
       border-radius: 50%;
       box-shadow: 0 0 15px #00ffaa;
     }
 
     .welcome {
-      font-size: 26px;
-      font-weight: bold;
-      margin: 10px 0;
+      font-size: 24px;
       color: #ffffff;
     }
 
-    .tab-buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .tab-buttons button {
-      background: transparent;
-      border: 1px solid #00ffaa;
-      color: #00ffaa;
-      padding: 8px 14px;
-      border-radius: 8px;
+    .menu-btn {
+      background: none;
+      border: none;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 32px;
+      color: #00ffaa;
     }
 
-    .tab-buttons button.active,
-    .tab-buttons button:hover {
-      background: #00ffaa;
-      color: #000;
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: -250px;
+      height: 100%;
+      width: 250px;
+      background: rgba(0, 0, 0, 0.9);
+      box-shadow: -2px 0 10px #00ffaa;
+      padding: 20px;
+      transition: right 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+    }
+
+    .side-menu a {
+      color: #00ffaa;
+      text-decoration: none;
+      margin: 15px 0;
+      font-size: 20px;
+    }
+
+    .side-menu.active {
+      right: 0;
     }
 
     .container {
       background: rgba(0, 0, 0, 0.7);
-      padding: 20px;
+      padding: 25px 30px;
       border-radius: 14px;
       max-width: 500px;
-      width: 90%;
+      margin: 40px auto;
       box-shadow: 0 0 25px #00ffaa;
-      margin-top: 20px;
     }
 
-    input, select {
+    label, select, input {
       width: 100%;
-      margin: 10px 0;
+      margin-top: 15px;
       padding: 14px;
       border: none;
       border-radius: 8px;
@@ -109,22 +103,16 @@
       color: #fff;
     }
 
-    .user-status {
-      margin-top: 18px;
-      text-align: center;
-      font-size: 16px;
-      color: #88ffcc;
-    }
-
     .logout-btn {
       background: transparent;
       color: #00ffaa;
       border: 1px solid #00ffaa;
-      padding: 6px 12px;
+      padding: 10px 16px;
       border-radius: 8px;
       font-size: 14px;
       cursor: pointer;
-      margin-top: 10px;
+      margin-top: 20px;
+      width: 100%;
     }
 
     .logout-btn:hover {
@@ -132,44 +120,39 @@
       color: #000;
     }
 
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
+    .user-status {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 16px;
+      color: #88ffcc;
     }
   </style>
 </head>
 <body>
+  <!-- VIDEO BACKGROUND -->
+  <video autoplay muted loop id="bg-video">
+    <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4">
+  </video>
 
-<!-- BACKGROUND VIDEO -->
-<video autoplay muted loop id="bg-video">
-  <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4">
-</video>
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="logo"></div>
+    <div class="welcome">Welcome, Dilx</div>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  </div>
 
-<!-- NAVBAR -->
-<div class="navbar">
-  <div class="hamburger" onclick="toggleTabs()">☰</div>
-  <div class="logo"></div>
-</div>
+  <!-- SIDE MENU -->
+  <div class="side-menu" id="sideMenu">
+    <a href="#">➕ Create User</a>
+    <a href="#">🔗 Pairing</a>
+    <a href="#" class="logout-btn">Logout</a>
+  </div>
 
-<!-- WELCOME -->
-<div class="welcome">Welcome, Dilx</div>
+  <!-- MAIN PANEL -->
+  <div class="container">
+    <label for="target">Target Number (without +)</label>
+    <input type="text" id="target" placeholder="60123456789" />
 
-<!-- TAB BUTTONS -->
-<div class="tab-buttons" id="tabMenu" style="display:none;">
-  <button onclick="showTab('bug')" class="active">Trigger Bug</button>
-  <button onclick="showTab('user')">Create User</button>
-  <button onclick="showTab('pair')">Pairing</button>
-</div>
-
-<!-- TAB CONTENT -->
-<div class="container">
-
-  <div id="bug" class="tab-content active">
-    <label for="target">Target Number (no +)</label>
-    <input type="text" id="target" placeholder="Example: 60123456789" />
     <label for="type">Select Bug Type</label>
     <select id="type">
       <option value="xcombo">XCombo</option>
@@ -177,54 +160,18 @@
       <option value="xinvisible">XInvisible</option>
       <option value="xviewonce">XViewOnce</option>
     </select>
+
     <div class="user-status">
-      Connected<br />
+      Connected<br>
       Expired on: <b>31/12/2025</b>
     </div>
-    <button class="logout-btn">Logout</button>
   </div>
 
-  <div id="user" class="tab-content">
-    <label>Username</label>
-    <input type="text" placeholder="e.g dilxvxii" />
-    <label>Password</label>
-    <input type="password" placeholder="Set password" />
-    <label>Role</label>
-    <select>
-      <option value="user">User</option>
-      <option value="reseller">Reseller</option>
-      <option value="owner">Owner</option>
-    </select>
-    <label>Active Until</label>
-    <input type="date" />
-    <button class="logout-btn">Create User</button>
-  </div>
-
-  <div id="pair" class="tab-content">
-    <label>Pairing Number (no +)</label>
-    <input type="text" placeholder="Example: 60123456789" />
-    <button class="logout-btn">Start Pairing</button>
-  </div>
-
-</div>
-
-<script>
-  function toggleTabs() {
-    const menu = document.getElementById("tabMenu");
-    menu.style.display = menu.style.display === "none" ? "flex" : "none";
-  }
-
-  function showTab(tabId) {
-    document.querySelectorAll(".tab-content").forEach(div => {
-      div.classList.remove("active");
-    });
-    document.querySelectorAll(".tab-buttons button").forEach(btn => {
-      btn.classList.remove("active");
-    });
-    document.getElementById(tabId).classList.add("active");
-    event.target.classList.add("active");
-  }
-</script>
-
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById("sideMenu");
+      menu.classList.toggle("active");
+    }
+  </script>
 </body>
 </html>
