@@ -1,9 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Arial', sans-serif;
   background: #000;
-  color: #0f0;
+  font-family: 'Montserrat', sans-serif;
+  color: #00ff99;
   overflow: hidden;
 }
 
@@ -15,61 +17,63 @@ body {
   min-height: 100%;
   z-index: -1;
   object-fit: cover;
-  filter: brightness(0.4);
+  filter: brightness(0.25);
 }
 
-.logo {
-  background: url('assets/logo.png') no-repeat center;
-  background-size: contain;
-  width: 80px;
-  height: 80px;
-  margin: 20px auto 10px;
-}
-
-.login-box {
-  max-width: 320px;
-  margin: 60px auto;
-  padding: 30px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #0f0;
-  border-radius: 10px;
+.login-container {
+  width: 350px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid #00ff99;
+  padding: 35px 30px;
+  margin: 100px auto;
   text-align: center;
+  border-radius: 4px;
+  box-shadow: 0 0 12px rgba(0, 255, 153, 0.2);
 }
 
-.login-box .title {
-  font-size: 24px;
-  font-weight: bold;
+.login-container h2 {
+  margin-bottom: 30px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #00ff99;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+  width: 100%;
+  padding: 12px 10px;
   margin-bottom: 20px;
-  color: #0f0;
-}
-
-.login-box input[type="text"],
-.login-box input[type="password"] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #0f0;
+  border: 1px solid #00ff99;
   background: #000;
-  color: #0f0;
-  border-radius: 5px;
+  color: #00ff99;
+  font-size: 14px;
+  border-radius: 3px;
 }
 
-.login-box button {
+.login-container button {
   width: 100%;
-  padding: 10px;
-  background: #0f0;
+  padding: 12px;
+  background: #00ff99;
   color: #000;
-  border: none;
   font-weight: bold;
-  border-radius: 5px;
+  font-size: 14px;
+  border: none;
+  border-radius: 3px;
   cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.login-container button:hover {
+  background: #00cc88;
 }
 
 .remember-box {
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
   margin-bottom: 15px;
   gap: 8px;
-  font-size: 14px;
+  font-size: 13px;
+  color: #00ff99;
 }
