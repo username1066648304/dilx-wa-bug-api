@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DilxVXII Panel</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Tourney:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
 </head>
-<body class="main-body">
-  <video autoplay muted loop id="bg-video">
-    <source src="https://files.catbox.moe/8v3bqv.mp4" type="video/mp4">
+<body>
+  <video autoplay loop muted class="bg-video">
+    <source src="assets/bg.mp4" type="video/mp4">
   </video>
-
-  <div id="sidebar">
+  <div class="sidebar" id="sidebar">
+    <img src="assets/logo.png" alt="Logo" class="logo">
     <ul>
-      <li onclick="navigate('pairing')">Pairing</li>
-      <li onclick="navigate('create')">Create User</li>
-      <li onclick="logout()">Logout</li>
+      <li onclick="navigate('home')">🏠 Home</li>
+      <li onclick="navigate('pairing')">🔗 Pairing</li>
+      <li onclick="navigate('create')">👤 Create User</li>
+      <li onclick="logout()">🚪 Logout</li>
     </ul>
   </div>
-  <div id="menu-btn" onclick="toggleSidebar()">&#9776;</div>
-
-  <div id="main-content" onclick="closeSidebarOnTap(event)">
-    <img src="logo.png" alt="DilxVXII Logo" class="logo">
-    <h1 class="welcome">Welcome, <span id="showUsername"></span></h1>
-    <p class="status-text">Connected</p>
-    <p class="status-text">Expired On: <span id="expiredOn">2025-12-31</span></p>
-    <button class="trigger-btn">TRIGGER BUG</button>
+  <div class="overlay" onclick="toggleSidebar()"></div>
+  <div class="top-bar">
+    <span class="menu-icon" onclick="toggleSidebar()">☰</span>
+    <span class="welcome" id="welcomeText">Welcome</span>
   </div>
-
+  <div class="content" id="mainContent">
+    <h1>Welcome, <span id="usernameDisplay"></span></h1>
+    <p>Status: <span id="status">Connected</span></p>
+    <p>Expired On: <span id="expired">31/12/2025</span></p>
+    <button onclick="triggerBug()">🚀 Trigger Bug</button>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>

@@ -1,42 +1,51 @@
 
-function login() {
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
-  if (username && password) {
-    localStorage.setItem('user', username);
-    window.location.href = 'index.html';
-  } else {
-    alert('Please enter username and password');
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("loginForm");
+  if (form) {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+      const remember = document.getElementById("rememberMe").checked;
+      if (user && pass) {
+        if (remember) {
+          localStorage.setItem("remember", "true");
+          localStorage.setItem("user", user);
+        }
+        sessionStorage.setItem("user", user);
+        window.location.href = "index.html";
+      }
+    });
+
+    if (localStorage.getItem("remember") === "true") {
+      document.getElementById("username").value = localStorage.getItem("user");
+      document.getElementById("rememberMe").checked = true;
+    }
   }
-}
+
+  if (window.location.pathname.includes("index")) {
+    const user = sessionStorage.getItem("user") || localStorage.getItem("user");
+    if (!user) window.location.href = "login.html";
+    document.getElementById("usernameDisplay").innerText = user;
+    document.getElementById("welcomeText").innerText = "Welcome, " + user;
+  }
+});
 
 function logout() {
-  localStorage.removeItem('user');
-  window.location.href = 'login.html';
+  sessionStorage.clear();
+  window.location.href = "login.html";
 }
 
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('active');
-}
-
-function closeSidebarOnTap(event) {
-  const sidebar = document.getElementById('sidebar');
-  if (sidebar.classList.contains('active')) {
-    if (!sidebar.contains(event.target) && event.target.id !== 'menu-btn') {
-      sidebar.classList.remove('active');
-    }
-  }
+  document.getElementById("sidebar").classList.toggle("open");
+  document.querySelector(".overlay").classList.toggle("show");
 }
 
 function navigate(page) {
-  alert('Navigating to: ' + page);
+  alert("Navigate to: " + page); // Placeholder
+  toggleSidebar();
 }
 
-window.onload = () => {
-  const user = localStorage.getItem('user');
-  if (document.getElementById('showUsername') && user) {
-    document.getElementById('showUsername').innerText = user;
-  } else if (!user && location.pathname.includes('index.html')) {
-    window.location.href = 'login.html';
-  }
-};
+function triggerBug() {
+  alert("Bug triggered!");
+}
