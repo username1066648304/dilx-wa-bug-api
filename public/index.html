@@ -4,272 +4,64 @@
   <meta charset="UTF-8" />
   <title>DilxVXII Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Tourney:wght@700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Tourney", sans-serif;
-      color: #d1ffd1;
-      font-weight: bold;
-      background: #000;
-    }
-    #bg-video {
-      position: fixed;
-      top: 0;
-      left: 0;
-      min-width: 100%;
-      min-height: 100%;
-      z-index: -1;
-      object-fit: cover;
-      filter: brightness(0.6) contrast(1.4) saturate(1.5);
-    }
-    .top-section {
-      display: flex;
-      align-items: center;
-      padding: 20px;
-    }
-    .logo {
-      width: 80px;
-      height: 80px;
-      background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
-      background-size: contain;
-      border-radius: 50%;
-      box-shadow: 0 0 15px #00ffaa;
-    }
-    .welcome {
-      font-size: 28px;
-      margin-left: 15px;
-      color: #fff;
-    }
-
-    .menu-btn {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      font-size: 28px;
-      background: none;
-      border: none;
-      color: #00ffaa;
-      cursor: pointer;
-      z-index: 999;
-    }
-
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: -250px;
-      width: 250px;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      color: white;
-      padding: 30px 20px;
-      transition: 0.3s;
-      z-index: 1000;
-    }
-
-    .sidebar.active {
-      left: 0;
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.4);
-      z-index: 900;
-      transition: 0.3s;
-    }
-
-    .overlay.active {
-      width: 100%;
-    }
-
-    .sidebar a {
-      display: block;
-      margin: 20px 0;
-      color: #00ffaa;
-      font-size: 18px;
-      text-decoration: none;
-    }
-
-    .container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 25px 30px;
-      border-radius: 14px;
-      max-width: 500px;
-      width: 90%;
-      margin: 20px auto;
-      box-shadow: 0 0 25px #00ffaa;
-    }
-
-    input, select {
-      width: 100%;
-      margin: 12px 0;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      background: #111;
-      color: #fff;
-      font-weight: bold;
-    }
-
-    .remember-container {
-      display: flex;
-      align-items: center;
-      margin-top: -5px;
-      margin-bottom: 10px;
-    }
-
-    .remember-container input {
-      width: auto;
-      margin-right: 10px;
-    }
-
-    .user-status {
-      margin-top: 18px;
-      text-align: center;
-      font-size: 16px;
-      color: #88ffcc;
-    }
-
-    .logout-btn {
-      background: transparent;
-      color: #00ffaa;
-      border: 1px solid #00ffaa;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 12px;
-    }
-
-    .logout-btn:hover {
-      background: #00ffaa;
-      color: #000;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Tourney:wdth,wght@100..900,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <video autoplay muted loop id="bg-video">
-    <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4">
+    <source src="assets/background.mp4" type="video/mp4" />
   </video>
 
-  <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+  <!-- Menu Icon -->
+  <div id="menu-toggle">&#9776;</div>
 
-  <div class="sidebar" id="sidebar">
-    <a href="#" onclick="loadPage('trigger')">Trigger Bug</a>
-    <a href="#" onclick="loadPage('create')">Create User</a>
-    <a href="#" onclick="loadPage('pairing')">Pairing</a>
-    <a href="#" onclick="logout()">Logout</a>
-  </div>
-
-  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-  <div class="top-section">
-    <div class="logo"></div>
-    <div class="welcome">Welcome, Dilx</div>
-  </div>
-
-  <div class="container" id="main-content">
-    <label>Username</label>
-    <input type="text" id="username" placeholder="Enter your username" />
-    <label>Password</label>
-    <input type="password" id="password" placeholder="Enter your password" />
-    <div class="remember-container">
-      <input type="checkbox" id="remember" />
-      <label for="remember">Remember Me</label>
+  <!-- Sidebar Menu -->
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-circle"></div>
     </div>
-    <button class="logout-btn" onclick="login()">Login</button>
+    <ul>
+      <li onclick="goTo('trigger')">Trigger</li>
+      <li onclick="goTo('create-user')">Create User</li>
+      <li onclick="goTo('pairing')">Pairing</li>
+      <li onclick="logout()">Logout</li>
+    </ul>
+  </div>
+
+  <!-- Overlay -->
+  <div id="overlay"></div>
+
+  <!-- Content Panel -->
+  <div class="panel-content">
+    <h1 class="welcome-text">Welcome</h1>
+    <p><strong>Username:</strong> admin</p>
+    <p><strong>Connected:</strong> Yes</p>
+    <p><strong>Expired On:</strong> 31/12/2025</p>
   </div>
 
   <script>
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    const content = document.getElementById('main-content');
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
 
-    function toggleSidebar() {
-      sidebar.classList.toggle('active');
-      overlay.classList.toggle('active');
-    }
+    document.getElementById("menu-toggle").onclick = () => {
+      sidebar.classList.add("open");
+      overlay.style.display = "block";
+    };
 
-    function loadPage(page) {
-      toggleSidebar();
-      if (page === 'trigger') {
-        content.innerHTML = `
-          <label for="target">Target Number (no +)</label>
-          <input type="text" id="target" placeholder="Example: 60123456789" />
-          <label for="type">Select Bug Type</label>
-          <select id="type">
-            <option value="xcombo">XCombo</option>
-            <option value="xforceclose">XForceClose</option>
-            <option value="xinvisible">XInvisible</option>
-            <option value="xviewonce">XViewOnce</option>
-          </select>
-          <div class="user-status">
-            Connected<br />
-            Expired on: <b>31/12/2025</b>
-          </div>
-          <button class="logout-btn">Logout</button>
-        `;
-      } else if (page === 'create') {
-        content.innerHTML = `
-          <label>New Username</label>
-          <input type="text" placeholder="Username" />
-          <label>Password</label>
-          <input type="text" placeholder="Password" />
-          <label>Role</label>
-          <select>
-            <option>User</option>
-            <option>Reseller</option>
-            <option>Owner</option>
-          </select>
-          <label>Active Until</label>
-          <input type="date" />
-          <button class="logout-btn">Create User</button>
-        `;
-      } else if (page === 'pairing') {
-        content.innerHTML = `
-          <label>Pairing Number (without +)</label>
-          <input type="text" placeholder="60123456789" />
-          <button class="logout-btn">Pair Now</button>
-        `;
-      }
-    }
+    overlay.onclick = () => {
+      sidebar.classList.remove("open");
+      overlay.style.display = "none";
+    };
 
-    function login() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      const remember = document.getElementById('remember').checked;
-
-      if (user && pass) {
-        if (remember) {
-          localStorage.setItem('rememberedUser', user);
-        }
-        loadPage('trigger');
-      } else {
-        alert("Please fill in all fields");
-      }
+    function goTo(section) {
+      alert("Redirect to: " + section);
+      sidebar.classList.remove("open");
+      overlay.style.display = "none";
     }
 
     function logout() {
-      localStorage.removeItem('rememberedUser');
-      location.reload();
-    }
-
-    window.onload = () => {
-      const remembered = localStorage.getItem('rememberedUser');
-      if (remembered) {
-        loadPage('trigger');
-      }
+      alert("Logged out!");
+      window.location.href = "login.html";
     }
   </script>
 </body>
