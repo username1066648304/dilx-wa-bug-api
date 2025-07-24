@@ -1,37 +1,42 @@
-function toggleMenu() {
-  const menu = document.getElementById("sideMenu");
-  menu.style.left = menu.style.left === "0px" ? "-200px" : "0px";
-}
-
-function closeMenu() {
-  const menu = document.getElementById("sideMenu");
-  menu.style.left = "-200px";
-}
-
-function logout() {
-  localStorage.removeItem("auth");
-  window.location.href = "login.html";
-}
 
 function login() {
-  const user = document.getElementById("username").value;
-  const pass = document.getElementById("password").value;
-  const remember = document.getElementById("rememberMe").checked;
-
-  if (user === "admin" && pass === "dilx123") {
-    if (remember) localStorage.setItem("auth", user);
-    else sessionStorage.setItem("auth", user);
-    window.location.href = "index.html";
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  if (username && password) {
+    localStorage.setItem('user', username);
+    window.location.href = 'index.html';
   } else {
-    alert("Invalid credentials");
+    alert('Please enter username and password');
   }
 }
 
+function logout() {
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('active');
+}
+
+function closeSidebarOnTap(event) {
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar.classList.contains('active')) {
+    if (!sidebar.contains(event.target) && event.target.id !== 'menu-btn') {
+      sidebar.classList.remove('active');
+    }
+  }
+}
+
+function navigate(page) {
+  alert('Navigating to: ' + page);
+}
+
 window.onload = () => {
-  const path = window.location.pathname;
-  if (path.includes("index") || path.includes("pairing") || path.includes("create")) {
-    const auth = localStorage.getItem("auth") || sessionStorage.getItem("auth");
-    if (!auth) window.location.href = "login.html";
-    else document.getElementById("welcomeText").textContent = `Welcome, ${auth}`;
+  const user = localStorage.getItem('user');
+  if (document.getElementById('showUsername') && user) {
+    document.getElementById('showUsername').innerText = user;
+  } else if (!user && location.pathname.includes('index.html')) {
+    window.location.href = 'login.html';
   }
 };

@@ -1,129 +1,106 @@
-* {
-  box-sizing: border-box;
-}
+
 body {
   margin: 0;
-  font-family: "Tourney", sans-serif;
-  color: #d1ffd1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  backdrop-filter: blur(4px);
+  padding: 0;
+  font-family: 'Tourney', sans-serif;
+  color: white;
 }
 #bg-video {
   position: fixed;
-  top: 0; left: 0;
-  min-width: 100%; min-height: 100%;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
   z-index: -1;
-  object-fit: cover;
-  filter: brightness(0.6) contrast(1.4) saturate(1.5);
 }
-.top-section {
+.login-body, .main-body {
   display: flex;
+  justify-content: center;
   align-items: center;
-  margin-top: 30px;
-  gap: 20px;
+  height: 100vh;
+  flex-direction: column;
+  background: transparent;
+}
+.login-box {
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 20px;
+  border-radius: 20px;
+  text-align: center;
 }
 .logo {
-  width: 100px; height: 100px;
-  background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
-  background-size: contain;
-  border-radius: 50%;
-  box-shadow: 0 0 15px #00ffaa;
+  width: 60px;
+  margin-bottom: 10px;
 }
-.welcome {
-  font-size: 32px;
-  font-weight: bold;
-  color: #ffffff;
-}
-.container {
-  background: rgba(0, 0, 0, 0.7);
-  padding: 25px 30px;
-  border-radius: 14px;
-  max-width: 500px;
-  width: 90%;
-  box-shadow: 0 0 25px #00ffaa;
-  margin-top: 20px;
-}
-input, select {
-  width: 100%;
-  margin: 12px 0;
-  padding: 14px;
+input[type=text], input[type=password] {
+  width: 220px;
+  padding: 10px;
+  margin: 8px 0;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  background: #111;
-  color: #fff;
-  font-weight: bold;
-}
-.user-status {
-  margin-top: 18px;
+  border-radius: 10px;
   text-align: center;
-  font-size: 16px;
-  color: #88ffcc;
   font-weight: bold;
 }
-.logout-btn {
-  background: transparent;
-  color: #00ffaa;
-  border: 1px solid #00ffaa;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 14px;
+button {
+  background: #0f0;
+  color: black;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
   cursor: pointer;
   margin-top: 10px;
-  font-weight: bold;
 }
-.logout-btn:hover {
-  background: #00ffaa;
-  color: #000;
-}
-.hamburger {
-  position: fixed;
-  left: 10px;
-  top: 10px;
-  font-size: 28px;
-  color: #00ffaa;
-  cursor: pointer;
-  z-index: 10;
-}
-.side-menu {
-  position: fixed;
-  left: -200px;
-  top: 0;
-  width: 200px;
-  height: 100%;
-  background: rgba(0,0,0,0.8);
-  box-shadow: 2px 0 10px #00ffaa;
-  padding-top: 60px;
+.remember-container {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  transition: left 0.3s ease;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-top: -5px;
 }
-.side-menu a {
-  color: #00ffaa;
-  text-decoration: none;
-  padding: 12px 20px;
+.welcome-text {
   font-size: 18px;
   font-weight: bold;
+  margin-bottom: 10px;
 }
-.login-container {
-  background: rgba(0,0,0,0.7);
+#menu-btn {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  font-size: 30px;
+  cursor: pointer;
+}
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 200px;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  padding-top: 60px;
+  transition: left 0.3s;
+  z-index: 10;
+}
+#sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+#sidebar ul li {
+  padding: 15px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid #444;
+}
+#sidebar.active {
+  left: 0;
+}
+#main-content {
   padding: 30px;
-  margin-top: 120px;
-  border-radius: 12px;
-  box-shadow: 0 0 15px #00ffaa;
-  width: 90%;
-  max-width: 400px;
   text-align: center;
 }
-.remember-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  margin-bottom: 10px;
-  gap: 10px;
+.trigger-btn {
+  margin-top: 20px;
+  padding: 12px 25px;
+  background: lime;
+  color: black;
 }

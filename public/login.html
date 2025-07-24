@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Login - DilxVXII</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Tourney:wght@700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DilxVXII Login</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tourney:wght@700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="login-body">
   <video autoplay muted loop id="bg-video">
-    <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4" />
+    <source src="https://files.catbox.moe/8v3bqv.mp4" type="video/mp4">
   </video>
 
-  <div class="login-container">
-    <h2>Login Panel</h2>
-    <input type="text" id="username" placeholder="Username" />
-    <input type="password" id="password" placeholder="Password" />
-    <div class="remember-wrap">
-      <input type="checkbox" id="rememberMe" />
-      <label for="rememberMe"><b>Remember Me</b></label>
+  <div class="login-box">
+    <img src="logo.png" alt="DilxVXII Logo" class="logo">
+    <h2 class="welcome-text">LOGIN PANEL</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <div class="remember-container">
+      <input type="checkbox" id="remember"> <label for="remember"><b>Remember Me</b></label>
     </div>
     <button onclick="login()">Login</button>
   </div>
