@@ -1,13 +1,31 @@
-document.getElementById("login-form").addEventListener("submit", function (e) {
+document.getElementById('loginForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const remember = document.getElementById("remember").checked;
+  const username = e.target[0].value;
+  const password = e.target[1].value;
+  const remember = document.getElementById('remember').checked;
 
-  if (username === "admin" && password === "admin123") {
-    if (remember) localStorage.setItem("remember", "yes");
-    window.location.href = "index.html";
+  console.log("Login attempt:", { username, password, remember });
+
+  // Simpan ke localStorage jika Remember Me
+  if (remember) {
+    localStorage.setItem('savedUsername', username);
+    localStorage.setItem('savedPassword', password);
   } else {
-    alert("Login gagal! Username atau password salah.");
+    localStorage.removeItem('savedUsername');
+    localStorage.removeItem('savedPassword');
   }
+
+  // Redirect ke index.html
+  window.location.href = "index.html";
 });
+
+// Auto isi jika Remember Me pernah digunakan
+window.onload = function () {
+  const savedUsername = localStorage.getItem('savedUsername');
+  const savedPassword = localStorage.getItem('savedPassword');
+  if (savedUsername && savedPassword) {
+    document.querySelector('input[type="text"]').value = savedUsername;
+    document.querySelector('input[type="password"]').value = savedPassword;
+    document.getElementById('remember').checked = true;
+  }
+};
