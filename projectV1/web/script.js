@@ -1,41 +1,38 @@
-console.log("ULTRA Login Panel Loaded");
+document.getElementById("loginForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
 
-document.addEventListener("DOMContentLoaded", function () {
-  const loginForm = document.getElementById("loginForm");
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const errorMsg = document.getElementById("errorMsg");
 
-  loginForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
+  try {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
 
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const data = await res.json();
 
-    if (!username || !password) {
-      alert("Sila isi semua ruangan.");
-      return;
+    if (data.success) {
+      localStorage.setItem("token", data.token);
+      window.location.href = "/web/dashboard.html";
+    } else {
+      // ❗️Jika login gagal
+      errorMsg.style.display = "block";
+      errorMsg.textContent = "Username atau Password salah!";
+      setTimeout(() => {
+        errorMsg.style.display = "none";
+      }, 5000);
     }
-
-    try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
-      console.log("[LOGIN RESPONSE]", data);
-
-      if (data.success) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("username", data.username);
-        window.location.href = "/dashboard.html";
-      } else {
-        alert(data.message || "Login gagal. Sila semak semula.");
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      alert("Ralat sambungan ke server.");
-    }
-  });
+  } catch (err) {
+    console.error("Login error:", err);
+    errorMsg.style.display = "block";
+    errorMsg.textContent = "Ralat sambungan ke server.";
+    setTimeout(() => {
+      errorMsg.style.display = "none";
+    }, 5000);
+  }
 });
