@@ -1,48 +1,54 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DilxVXII Panel</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet"/>
 </head>
 <body>
-  <video autoplay muted loop id="bg-video">
-    <source src="assets/bg.mp4" type="video/mp4" />
+  <video autoplay loop muted id="bg-video">
+    <source src="bg.mp4" type="video/mp4"/>
   </video>
 
-  <div class="sidebar" id="sidebar">
-    <img src="assets/logo.png" class="logo" />
-    <ul>
-      <li onclick="navigate('dashboard')"><b>Dashboard</b></li>
-      <li onclick="navigate('create')"><b>Create User</b></li>
-      <li onclick="navigate('pairing')"><b>Pairing</b></li>
-      <li onclick="logout()"><b>Logout</b></li>
-    </ul>
+  <div id="login-box" class="dark-box">
+    <h2 class="title">DilxVXII Login</h2>
+    <input type="text" id="username" placeholder="Username"/>
+    <input type="password" id="password" placeholder="Password"/>
+    <label class="remember-label">
+      <input type="checkbox" id="rememberMe"/> Remember Me
+    </label>
+    <button onclick="login()">Login</button>
   </div>
 
-  <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
-
-  <div class="main" onclick="closeSidebarIfOpen(event)">
-    <div id="dashboard" class="section active">
-      <h2><b>Welcome, <span id="userDisplay">User</span></b></h2>
-      <p><b>Status:</b> Connected</p>
-      <p><b>Expired On:</b> 31-12-2025</p>
-      <button><b>Trigger Bug</b></button>
+  <div id="main-panel" class="hidden">
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <div id="side-menu" class="side-menu hidden">
+      <a onclick="showSection('pairing')">Pairing</a>
+      <a onclick="showSection('createUser')">Create User</a>
+      <a onclick="logout()">Logout</a>
     </div>
 
-    <div id="create" class="section">
-      <h2><b>Create User</b></h2>
-      <input type="text" placeholder="Username" />
-      <input type="password" placeholder="Password" />
-      <button><b>Create</b></button>
-    </div>
+    <div id="content-area">
+      <h1 class="welcome-text">Welcome, <span id="userLabel"></span></h1>
 
-    <div id="pairing" class="section">
-      <h2><b>Pairing</b></h2>
-      <input type="text" placeholder="Target Number" />
-      <button><b>Pair</b></button>
+      <div id="pairing" class="panel-section hidden">
+        <input type="text" id="targetNumber" placeholder="Enter target number"/>
+        <button onclick="startPairing()">Start Pairing</button>
+      </div>
+
+      <div id="createUser" class="panel-section hidden">
+        <input type="text" id="newUsername" placeholder="New Username"/>
+        <input type="password" id="newPassword" placeholder="New Password"/>
+        <input type="text" id="duration" placeholder="Active Duration (e.g., 30d)"/>
+        <select id="role">
+          <option value="user">User</option>
+          <option value="reseller">Reseller</option>
+          <option value="owner">Owner</option>
+        </select>
+        <button onclick="createUser()">Create User</button>
+      </div>
     </div>
   </div>
 
