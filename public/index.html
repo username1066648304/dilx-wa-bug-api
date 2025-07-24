@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>DilxVXII Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Tourney:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tourney:wdth,wght@100..900,100..900&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -14,164 +13,173 @@
       padding: 0;
       font-family: "Tourney", sans-serif;
       color: #d1ffd1;
-      background: transparent;
-    }
-
-    #bg-video {
-      position: fixed;
-      top: 0;
-      left: 0;
-      min-width: 100%;
-      min-height: 100%;
-      z-index: -1;
-      object-fit: cover;
-      filter: brightness(0.6) contrast(1.4) saturate(1.5);
-    }
-
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 20px;
-    }
-
-    .logo {
-      width: 60px;
-      height: 60px;
-      background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
-      background-size: contain;
-      border-radius: 50%;
-      box-shadow: 0 0 15px #00ffaa;
-    }
-
-    .welcome {
-      font-size: 24px;
-      color: #ffffff;
-    }
-
-    .menu-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 32px;
-      color: #00ffaa;
-    }
-
-    .side-menu {
-      position: fixed;
-      top: 0;
-      right: -250px;
-      height: 100%;
-      width: 250px;
-      background: rgba(0, 0, 0, 0.9);
-      box-shadow: -2px 0 10px #00ffaa;
-      padding: 20px;
-      transition: right 0.3s ease;
       display: flex;
       flex-direction: column;
-      z-index: 10;
-    }
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      backdrop-filter: blur(4px);
+    }#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  min-height: 100%;
+  z-index: -1;
+  object-fit: cover;
+  filter: brightness(0.6) contrast(1.4) saturate(1.5);
+}
 
-    .side-menu a {
-      color: #00ffaa;
-      text-decoration: none;
-      margin: 15px 0;
-      font-size: 20px;
-    }
+.top-section {
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+  gap: 20px;
+}
 
-    .side-menu.active {
-      right: 0;
-    }
+.logo {
+  width: 100px;
+  height: 100px;
+  background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
+  background-size: contain;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #00ffaa;
+}
 
-    .container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 25px 30px;
-      border-radius: 14px;
-      max-width: 500px;
-      margin: 40px auto;
-      box-shadow: 0 0 25px #00ffaa;
-    }
+.welcome {
+  font-size: 32px;
+  font-weight: bold;
+  color: #ffffff;
+}
 
-    label, select, input {
-      width: 100%;
-      margin-top: 15px;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      background: #111;
-      color: #fff;
-    }
+.container {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 25px 30px;
+  border-radius: 14px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 0 25px #00ffaa;
+  margin-top: 20px;
+}
 
-    .logout-btn {
-      background: transparent;
-      color: #00ffaa;
-      border: 1px solid #00ffaa;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-      margin-top: 20px;
-      width: 100%;
-    }
+select, input, button {
+  width: 100%;
+  margin: 12px 0;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  background: #111;
+  color: #fff;
+}
 
-    .logout-btn:hover {
-      background: #00ffaa;
-      color: #000;
-    }
+.user-status {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 16px;
+  color: #88ffcc;
+}
 
-    .user-status {
-      margin-top: 18px;
-      text-align: center;
-      font-size: 16px;
-      color: #88ffcc;
-    }
+.logout-btn {
+  background: transparent;
+  color: #00ffaa;
+  border: 1px solid #00ffaa;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.logout-btn:hover {
+  background: #00ffaa;
+  color: #000;
+}
+
+.login-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 99;
+}
+
+.hidden { display: none; }
+
   </style>
 </head>
 <body>
   <!-- VIDEO BACKGROUND -->
   <video autoplay muted loop id="bg-video">
     <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4">
-  </video>
-
-  <!-- TOP BAR -->
-  <div class="top-bar">
-    <div class="logo"></div>
-    <div class="welcome">Welcome, Dilx</div>
-    <button class="menu-btn" onclick="toggleMenu()">☰</button>
-  </div>
-
-  <!-- SIDE MENU -->
-  <div class="side-menu" id="sideMenu">
-    <a href="#">➕ Create User</a>
-    <a href="#">🔗 Pairing</a>
-    <a href="#" class="logout-btn">Logout</a>
-  </div>
-
-  <!-- MAIN PANEL -->
-  <div class="container">
-    <label for="target">Target Number (without +)</label>
-    <input type="text" id="target" placeholder="60123456789" />
-
-    <label for="type">Select Bug Type</label>
-    <select id="type">
-      <option value="xcombo">XCombo</option>
-      <option value="xforceclose">XForceClose</option>
-      <option value="xinvisible">XInvisible</option>
-      <option value="xviewonce">XViewOnce</option>
-    </select>
-
-    <div class="user-status">
-      Connected<br>
-      Expired on: <b>31/12/2025</b>
+  </video>  <!-- LOGIN SCREEN -->  <div class="login-screen" id="login-screen">
+    <div class="container">
+      <h2 style="text-align:center; color:#fff">Login to DilxVXII</h2>
+      <input type="text" id="login-username" placeholder="Username">
+      <input type="password" id="login-password" placeholder="Password">
+      <button onclick="handleLogin()">Login</button>
+      <p id="login-error" style="color:red; text-align:center"></p>
     </div>
+  </div>  <!-- MAIN PANEL -->  <div id="main-panel" class="hidden">
+    <!-- TOP SECTION -->
+    <div class="top-section">
+      <div class="logo"></div>
+      <div class="welcome" id="welcome-user">Welcome, User</div>
+    </div><!-- PANEL UI -->
+<div class="container">
+  <label for="target">Target Number (no +)</label>
+  <input type="text" id="target" placeholder="Example: 60123456789" />
+
+  <label for="type">Select Bug Type</label>
+  <select id="type">
+    <option value="xcombo">XCombo</option>
+    <option value="xforceclose">XForceClose</option>
+    <option value="xinvisible">XInvisible</option>
+    <option value="xviewonce">XViewOnce</option>
+  </select>
+
+  <button>Trigger Bug</button>
+
+  <div class="user-status">
+    Connected<br />
+    Expired on: <b>31/12/2025</b>
   </div>
 
-  <script>
-    function toggleMenu() {
-      const menu = document.getElementById("sideMenu");
-      menu.classList.toggle("active");
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+  </div>  <script>
+    const USERS = [
+      { username: "dilx", password: "12345" },
+      { username: "admin", password: "admin123" }
+    ];
+
+    function handleLogin() {
+      const u = document.getElementById("login-username").value.trim();
+      const p = document.getElementById("login-password").value.trim();
+      const valid = USERS.find(user => user.username === u && user.password === p);
+
+      if (valid) {
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("main-panel").classList.remove("hidden");
+        document.getElementById("welcome-user").innerText = `Welcome, ${u}`;
+      } else {
+        document.getElementById("login-error").innerText = "Invalid username or password";
+      }
     }
-  </script>
-</body>
+
+    function logout() {
+      document.getElementById("main-panel").classList.add("hidden");
+      document.getElementById("login-screen").classList.remove("hidden");
+      document.getElementById("login-username").value = "";
+      document.getElementById("login-password").value = "";
+      document.getElementById("login-error").innerText = "";
+    }
+  </script></body>
 </html>
