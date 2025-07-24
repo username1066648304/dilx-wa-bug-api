@@ -9,6 +9,9 @@ const PORT = process.env.PORT || 3000;
 const authRoutes = require('./api/auth');
 const { loadUsers, addUser, deleteUser, findUser } = require('./database/db');
 
+const path = require('path');
+app.use('/web', express.static(path.join(__dirname, 'web')));
+
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
