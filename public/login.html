@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login - DilxVXII</title>
+  <title>Login | DilxVXII</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
   <video autoplay muted loop id="bg-video">
@@ -12,14 +13,16 @@
   </video>
 
   <div class="login-container">
-    <h2>Login Panel</h2>
-    <form>
+    <h2>Welcome Back</h2>
+    <form id="login-form">
       <input type="text" placeholder="Username" required />
       <input type="password" placeholder="Password" required />
+
       <div class="remember-box">
         <input type="checkbox" id="remember" />
-        <label for="remember">Remember Me</label>
+        <label for="remember">Remember me</label>
       </div>
+
       <button type="submit">Login</button>
     </form>
   </div>
