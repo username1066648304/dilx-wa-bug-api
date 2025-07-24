@@ -4,87 +4,34 @@
   <meta charset="UTF-8" />
   <title>DilxVXII Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Tourney:wdth,wght@100..900,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tourney:wght@700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
     body {
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       font-family: "Tourney", sans-serif;
       color: #d1ffd1;
-      background: black;
-      overflow-x: hidden;
+      font-weight: bold;
+      background: #000;
     }
     #bg-video {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       min-width: 100%;
       min-height: 100%;
       z-index: -1;
       object-fit: cover;
       filter: brightness(0.6) contrast(1.4) saturate(1.5);
     }
-
-    .sidebar {
-      position: fixed;
-      left: -260px;
-      top: 0;
-      width: 250px;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      padding-top: 80px;
-      transition: left 0.3s ease;
-      z-index: 1000;
-      box-shadow: 5px 0 15px #00ffaa;
-    }
-    .sidebar a {
-      display: block;
-      padding: 15px 25px;
-      color: #00ffaa;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .sidebar a:hover {
-      background-color: #00ffaa;
-      color: #000;
-    }
-
-    .sidebar.open {
-      left: 0;
-    }
-
-    .hamburger {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      font-size: 28px;
-      cursor: pointer;
-      z-index: 1100;
-      color: #00ffaa;
-      background: rgba(0,0,0,0.5);
-      padding: 8px 12px;
-      border-radius: 8px;
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      display: none;
-      z-index: 900;
-    }
-    .overlay.show {
-      display: block;
-    }
-
     .top-section {
       display: flex;
       align-items: center;
-      margin-top: 80px;
-      gap: 20px;
-      justify-content: center;
+      padding: 20px;
     }
-
     .logo {
       width: 80px;
       height: 80px;
@@ -93,11 +40,62 @@
       border-radius: 50%;
       box-shadow: 0 0 15px #00ffaa;
     }
-
     .welcome {
       font-size: 28px;
-      font-weight: bold;
-      color: #ffffff;
+      margin-left: 15px;
+      color: #fff;
+    }
+
+    .menu-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 28px;
+      background: none;
+      border: none;
+      color: #00ffaa;
+      cursor: pointer;
+      z-index: 999;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 30px 20px;
+      transition: 0.3s;
+      z-index: 1000;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 900;
+      transition: 0.3s;
+    }
+
+    .overlay.active {
+      width: 100%;
+    }
+
+    .sidebar a {
+      display: block;
+      margin: 20px 0;
+      color: #00ffaa;
+      font-size: 18px;
+      text-decoration: none;
     }
 
     .container {
@@ -106,11 +104,11 @@
       border-radius: 14px;
       max-width: 500px;
       width: 90%;
+      margin: 20px auto;
       box-shadow: 0 0 25px #00ffaa;
-      margin: 30px auto;
     }
 
-    select, input {
+    input, select {
       width: 100%;
       margin: 12px 0;
       padding: 14px;
@@ -119,6 +117,19 @@
       font-size: 16px;
       background: #111;
       color: #fff;
+      font-weight: bold;
+    }
+
+    .remember-container {
+      display: flex;
+      align-items: center;
+      margin-top: -5px;
+      margin-bottom: 10px;
+    }
+
+    .remember-container input {
+      width: auto;
+      margin-right: 10px;
     }
 
     .user-status {
@@ -132,87 +143,36 @@
       background: transparent;
       color: #00ffaa;
       border: 1px solid #00ffaa;
-      padding: 6px 12px;
+      padding: 10px 16px;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 16px;
+      font-weight: bold;
       cursor: pointer;
-      margin-top: 10px;
+      width: 100%;
+      margin-top: 12px;
     }
 
     .logout-btn:hover {
       background: #00ffaa;
       color: #000;
     }
-
-    .remember-me {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: -8px 0 16px;
-    }
-
-    .remember-me label {
-      font-weight: bold;
-      font-size: 14px;
-      color: #fff;
-    }
-
-    /* Login overlay */
-    #loginScreen {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.95);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .login-box {
-      background: #111;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 25px #00ffaa;
-      width: 90%;
-      max-width: 400px;
-    }
-
-    .login-box input {
-      margin-bottom: 14px;
-    }
-
-    .login-box button {
-      width: 100%;
-      padding: 12px;
-      font-weight: bold;
-      background: #00ffaa;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      color: #000;
-    }
-
-    .login-box button:hover {
-      background: #00ddaa;
-    }
-
   </style>
 </head>
 <body>
   <video autoplay muted loop id="bg-video">
-    <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4" />
+    <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4">
   </video>
 
-  <div class="hamburger" onclick="toggleSidebar()">☰</div>
+  <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
   <div class="sidebar" id="sidebar">
-    <a href="#" onclick="loadPage('trigger')">Trigger</a>
-    <a href="#" onclick="loadPage('create-user')">Create User</a>
+    <a href="#" onclick="loadPage('trigger')">Trigger Bug</a>
+    <a href="#" onclick="loadPage('create')">Create User</a>
     <a href="#" onclick="loadPage('pairing')">Pairing</a>
     <a href="#" onclick="logout()">Logout</a>
   </div>
-  <div class="overlay" onclick="toggleSidebar()"></div>
+
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
   <div class="top-section">
     <div class="logo"></div>
@@ -220,98 +180,97 @@
   </div>
 
   <div class="container" id="main-content">
-    <label for="target">Target Number (no +)</label>
-    <input type="text" id="target" placeholder="Contoh: 60123456789" />
-
-    <label for="type">Pilih Jenis Bug</label>
-    <select id="type">
-      <option value="xcombo">XCombo</option>
-      <option value="xforceclose">XForceClose</option>
-      <option value="xinvisible">XInvisible</option>
-      <option value="xviewonce">XViewOnce</option>
-    </select>
-
-    <div class="user-status">
-      Connected<br />
-      Expired on: <b>31/12/2025</b>
+    <label>Username</label>
+    <input type="text" id="username" placeholder="Enter your username" />
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Enter your password" />
+    <div class="remember-container">
+      <input type="checkbox" id="remember" />
+      <label for="remember">Remember Me</label>
     </div>
-
-    <button class="logout-btn" onclick="logout()">Logout</button>
-  </div>
-
-  <div id="loginScreen">
-    <div class="login-box">
-      <input type="text" id="loginUser" placeholder="Username" />
-      <input type="password" id="loginPass" placeholder="Password" />
-      <div class="remember-me">
-        <input type="checkbox" id="rememberMe" />
-        <label for="rememberMe">Remember me</label>
-      </div>
-      <button onclick="checkLogin()">Login</button>
-    </div>
+    <button class="logout-btn" onclick="login()">Login</button>
   </div>
 
   <script>
-    const loginScreen = document.getElementById("loginScreen");
-
-    function checkLogin() {
-      const user = document.getElementById("loginUser").value;
-      const pass = document.getElementById("loginPass").value;
-      const remember = document.getElementById("rememberMe").checked;
-
-      if (user === "admin" && pass === "1234") {
-        if (remember) localStorage.setItem("dilx-login", "true");
-        loginScreen.style.display = "none";
-      } else {
-        alert("Wrong credentials!");
-      }
-    }
-
-    function logout() {
-      localStorage.removeItem("dilx-login");
-      location.reload();
-    }
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const content = document.getElementById('main-content');
 
     function toggleSidebar() {
-      const sidebar = document.getElementById("sidebar");
-      const overlay = document.querySelector(".overlay");
-      sidebar.classList.toggle("open");
-      overlay.classList.toggle("show");
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
     }
 
     function loadPage(page) {
-      let content = "";
-      if (page === "create-user") {
-        content = `
-          <h2>Create User</h2>
-          <input placeholder="Username" />
-          <input placeholder="Password" />
+      toggleSidebar();
+      if (page === 'trigger') {
+        content.innerHTML = `
+          <label for="target">Target Number (no +)</label>
+          <input type="text" id="target" placeholder="Example: 60123456789" />
+          <label for="type">Select Bug Type</label>
+          <select id="type">
+            <option value="xcombo">XCombo</option>
+            <option value="xforceclose">XForceClose</option>
+            <option value="xinvisible">XInvisible</option>
+            <option value="xviewonce">XViewOnce</option>
+          </select>
+          <div class="user-status">
+            Connected<br />
+            Expired on: <b>31/12/2025</b>
+          </div>
+          <button class="logout-btn">Logout</button>
+        `;
+      } else if (page === 'create') {
+        content.innerHTML = `
+          <label>New Username</label>
+          <input type="text" placeholder="Username" />
+          <label>Password</label>
+          <input type="text" placeholder="Password" />
+          <label>Role</label>
           <select>
             <option>User</option>
             <option>Reseller</option>
             <option>Owner</option>
           </select>
-          <button>Create</button>
+          <label>Active Until</label>
+          <input type="date" />
+          <button class="logout-btn">Create User</button>
         `;
-      } else if (page === "pairing") {
-        content = `
-          <h2>Pairing Page</h2>
-          <input placeholder="Pair Number" />
-          <button>Pair</button>
+      } else if (page === 'pairing') {
+        content.innerHTML = `
+          <label>Pairing Number (without +)</label>
+          <input type="text" placeholder="60123456789" />
+          <button class="logout-btn">Pair Now</button>
         `;
-      } else {
-        content = document.querySelector(".container").innerHTML;
       }
-      document.getElementById("main-content").innerHTML = content;
-      toggleSidebar();
     }
 
-    // Auto login check
-    window.onload = () => {
-      if (localStorage.getItem("dilx-login") === "true") {
-        loginScreen.style.display = "none";
+    function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      const remember = document.getElementById('remember').checked;
+
+      if (user && pass) {
+        if (remember) {
+          localStorage.setItem('rememberedUser', user);
+        }
+        loadPage('trigger');
+      } else {
+        alert("Please fill in all fields");
       }
-    };
+    }
+
+    function logout() {
+      localStorage.removeItem('rememberedUser');
+      location.reload();
+    }
+
+    window.onload = () => {
+      const remembered = localStorage.getItem('rememberedUser');
+      if (remembered) {
+        loadPage('trigger');
+      }
+    }
   </script>
 </body>
 </html>
