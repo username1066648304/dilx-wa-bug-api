@@ -1,84 +1,103 @@
 body, html {
   margin: 0;
   padding: 0;
-  font-family: 'Ultra', sans-serif;
-  height: 100%;
-  overflow: hidden;
+  font-family: 'Orbitron', sans-serif;
+  color: #00ff99;
   background-color: black;
-  color: white;
+  overflow: hidden;
 }
 
 #bg-video {
   position: fixed;
-  top: 0;
-  left: 0;
-  min-width: 100%;
-  min-height: 100%;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   object-fit: cover;
   z-index: -1;
+  opacity: 0.2;
 }
 
-.logo-container {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
-
-.logo {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-}
-
-.login-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.6);
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 0 10px #00ff00;
+.dark-box {
+  background: rgba(0,0,0,0.8);
+  border: 1px solid #00ff99;
+  padding: 20px;
+  border-radius: 12px;
   width: 300px;
-}
-
-.login-title {
-  font-size: 30px;
+  margin: 100px auto;
   text-align: center;
-  margin-bottom: 20px;
-  color: #00ff00;
 }
 
-input[type="text"], input[type="password"] {
+input, select {
   width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: none;
-  border-radius: 8px;
-  background: #222;
-  color: #fff;
-  font-size: 16px;
+  padding: 10px;
+  margin: 8px 0;
+  background: #000;
+  color: #00ff99;
+  border: 1px solid #00ff99;
+  border-radius: 5px;
 }
 
 button {
   width: 100%;
-  padding: 12px;
-  background-color: #00ff00;
+  padding: 10px;
+  background: #00ff99;
   color: black;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
   font-weight: bold;
-  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
 button:hover {
-  background-color: #00cc00;
+  background: #00cc77;
 }
 
-.remember-container {
+.menu-toggle {
+  font-size: 24px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  cursor: pointer;
+  color: #00ff99;
+}
+
+.side-menu {
+  position: absolute;
+  top: 40px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.95);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.side-menu a {
+  display: block;
+  color: #00ff99;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.side-menu a:hover {
+  text-decoration: underline;
+}
+
+.panel-section {
+  margin-top: 60px;
+  padding: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.remember-label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 10px 0;
+  font-size: 14px;
+  margin: 5px 0 15px;
+  color: #ccc;
+}
+
+.welcome-text {
+  text-align: center;
+  margin-top: 40px;
 }
