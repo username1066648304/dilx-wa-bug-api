@@ -1,86 +1,75 @@
-body, html {
+body {
   margin: 0;
   padding: 0;
-  height: 100%;
-  font-family: sans-serif;
-  background-color: black;
+  font-family: 'Arial', sans-serif;
+  background: #000;
   color: #0f0;
   overflow: hidden;
 }
 
-#bgVideo {
+#bg-video {
   position: fixed;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   min-width: 100%;
   min-height: 100%;
-  object-fit: cover;
   z-index: -1;
+  object-fit: cover;
+  filter: brightness(0.4);
 }
 
-.login-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.85);
-  padding: 40px;
-  border: 2px solid #064e3b;
-  border-radius: 12px;
-  width: 300px;
+.logo {
+  background: url('assets/logo.png') no-repeat center;
+  background-size: contain;
+  width: 80px;
+  height: 80px;
+  margin: 20px auto 10px;
+}
+
+.login-box {
+  max-width: 320px;
+  margin: 60px auto;
+  padding: 30px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #0f0;
+  border-radius: 10px;
   text-align: center;
 }
 
-.logo-top {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  color: #0f0;
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.login-title {
-  color: #0f0;
+.login-box .title {
   font-size: 24px;
-  margin-bottom: 20px;
   font-weight: bold;
+  margin-bottom: 20px;
+  color: #0f0;
 }
 
-input[type="text"], input[type="password"] {
+.login-box input[type="text"],
+.login-box input[type="password"] {
   width: 100%;
   padding: 10px;
-  margin-bottom: 12px;
-  background-color: black;
+  margin-bottom: 15px;
   border: 1px solid #0f0;
+  background: #000;
   color: #0f0;
   border-radius: 5px;
 }
 
-.remember-me {
+.login-box button {
+  width: 100%;
+  padding: 10px;
+  background: #0f0;
+  color: #000;
+  border: none;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.remember-box {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  margin-bottom: 20px;
-}
-
-.remember-me label {
-  margin-left: 6px;
+  justify-content: start;
+  margin-bottom: 15px;
+  gap: 8px;
   font-size: 14px;
-  color: #0f0;
-  font-weight: bold;
-}
-
-button {
-  background-color: #064e3b;
-  color: #0f0;
-  border: none;
-  padding: 10px;
-  width: 100%;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-button:hover {
-  background-color: #0f5132;
 }
