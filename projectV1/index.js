@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 const authRoutes = require('./api/auth');
 const { loadUsers, addUser, deleteUser, findUser } = require('./database/db');
 
-const path = require('path');
+// Serve folder web (statik)
 app.use('/web', express.static(path.join(__dirname, 'web')));
 
 // Middleware
