@@ -1,32 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ultra - Login</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <video autoplay muted loop id="bgVideo">
-    <source src="https://files.catbox.moe/eut77a.mp4" type="video/mp4">
-  </video>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Ultra</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: black;
+        font-family: Arial, sans-serif;
+      }
 
-  <div class="login-container">
-    <h1>Welcome to <span class="brand">Ultra</span></h1>
-    <form id="loginForm">
-      <input type="text" id="username" placeholder="Username" required />
-      <input type="password" id="password" placeholder="Password" required />
-      
-      <div class="remember-container">
-        <input type="checkbox" id="rememberMe" />
-        <label for="rememberMe">Remember Me</label>
+      #video-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: -1;
+      }
+
+      .login-container {
+        border: 2px solid #00ff00;
+        padding: 30px;
+        border-radius: 15px;
+        width: 300px;
+        background-color: rgba(0, 0, 0, 0.85);
+      }
+
+      .remember-container {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .login-box {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      input {
+        margin-bottom: 10px;
+        padding: 8px;
+        border-radius: 5px;
+        border: none;
+        width: 100%;
+      }
+
+      .btn {
+        padding: 10px;
+        width: 100%;
+        border: none;
+        background-color: #00ff00;
+        color: black;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      #errorMsg {
+        display: none;
+        color: #ff4d4d;
+        margin-top: 10px;
+        text-align: center;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <video autoplay muted loop id="video-bg">
+      <source src="https://files.catbox.moe/eut77a.mp4" type="video/mp4" />
+    </video>
+
+    <div class="login-box">
+      <div class="login-container">
+        <form id="loginForm">
+          <input type="text" id="username" placeholder="Username" required />
+          <input type="password" id="password" placeholder="Password" required />
+
+          <div class="remember-container">
+            <input type="checkbox" id="rememberMe" />
+            <label for="rememberMe">Remember Me</label>
+          </div>
+
+          <button type="submit" class="btn">Login</button>
+
+          <!-- Notifikasi jika login gagal -->
+          <div id="errorMsg">Username atau Password salah!</div>
+        </form>
       </div>
+    </div>
 
-      <button type="submit" class="btn">Login</button>
-    </form>
-    <p class="dev">Developed by <strong>dilxVXII</strong></p>
-  </div>
-
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
