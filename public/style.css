@@ -1,60 +1,22 @@
-
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: black;
+  background-color: #000;
   color: #0f0;
-}
-#bgVideo {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  min-width: 100%; 
-  min-height: 100%;
-  z-index: -1;
-  object-fit: cover;
+  font-family: 'Courier New', monospace;
 }
 .login-box {
-  border: 2px solid #006400;
-  border-radius: 10px;
-  background-color: rgba(0,0,0,0.85);
   width: 300px;
-  padding: 20px;
   margin: 100px auto;
-  text-align: center;
+  padding: 20px;
+  border: 2px solid #0f0;
+  border-radius: 10px;
+  background-color: #111;
 }
-.brand {
-  font-size: 32px;
-  margin-bottom: 5px;
-}
-.developer {
-  font-size: 14px;
-  margin-bottom: 20px;
-  color: #0f0;
-}
-input[type="text"],
-input[type="password"] {
+input, button {
+  display: block;
   width: 100%;
+  margin-top: 10px;
   padding: 10px;
-  margin: 8px 0;
-  background-color: #222;
-  border: 1px solid #006400;
+  background: #000;
+  border: 1px solid #0f0;
   color: #0f0;
-}
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #006400;
-  border: none;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-.remember-box {
-  text-align: left;
-  margin-bottom: 10px;
-}
-.error {
-  color: red;
-  font-size: 13px;
 }
