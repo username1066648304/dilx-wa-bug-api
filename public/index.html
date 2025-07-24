@@ -4,168 +4,200 @@
   <meta charset="UTF-8" />
   <title>DilxVXII Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Tourney:wght@400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tourney:wdth,wght@100..900,100..900&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: "Tourney", sans-serif;
-    }
+    * { box-sizing: border-box; }
     body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
+      font-family: "Tourney", sans-serif;
       color: #d1ffd1;
-      background: #000;
+      background: black;
+      overflow-x: hidden;
     }
     #bg-video {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      min-width: 100%;
+      min-height: 100%;
       z-index: -1;
       object-fit: cover;
       filter: brightness(0.6) contrast(1.4) saturate(1.5);
     }
 
-    .login-container,
-    .app-container {
-      display: none;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
-    }
-
-    .login-container.active,
-    .app-container.active {
-      display: flex;
-    }
-
-    .login-box {
-      background: rgba(0, 0, 0, 0.8);
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px #00ffaa;
-    }
-
-    input {
-      width: 100%;
-      margin: 10px 0;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      background: #111;
-      color: #fff;
-      font-size: 16px;
-    }
-
-    label {
-      color: #aaffaa;
-    }
-
-    .remember {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 5px;
-      color: #aaffaa;
-      font-size: 14px;
-    }
-
-    button {
-      background: #00ffaa;
-      border: none;
-      color: #000;
-      font-weight: bold;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 15px;
-    }
-
-    /* App Layout */
-    .top-bar {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .hamburger {
-      font-size: 24px;
-      cursor: pointer;
-      margin-right: 20px;
-    }
-
-    .logo {
-      width: 60px;
-      height: 60px;
-      background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
-      background-size: contain;
-      border-radius: 50%;
-      box-shadow: 0 0 12px #00ffaa;
-    }
-
-    .welcome {
-      font-size: 24px;
-      margin-left: 15px;
-      color: #fff;
-    }
-
     .sidebar {
       position: fixed;
+      left: -260px;
       top: 0;
-      left: -200px;
-      width: 200px;
+      width: 250px;
       height: 100%;
-      background: rgba(0, 0, 0, 0.95);
-      box-shadow: 0 0 15px #00ffaa;
-      transition: left 0.3s ease;
+      background: rgba(0, 0, 0, 0.85);
       padding-top: 80px;
+      transition: left 0.3s ease;
+      z-index: 1000;
+      box-shadow: 5px 0 15px #00ffaa;
+    }
+    .sidebar a {
+      display: block;
+      padding: 15px 25px;
+      color: #00ffaa;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .sidebar a:hover {
+      background-color: #00ffaa;
+      color: #000;
     }
 
-    .sidebar.active {
+    .sidebar.open {
       left: 0;
     }
 
-    .sidebar a {
-      display: block;
+    .hamburger {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      font-size: 28px;
+      cursor: pointer;
+      z-index: 1100;
       color: #00ffaa;
-      padding: 12px 20px;
-      text-decoration: none;
-      font-size: 18px;
+      background: rgba(0,0,0,0.5);
+      padding: 8px 12px;
+      border-radius: 8px;
     }
 
-    .sidebar a:hover {
-      background: #00ffaa;
-      color: #000;
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      z-index: 900;
+    }
+    .overlay.show {
+      display: block;
     }
 
-    .content {
-      margin-top: 20px;
-      padding: 20px;
+    .top-section {
+      display: flex;
+      align-items: center;
+      margin-top: 80px;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
+      background-size: contain;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #00ffaa;
+    }
+
+    .welcome {
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 25px 30px;
+      border-radius: 14px;
+      max-width: 500px;
       width: 90%;
-      max-width: 600px;
-      background: rgba(0,0,0,0.7);
-      border-radius: 12px;
       box-shadow: 0 0 25px #00ffaa;
+      margin: 30px auto;
+    }
+
+    select, input {
+      width: 100%;
+      margin: 12px 0;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      background: #111;
       color: #fff;
     }
 
+    .user-status {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 16px;
+      color: #88ffcc;
+    }
+
     .logout-btn {
-      margin-top: 30px;
       background: transparent;
       color: #00ffaa;
       border: 1px solid #00ffaa;
-      padding: 8px 14px;
+      padding: 6px 12px;
       border-radius: 8px;
+      font-size: 14px;
       cursor: pointer;
+      margin-top: 10px;
     }
 
     .logout-btn:hover {
       background: #00ffaa;
       color: #000;
     }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: -8px 0 16px;
+    }
+
+    .remember-me label {
+      font-weight: bold;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    /* Login overlay */
+    #loginScreen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-box {
+      background: #111;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px #00ffaa;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .login-box input {
+      margin-bottom: 14px;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      font-weight: bold;
+      background: #00ffaa;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #000;
+    }
+
+    .login-box button:hover {
+      background: #00ddaa;
+    }
+
   </style>
 </head>
 <body>
@@ -173,131 +205,113 @@
     <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4" />
   </video>
 
-  <!-- LOGIN SECTION -->
-  <div class="login-container active" id="loginPage">
-    <div class="login-box">
-      <h2 style="text-align:center; color:#00ffaa;">DilxVXII Panel</h2>
-      <input type="text" id="username" placeholder="Username" />
-      <input type="password" id="password" placeholder="Password" />
-      <div class="remember">
-        <input type="checkbox" id="rememberMe" />
-        <label for="rememberMe">Remember Me</label>
-      </div>
-      <button onclick="login()">Login</button>
-    </div>
+  <div class="hamburger" onclick="toggleSidebar()">☰</div>
+  <div class="sidebar" id="sidebar">
+    <a href="#" onclick="loadPage('trigger')">Trigger</a>
+    <a href="#" onclick="loadPage('create-user')">Create User</a>
+    <a href="#" onclick="loadPage('pairing')">Pairing</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+  <div class="overlay" onclick="toggleSidebar()"></div>
+
+  <div class="top-section">
+    <div class="logo"></div>
+    <div class="welcome">Welcome, Dilx</div>
   </div>
 
-  <!-- APP PANEL SECTION -->
-  <div class="app-container" id="appPage">
-    <div class="top-bar">
-      <div class="hamburger" onclick="toggleSidebar()">☰</div>
-      <div class="logo"></div>
-      <div class="welcome" id="welcomeText">Welcome, User</div>
+  <div class="container" id="main-content">
+    <label for="target">Target Number (no +)</label>
+    <input type="text" id="target" placeholder="Contoh: 60123456789" />
+
+    <label for="type">Pilih Jenis Bug</label>
+    <select id="type">
+      <option value="xcombo">XCombo</option>
+      <option value="xforceclose">XForceClose</option>
+      <option value="xinvisible">XInvisible</option>
+      <option value="xviewonce">XViewOnce</option>
+    </select>
+
+    <div class="user-status">
+      Connected<br />
+      Expired on: <b>31/12/2025</b>
     </div>
 
-    <div class="sidebar" id="sidebar">
-      <a href="#" onclick="showPage('trigger')">Trigger</a>
-      <a href="#" onclick="showPage('create')">Create User</a>
-      <a href="#" onclick="showPage('pairing')">Pairing</a>
-      <a href="#" onclick="logout()">Logout</a>
-    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
 
-    <div class="content" id="contentBox">
-      <h3>Trigger Bug</h3>
-      <label>Target Number:</label>
-      <input type="text" placeholder="60123456789" />
-      <label>Bug Type:</label>
-      <select>
-        <option>XCombo</option>
-        <option>XForceClose</option>
-        <option>XInvisible</option>
-        <option>XViewOnce</option>
-      </select>
+  <div id="loginScreen">
+    <div class="login-box">
+      <input type="text" id="loginUser" placeholder="Username" />
+      <input type="password" id="loginPass" placeholder="Password" />
+      <div class="remember-me">
+        <input type="checkbox" id="rememberMe" />
+        <label for="rememberMe">Remember me</label>
+      </div>
+      <button onclick="checkLogin()">Login</button>
     </div>
   </div>
 
   <script>
-    const usernameInput = document.getElementById("username");
-    const passwordInput = document.getElementById("password");
-    const rememberMe = document.getElementById("rememberMe");
-    const welcomeText = document.getElementById("welcomeText");
+    const loginScreen = document.getElementById("loginScreen");
 
-    window.onload = () => {
-      const saved = localStorage.getItem("dilx_remember");
-      if (saved) {
-        const user = JSON.parse(saved);
-        sessionStorage.setItem("user", user.username);
-        showApp(user.username);
+    function checkLogin() {
+      const user = document.getElementById("loginUser").value;
+      const pass = document.getElementById("loginPass").value;
+      const remember = document.getElementById("rememberMe").checked;
+
+      if (user === "admin" && pass === "1234") {
+        if (remember) localStorage.setItem("dilx-login", "true");
+        loginScreen.style.display = "none";
+      } else {
+        alert("Wrong credentials!");
       }
-    };
-
-    function login() {
-      const username = usernameInput.value.trim();
-      const password = passwordInput.value.trim();
-      if (!username || !password) return alert("Isi username dan password");
-
-      if (rememberMe.checked) {
-        localStorage.setItem("dilx_remember", JSON.stringify({ username }));
-      }
-
-      sessionStorage.setItem("user", username);
-      showApp(username);
-    }
-
-    function showApp(name) {
-      document.getElementById("loginPage").classList.remove("active");
-      document.getElementById("appPage").classList.add("active");
-      welcomeText.innerText = `Welcome, ${name}`;
     }
 
     function logout() {
-      sessionStorage.removeItem("user");
-      localStorage.removeItem("dilx_remember");
-      document.getElementById("appPage").classList.remove("active");
-      document.getElementById("loginPage").classList.add("active");
+      localStorage.removeItem("dilx-login");
+      location.reload();
     }
 
     function toggleSidebar() {
       const sidebar = document.getElementById("sidebar");
-      sidebar.classList.toggle("active");
+      const overlay = document.querySelector(".overlay");
+      sidebar.classList.toggle("open");
+      overlay.classList.toggle("show");
     }
 
-    function showPage(type) {
-      const contentBox = document.getElementById("contentBox");
-      if (type === "trigger") {
-        contentBox.innerHTML = `
-          <h3>Trigger Bug</h3>
-          <label>Target Number:</label>
-          <input type="text" placeholder="60123456789" />
-          <label>Bug Type:</label>
-          <select>
-            <option>XCombo</option>
-            <option>XForceClose</option>
-            <option>XInvisible</option>
-            <option>XViewOnce</option>
-          </select>
-        `;
-      } else if (type === "create") {
-        contentBox.innerHTML = `
-          <h3>Create User</h3>
-          <input type="text" placeholder="Username" />
-          <input type="password" placeholder="Password" />
+    function loadPage(page) {
+      let content = "";
+      if (page === "create-user") {
+        content = `
+          <h2>Create User</h2>
+          <input placeholder="Username" />
+          <input placeholder="Password" />
           <select>
             <option>User</option>
             <option>Reseller</option>
             <option>Owner</option>
           </select>
-          <input type="number" placeholder="Active (days)" />
           <button>Create</button>
         `;
-      } else if (type === "pairing") {
-        contentBox.innerHTML = `
-          <h3>Pairing</h3>
-          <input type="text" placeholder="WhatsApp Number" />
-          <button>Pair Now</button>
+      } else if (page === "pairing") {
+        content = `
+          <h2>Pairing Page</h2>
+          <input placeholder="Pair Number" />
+          <button>Pair</button>
         `;
+      } else {
+        content = document.querySelector(".container").innerHTML;
       }
+      document.getElementById("main-content").innerHTML = content;
+      toggleSidebar();
     }
+
+    // Auto login check
+    window.onload = () => {
+      if (localStorage.getItem("dilx-login") === "true") {
+        loginScreen.style.display = "none";
+      }
+    };
   </script>
 </body>
 </html>
