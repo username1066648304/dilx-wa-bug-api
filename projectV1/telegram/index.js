@@ -4,7 +4,7 @@ const { TELEGRAM_TOKEN, TELEGRAM_OWNER_ID } = require("../config");
 
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
 
-// Command: /start
+// /start command
 bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
@@ -13,7 +13,7 @@ bot.onText(/\/start/, async (msg) => {
   bot.sendMessage(chatId, `👑 Bot Ultra telah diaktifkan oleh dilxVXII.\nGunakan /users untuk lihat semua user.`);
 });
 
-// Command: /users
+// /users command
 bot.onText(/\/users/, async (msg) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
@@ -30,9 +30,13 @@ bot.onText(/\/users/, async (msg) => {
   bot.sendMessage(chatId, `📦 Senarai User:\n\n${list}`);
 });
 
-// Optional: pairing alert
+// Function: notifyPairing
 async function notifyPairing(username, number) {
   await bot.sendMessage(TELEGRAM_OWNER_ID, `🔗 Pairing baru berjaya:\n👤 ${username}\n📱 ${number}`);
 }
 
-module.exports = { bot, notifyPairing };
+// Export bot & pairing function
+module.exports = {
+  bot,
+  notifyPairing,
+};
