@@ -1,14 +1,12 @@
-document.getElementById("login-form")?.addEventListener("submit", function (e) {
-  e.preventDefault();
-  const user = this.querySelector("input[type=text]").value.trim();
-  const pass = this.querySelector("input[type=password]").value.trim();
-  const err = document.getElementById("error-message");
 
-  if (user === "dilx" && pass === "1") {
-    err.textContent = "";
-    sessionStorage.setItem("dilxUser", user);
-    window.location.href = "index.html"; // <-- Redirect ke halaman utama kamu
+function login() {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const errorMsg = document.getElementById("error-msg");
+
+  if (username === "dilx" && password === "1") {
+    window.location.href = "/dashboard"; // Ganti jika ada halaman dashboard
   } else {
-    err.textContent = "Username atau password salah!";
+    errorMsg.textContent = "Username atau password salah.";
   }
-});
+}
