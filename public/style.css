@@ -1,22 +1,91 @@
-body {
-  background-color: #000;
-  color: #0f0;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   font-family: 'Courier New', monospace;
 }
-.login-box {
-  width: 300px;
-  margin: 100px auto;
-  padding: 20px;
-  border: 2px solid #0f0;
-  border-radius: 10px;
-  background-color: #111;
-}
-input, button {
-  display: block;
-  width: 100%;
-  margin-top: 10px;
-  padding: 10px;
+
+body, html {
+  height: 100%;
   background: #000;
-  border: 1px solid #0f0;
-  color: #0f0;
+  overflow: hidden;
+}
+
+#bgVideo {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+  z-index: -1;
+}
+
+.login-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid #00ff80;
+  padding: 40px;
+  border-radius: 10px;
+  width: 300px;
+  color: white;
+  text-align: center;
+}
+
+.login-box .logo {
+  width: 80px;
+  margin-bottom: 20px;
+}
+
+.login-box h2 {
+  margin-bottom: 20px;
+  color: #00ff80;
+}
+
+.login-box input[type="text"],
+.login-box input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  background: transparent;
+  border: 1px solid #00ff80;
+  color: #00ff80;
+  border-radius: 4px;
+}
+
+.login-box .remember {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+}
+
+.login-box .remember input {
+  margin-right: 5px;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: #00ff80;
+  color: #000;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-box button:hover {
+  background: #00cc66;
+}
+
+.login-box .developer {
+  margin-top: 20px;
+  font-size: 0.8em;
+  color: #00ff80;
 }

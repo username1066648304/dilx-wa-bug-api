@@ -1,18 +1,30 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ultra Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ultra Login</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="icon" href="https://files.catbox.moe/gwatpr.png" />
 </head>
 <body>
-  <h1>Welcome to Ultra</h1>
-  <div class="menu">
-    <button onclick="createUser()">Create User</button>
-    <button onclick="triggerBug()">Trigger Bug</button>
-    <button onclick="addBot()">Add Pairing Bot</button>
-    <button onclick="addFunction()">Add Bug JS</button>
+  <video autoplay muted loop id="bgVideo">
+    <source src="https://files.catbox.moe/eut77a.mp4" type="video/mp4" />
+  </video>
+  <div class="login-box">
+    <img src="https://files.catbox.moe/gwatpr.png" class="logo"/>
+    <h2>Welcome to Ultra</h2>
+    <form>
+      <input type="text" placeholder="Username" required />
+      <input type="password" placeholder="Password" required />
+      <div class="remember">
+        <input type="checkbox" id="remember" />
+        <label for="remember">Remember Me</label>
+      </div>
+      <button type="submit">Login</button>
+    </form>
+    <p class="developer">Developer: dilxVXII</p>
   </div>
   <script src="script.js"></script>
 </body>
