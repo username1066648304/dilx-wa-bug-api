@@ -1,194 +1,230 @@
-<!DOCTYPE html><html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DilxVXII Panel</title>
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Share Tech Mono', monospace;
-        color: #00ffaa;
-        background: black url('https://i.gifer.com/YkMC.gif') center/cover no-repeat fixed;
-      }
-      .menu-btn {
-        position: fixed;
-        top: 25px;
-        left: 25px;
-        font-size: 32px;
-        cursor: pointer;
-        z-index: 1000;
-        color: #00ffaa;
-      }
-      .sidebar {
-        position: fixed;
-        top: 0;
-        left: -240px;
-        width: 200px;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        padding: 40px 20px;
-        box-shadow: 2px 0 10px #00ffaa;
-        transition: 0.3s ease;
-        z-index: 999;
-      }
-      .sidebar.open {
-        left: 0;
-      }
-      .sidebar a {
-        display: block;
-        margin: 20px 0;
-        color: #00ffaa;
-        text-decoration: none;
-        font-size: 16px;
-      }
-      .logo {
-        text-align: center;
-        margin-top: 80px;
-      }
-      .logo img {
-        width: 80px;
-        border-radius: 50%;
-      }
-      .container {
-        max-width: 400px;
-        margin: 120px auto;
-        background: rgba(0, 0, 0, 0.8);
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 0 15px #00ffaa;
-        display: none;
-      }
-      .container.active {
-        display: block;
-      }
-      label {
-        display: block;
-        margin-top: 10px;
-        font-size: 14px;
-      }
-      input, select {
-        width: 100%;
-        padding: 10px;
-        background: #111;
-        color: #00ffaa;
-        border: 1px solid #00ffaa;
-        border-radius: 5px;
-        margin-top: 5px;
-      }
-      .logout-btn {
-        width: 100%;
-        padding: 10px;
-        margin-top: 20px;
-        background: #00ffaa;
-        color: black;
-        border: none;
-        border-radius: 5px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      .user-status {
-        margin-top: 20px;
-        font-size: 14px;
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="menu-btn" onclick="toggleSidebar()">☰</div>
-    <div class="sidebar" id="sidebar">
-      <a href="#" onclick="showSection('dashboard')">Dashboard</a>
-      <a href="#" onclick="showSection('createUser')">Create User</a>
-      <a href="#" onclick="showSection('pairing')">Pairing</a>
-      <a href="#" onclick="logout()">Logout</a>
-    </div><div class="logo">
-  <img src="https://i.ibb.co/gdx78bz/logo.png" alt="DilxVXII" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DilxVXII Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Tourney:wdth,wght@100..900,100..900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Tourney", sans-serif;
+      color: #d1ffd1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      backdrop-filter: blur(4px);
+      background: #000;
+    }
+
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
+      object-fit: cover;
+      filter: brightness(0.6) contrast(1.4) saturate(1.5);
+    }
+
+    .navbar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 25px;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .hamburger {
+      font-size: 28px;
+      cursor: pointer;
+      color: #00ffaa;
+    }
+
+    .logo {
+      width: 60px;
+      height: 60px;
+      background: url('https://files.catbox.moe/tje4sw.png') no-repeat center center;
+      background-size: cover;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #00ffaa;
+    }
+
+    .welcome {
+      font-size: 26px;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #ffffff;
+    }
+
+    .tab-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .tab-buttons button {
+      background: transparent;
+      border: 1px solid #00ffaa;
+      color: #00ffaa;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .tab-buttons button.active,
+    .tab-buttons button:hover {
+      background: #00ffaa;
+      color: #000;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 14px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 0 25px #00ffaa;
+      margin-top: 20px;
+    }
+
+    input, select {
+      width: 100%;
+      margin: 10px 0;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      background: #111;
+      color: #fff;
+    }
+
+    .user-status {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 16px;
+      color: #88ffcc;
+    }
+
+    .logout-btn {
+      background: transparent;
+      color: #00ffaa;
+      border: 1px solid #00ffaa;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .logout-btn:hover {
+      background: #00ffaa;
+      color: #000;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<!-- BACKGROUND VIDEO -->
+<video autoplay muted loop id="bg-video">
+  <source src="https://files.catbox.moe/r5wiim.mp4" type="video/mp4">
+</video>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="hamburger" onclick="toggleTabs()">☰</div>
+  <div class="logo"></div>
 </div>
 
-<div class="container active" id="dashboard">
-  <label for="target">Target Number (no +)</label>
-  <input type="text" id="target" placeholder="60123456789" />
-  <label for="type">Select Bug Type</label>
-  <select id="type">
-    <option value="xcombo">XCombo</option>
-    <option value="xforceclose">XForceClose</option>
-    <option value="xinvisible">XInvisible</option>
-    <option value="xviewonce">XViewOnce</option>
-  </select>
-  <div class="user-status">Connected<br />Expired on: <b>31/12/2025</b></div>
+<!-- WELCOME -->
+<div class="welcome">Welcome, Dilx</div>
+
+<!-- TAB BUTTONS -->
+<div class="tab-buttons" id="tabMenu" style="display:none;">
+  <button onclick="showTab('bug')" class="active">Trigger Bug</button>
+  <button onclick="showTab('user')">Create User</button>
+  <button onclick="showTab('pair')">Pairing</button>
 </div>
 
-<div class="container" id="createUser">
-  <label>Username</label>
-  <input type="text" id="newUsername" placeholder="New Username" />
-  <label>Password</label>
-  <input type="text" id="newPassword" placeholder="Password" />
-  <label>Role</label>
-  <select id="newRole">
-    <option value="user">User</option>
-    <option value="reseller">Reseller</option>
-    <option value="owner">Owner</option>
-  </select>
-  <label>Active Until (yyyy-mm-dd)</label>
-  <input type="date" id="expireDate" />
-  <button onclick="createUser()" class="logout-btn">Create</button>
-</div>
+<!-- TAB CONTENT -->
+<div class="container">
 
-<div class="container" id="pairing">
-  <label>Pairing Number</label>
-  <input type="text" id="pairingNum" placeholder="60123456789" />
-  <button onclick="addPairing()" class="logout-btn">Add Pairing</button>
+  <div id="bug" class="tab-content active">
+    <label for="target">Target Number (no +)</label>
+    <input type="text" id="target" placeholder="Example: 60123456789" />
+    <label for="type">Select Bug Type</label>
+    <select id="type">
+      <option value="xcombo">XCombo</option>
+      <option value="xforceclose">XForceClose</option>
+      <option value="xinvisible">XInvisible</option>
+      <option value="xviewonce">XViewOnce</option>
+    </select>
+    <div class="user-status">
+      Connected<br />
+      Expired on: <b>31/12/2025</b>
+    </div>
+    <button class="logout-btn">Logout</button>
+  </div>
+
+  <div id="user" class="tab-content">
+    <label>Username</label>
+    <input type="text" placeholder="e.g dilxvxii" />
+    <label>Password</label>
+    <input type="password" placeholder="Set password" />
+    <label>Role</label>
+    <select>
+      <option value="user">User</option>
+      <option value="reseller">Reseller</option>
+      <option value="owner">Owner</option>
+    </select>
+    <label>Active Until</label>
+    <input type="date" />
+    <button class="logout-btn">Create User</button>
+  </div>
+
+  <div id="pair" class="tab-content">
+    <label>Pairing Number (no +)</label>
+    <input type="text" placeholder="Example: 60123456789" />
+    <button class="logout-btn">Start Pairing</button>
+  </div>
+
 </div>
 
 <script>
-  function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
+  function toggleTabs() {
+    const menu = document.getElementById("tabMenu");
+    menu.style.display = menu.style.display === "none" ? "flex" : "none";
   }
 
-  function showSection(id) {
-    const sections = ['dashboard', 'createUser', 'pairing'];
-    sections.forEach(sec => {
-      const el = document.getElementById(sec);
-      if (el) el.classList.remove('active');
+  function showTab(tabId) {
+    document.querySelectorAll(".tab-content").forEach(div => {
+      div.classList.remove("active");
     });
-    const target = document.getElementById(id);
-    if (target) target.classList.add('active');
-    document.getElementById('sidebar').classList.remove('open');
-  }
-
-  function logout() {
-    alert("Logging out...");
-  }
-
-  async function createUser() {
-    const username = document.getElementById('newUsername').value.trim();
-    const password = document.getElementById('newPassword').value.trim();
-    const role = document.getElementById('newRole').value;
-    const expired = document.getElementById('expireDate').value;
-
-    const res = await fetch('/api/create-user.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password, role, expired })
+    document.querySelectorAll(".tab-buttons button").forEach(btn => {
+      btn.classList.remove("active");
     });
-    const data = await res.json();
-    alert(data.message || 'User Created');
-  }
-
-  async function addPairing() {
-    const number = document.getElementById('pairingNum').value.trim();
-    if (!number) return alert("Enter number");
-
-    const res = await fetch('/api/pairing.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ number })
-    });
-    const data = await res.json();
-    alert(data.message || 'Pairing done');
+    document.getElementById(tabId).classList.add("active");
+    event.target.classList.add("active");
   }
 </script>
 
-  </body>
+</body>
 </html>
