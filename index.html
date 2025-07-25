@@ -7,146 +7,168 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
 :root {
-  --main: #4CAF50;     /* hijau medium, terlihat profesional */
-  --second: #2E7D32;   /* hijau tua, untuk aksen */
-  --bg: #121212;       /* abu hitam, lebih soft dari #0a0a0a */
-  --text: #e0e0e0;     /* abu terang, sedikit lebih hangat dari putih */
+  --main: #4CAF50;     /* hijau medium */
+  --second: #2E7D32;   /* hijau tua */
+  --bg: #0a0a0a;       /* latar belakang gelap */
+  --text: #f2f2f2;     /* teks terang */
 }
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-      font-family: sans-serif;
-    }
-    body {
-      background: var(--bg); color: var(--text);
-      min-height: 100vh; display: flex;
-      justify-content: center; align-items: center;
-      padding: 20px; position: relative;
-    }
-    #particles-js {
-      position: fixed; width: 100%; height: 100%; z-index: 0;
-    }
-    .glass-box {
-      background: rgba(255, 0, 0, 0.03);
-      border: 1px solid rgba(255, 0, 0, 0.2);
-      border-radius: 20px;
-      padding: 30px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 25px rgba(255, 0, 0, 0.1);
-      z-index: 2;
-      max-width: 450px;
-      width: 100%;
-    }
-    .profile {
-      display: flex; align-items: center; gap: 15px; margin-bottom: 25px;
-    }
-    .profile img {
-      width: 65px; height: 65px;
-      border-radius: 50%;
-      border: 2px solid var(--main);
-    }
-    .profile-info h2 { font-size: 1.2rem; color: var(--main); }
-    .status {
-      font-size: 0.9rem; color: #aaaaaa;
-    }
-    .status i {
-      margin-right: 5px;
-    }
-    h1 {
-      font-size: 1.4rem;
-      color: var(--main);
-      margin-bottom: 20px;
-      text-align: center;
-      text-shadow: 0 0 10px var(--main);
-    }
-    input, select {
-      background: rgba(255, 255, 255, 0.05);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 12px;
-      width: 100%;
-      margin-bottom: 10px;
-      transition: 0.3s;
-    }
-    input:focus, select:focus {
-      outline: none;
-      border: 1px solid var(--main);
-      background: rgba(255, 255, 255, 0.1);
-    }
-    button {
-      background: linear-gradient(135deg, var(--main), var(--second));
-      border: none;
-      color: white;
-      width: 100%;
-      padding: 10px 16px;
-      border-radius: 50px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 0 15px var(--main);
-      transition: 0.3s;
-      margin-top: 10px;
-    }
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    .small-logout {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--main);
-      color: var(--main);
-      font-size: 0.85rem;
-      padding: 8px 16px;
-      border-radius: 12px;
-      margin-top: 10px;
-      cursor: pointer;
-      transition: 0.3s;
-      width: fit-content;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .small-logout:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-    #popup {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      display: flex; justify-content: center; align-items: center;
-      z-index: 999;
-    }
-    .popup-content {
-    .popup-content {
-  background: #1a1a1a;              /* tetap gelap, konsisten dengan --bg */
-  color: var(--main);              /* teks hijau medium */
+
+* {
+  margin: 0; padding: 0; box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+body {
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; display: flex;
+  justify-content: center; align-items: center;
+  padding: 20px; position: relative;
+}
+
+#particles-js {
+  position: fixed; width: 100%; height: 100%; z-index: 0;
+}
+
+.glass-box {
+  background: rgba(76, 175, 80, 0.03); /* hijau transparan */
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 25px rgba(76, 175, 80, 0.1);
+  z-index: 2;
+  max-width: 450px;
+  width: 100%;
+}
+
+.profile {
+  display: flex; align-items: center; gap: 15px; margin-bottom: 25px;
+}
+
+.profile img {
+  width: 65px; height: 65px;
+  border-radius: 50%;
+  border: 2px solid var(--main);
+}
+
+.profile-info h2 {
+  font-size: 1.2rem; color: var(--main);
+}
+
+.status {
+  font-size: 0.9rem; color: #aaaaaa;
+}
+
+.status i {
+  margin-right: 5px;
+}
+
+h1 {
+  font-size: 1.4rem;
+  color: var(--main);
+  margin-bottom: 20px;
+  text-align: center;
+  text-shadow: 0 0 10px var(--main);
+}
+
+input, select {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px;
+  width: 100%;
+  margin-bottom: 10px;
+  transition: 0.3s;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border: 1px solid var(--main);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+button {
+  background: linear-gradient(135deg, var(--main), var(--second));
+  border: none;
+  color: white;
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 0 15px var(--main);
+  transition: 0.3s;
+  margin-top: 10px;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.small-logout {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--main);
+  color: var(--main);
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border-radius: 12px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  width: fit-content;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.small-logout:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+#popup {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 999;
+}
+
+.popup-content {
+  background: #1a1a1a;
+  color: var(--main);
   padding: 30px;
   border-radius: 15px;
   text-align: center;
   max-width: 90%;
-  box-shadow: 0 0 20px var(--main); /* glow hijau */
+  box-shadow: 0 0 20px var(--main);
   animation: fadeIn 0.3s ease-in-out;
   position: relative;
-    }
-    .popup-content.success {
-      background: #000;
-      color: #fff;
-      box-shadow: 0 0 20px #fff;
-    }
-    .popup-content .close-btn {
-      position: absolute;
-      top: 10px; right: 15px;
-      font-size: 1.5rem;
-      color: #ff4d4d;
-      cursor: pointer;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
-    }
+}
+
+.popup-content.success {
+  background: #000;
+  color: #fff;
+  box-shadow: 0 0 20px #fff;
+}
+
+.popup-content .close-btn {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 1.5rem;
+  color: var(--main);
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
   </style>
 </head>
 <body>
