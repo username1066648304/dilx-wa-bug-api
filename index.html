@@ -159,11 +159,11 @@
 </div>
 
 <audio id="bg-music" autoplay loop>
-  <source src="" type="audio/mpeg" />
+  <source src="https://files.catbox.moe/rolj9k.mp3" type="audio/mpeg" />
 </audio>
 
 <div id="login-box" class="glass-box">
-  <h1>Login</h1>
+  <h1>Login, UltraXweb</h1>
   <div style="position: relative; margin-bottom: 10px;">
     <i class="fas fa-user" style="position: absolute; top: 50%; left: 12px; transform: translateY(-50%); color: #888;"></i>
     <input type="text" id="username" placeholder="Username" style="padding-left: 40px;" />
@@ -178,7 +178,7 @@
 
 <div class="glass-box" id="main-box" style="display:none;">
   <div class="profile">
-    <img src="https://files.catbox.moe/5x1mst.jpeg" alt="profile">
+    <img src="https://files.catbox.moe/35tt19.jpeg" alt="profile">
     <div class="profile-info">
       <h2 id="userLabel">Api Bug</h2>
       <span class="status"><i class="fas fa-circle"></i> Checking...</span>
@@ -187,8 +187,9 @@
   <h1><i class="fab fa-whatsapp"></i> UltraXweb</h1>
   <input type="text" id="target" placeholder="628xxxx" />
   <select id="bugType">
-    <option value="crashtotal">FC Invisible</option>
-    <option value="delay">Invisible Delay</option>
+    <option value="crashtotal">Force Close Android</option>
+    <option value="crashtotal">Force Close IPhone</option>  
+    <option value="delay">Delay Invisible</option>   
   </select>
   <button id="sendBtn" onclick="sendBug()">
     <i class="fab fa-telegram-plane"></i> Kirim Bug
@@ -198,7 +199,7 @@
   <div class="contact" style="margin-top: 20px; color: white;">
     <p>Contact Developer:</p>
     <a href="https://t.me/dilxVXII" target="_blank" style="color: #ff2a2a;">
-      <i class="fab fa-telegram"></i> @dilxVXII
+      <i class="fab fa-telegram"></i> Developer @dilxVXII
     </a>
   </div>
 </div>
@@ -233,15 +234,9 @@
   };
 
   async function getUsers() {
-  const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
-  const data = await res.json();
-  const users = data.record;
-
-  // Buang field Telegram yang tak diperlukan web
-  return users.map(user => {
-    const { telegram_id, login_timestamp, ...webUser } = user;
-    return webUser;
-  });
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
+    const data = await res.json();
+    return data.record;
   }
 
   function logout() {
