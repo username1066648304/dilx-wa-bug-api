@@ -125,6 +125,12 @@
     }
   </style>
 
+  <script>
+    // Penjaga halaman: redirect kalau tak login
+    if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+      window.location.href = 'index.html';
+    }
+  </script>
 </head>
 <body>
   <div class="video-background">
@@ -138,7 +144,7 @@
   <button id="logoutBtn" class="logout-btn">Logout</button>
 
   <div class="container">
-    <h1>Website ZxoBugxz</h1>
+    <h1>Website ultra</h1>
     <p>Crash Whatsapp Via Web</p>
 
     <input type="text" id="targetNumber" placeholder="Target number, e.g. 628xxx">
