@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nandemo</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --main: #ff2a2a;
+      --second: #990000;
+      --bg: #0a0a0a;
+      --text: #f2f2f2;
+    }
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: sans-serif;
+    }
+    body {
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex;
+      justify-content: center; align-items: center;
+      padding: 20px; position: relative;
+    }
+    #particles-js {
+      position: fixed; width: 100%; height: 100%; z-index: 0;
+    }
+    .glass-box {
+      background: rgba(255, 0, 0, 0.03);
+      border: 1px solid rgba(255, 0, 0, 0.2);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.1);
+      z-index: 2;
+      max-width: 450px;
+      width: 100%;
+    }
+    .profile {
+      display: flex; align-items: center; gap: 15px; margin-bottom: 25px;
+    }
+    .profile img {
+      width: 65px; height: 65px;
+      border-radius: 50%;
+      border: 2px solid var(--main);
+    }
+    .profile-info h2 { font-size: 1.2rem; color: var(--main); }
+    .status {
+      font-size: 0.9rem; color: #aaaaaa;
+    }
+    .status i {
+      margin-right: 5px;
+    }
+    h1 {
+      font-size: 1.4rem;
+      color: var(--main);
+      margin-bottom: 20px;
+      text-align: center;
+      text-shadow: 0 0 10px var(--main);
+    }
+    input, select {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 12px;
+      width: 100%;
+      margin-bottom: 10px;
+      transition: 0.3s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border: 1px solid var(--main);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    button {
+      background: linear-gradient(135deg, var(--main), var(--second));
+      border: none;
+      color: white;
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 0 15px var(--main);
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .small-logout {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--main);
+      color: var(--main);
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      border-radius: 12px;
+      margin-top: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: fit-content;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .small-logout:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    #popup {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 999;
+    }
+    .popup-content {
+      background: #1a1a1a;
+      color: #ff2a2a;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 90%;
+      box-shadow: 0 0 20px #ff2a2a;
+      animation: fadeIn 0.3s ease-in-out;
+      position: relative;
+    }
+    .popup-content.success {
+      background: #000;
+      color: #fff;
+      box-shadow: 0 0 20px #fff;
+    }
+    .popup-content .close-btn {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 1.5rem;
+      color: #ff4d4d;
+      cursor: pointer;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+<div id="particles-js"></div>
+
+<div id="popup" style="display:none;">
+  <div class="popup-content">
+    <span class="close-btn" onclick="closePopup()">&times;</span>
+    <p id="popup-message"></p>
+  </div>
+</div>
+
+<audio id="bg-music" autoplay loop>
+  <source src="https://files.catbox.moe/rolj9k.mp3" type="audio/mpeg" />
+</audio>
+
+<div id="login-box" class="glass-box">
+  <h1>Login</h1>
+  <div style="position: relative; margin-bottom: 10px;">
+    <i class="fas fa-user" style="position: absolute; top: 50%; left: 12px; transform: translateY(-50%); color: #888;"></i>
+    <input type="text" id="username" placeholder="Username" style="padding-left: 40px;" />
+  </div>
+  <div style="position: relative; margin-bottom: 10px;">
+    <i class="fas fa-lock" style="position: absolute; top: 50%; left: 12px; transform: translateY(-50%); color: #888;"></i>
+    <input type="password" id="password" placeholder="Password" style="padding-left: 40px;" />
+  </div>
+  <button onclick="login()"><i class="fas fa-sign-in-alt"></i> Login</button>
+  <div id="login-result" style="margin-top:10px; text-align:center;"></div>
+</div>
+
+<div class="glass-box" id="main-box" style="display:none;">
+  <div class="profile">
+    <img src="https://files.catbox.moe/5x1mst.jpeg" alt="profile">
+    <div class="profile-info">
+      <h2 id="userLabel">Api Bug</h2>
+      <span class="status"><i class="fas fa-circle"></i> Checking...</span>
+    </div>
+  </div>
+  <h1><i class="fab fa-whatsapp"></i> ZxoBugxz</h1>
+  <input type="text" id="target" placeholder="628xxxx" />
+  <select id="bugType">
+    <option value="crashtotal">FC Invisible</option>
+    <option value="delay">Invisible Delay</option>
+  </select>
+  <button id="sendBtn" onclick="sendBug()">
+    <i class="fab fa-telegram-plane"></i> Kirim Bug
+  </button>
+  <button class="small-logout" onclick="logout()">Logout</button>
+  <div id="result" style="margin-top:10px;"></div>
+  <div class="contact" style="margin-top: 20px; color: white;">
+    <p>Contact Developer:</p>
+    <a href="https://t.me/rugibanget" target="_blank" style="color: #ff2a2a;">
+      <i class="fab fa-telegram"></i> @cella
+    </a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+  particlesJS("particles-js", {
+    particles: {
+      number: { value: 60, density: { enable: true, value_area: 800 }},
+      color: { value: "#ffffff" },
+      shape: { type: "circle" },
+      opacity: { value: 0.3 },
+      size: { value: 3, random: true },
+      line_linked: {
+        enable: true, distance: 150,
+        color: "#ffffff", opacity: 0.2, width: 1
+      },
+      move: { enable: true, speed: 2 }
+    },
+    interactivity: {
+      events: { onhover: { enable: true, mode: "grab" }},
+      modes: { grab: { distance: 200, line_linked: { opacity: 1 }}}
+    },
+    retina_detect: true
+  });
+
+  const BIN_ID = "685fb1f98561e97a502d53c1";
+  const API_KEY = "$2a$10$aRQ6DFj97InHWwHpKCfc2ulda4ESN3Gd0pcp8d5s8D3clbfNj2Q0W";
+  const headers = {
+    "Content-Type": "application/json",
+    "X-Master-Key": API_KEY
+  };
+
+  async function getUsers() {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
+    const data = await res.json();
+    return data.record;
+  }
+
+  function logout() {
+    sessionStorage.removeItem("currentUser");
+    location.reload();
+  }
+
+  function saveSession(user) {
+    sessionStorage.setItem("currentUser", JSON.stringify(user));
+  }
+
+  function getSession() {
+    return JSON.parse(sessionStorage.getItem("currentUser"));
+  }
+
+  window.onload = async () => {
+    const user = getSession();
+    if (user) showDashboard(user);
+  };
+
+  function showPopup(message, isSuccess = false) {
+    const popup = document.getElementById("popup");
+    const content = popup.querySelector(".popup-content");
+    const text = document.getElementById("popup-message");
+
+    text.innerHTML = message;
+    popup.style.display = "flex";
+
+    if (isSuccess) {
+      content.classList.add("success");
+    } else {
+      content.classList.remove("success");
+    }
+  }
+
+  function closePopup() {
+    document.getElementById("popup").style.display = "none";
+  }
+
+  window.addEventListener("click", () => {
+    const audio = document.getElementById("bg-music");
+    if (audio.paused) {
+      audio.play().catch(err => console.log("Autoplay error:", err));
+    }
+  }, { once: true });
+
+  async function login() {
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value.trim();
+    const result = document.getElementById("login-result");
+    const users = await getUsers();
+    const found = users.find(u => u.username === user && u.password === pass);
+
+    if (found) {
+      saveSession(found);
+      showDashboard(found);
+    } else {
+      result.innerText = "❌ Username atau Password salah!";
+      result.style.color = "crimson";
+    }
+  }
+
+  function showDashboard(user) {
+    document.getElementById("login-box").style.display = "none";
+    document.getElementById("main-box").style.display = "block";
+    document.getElementById("userLabel").innerText = user.username;
+    checkServerStatus();
+    setInterval(checkServerStatus, 3000);
+  }
+
+  function getSelectedBug() {
+    return document.getElementById("bugType").value;
+  }
+
+  async function sendBug() {
+    const target = document.getElementById("target").value.trim();
+    const resultDiv = document.getElementById("result");
+    const sendBtn = document.getElementById("sendBtn");
+
+    if (!target) {
+      showPopup("⚠️ Masukkan nomor target!");
+      return;
+    }
+
+    const selectedBug = getSelectedBug();
+    sendBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Mengirim...`;
+    sendBtn.disabled = true;
+
+    try {
+      await handleBugSend(target, selectedBug); // fungsi dari api.js
+      showPopup(`Bug berhasil dikirim ke ${target}`, true);
+      resultDiv.innerText = "";
+    } catch (err) {
+      showPopup("❌ Gagal mengirim bug!");
+    }
+
+    sendBtn.innerHTML = `<i class="fab fa-telegram-plane"></i> Kirim Bug`;
+    sendBtn.disabled = false;
+  }
+
+  async function checkServerStatus() {
+    const statusEl = document.querySelector(".status");
+    try {
+      const res = await fetch("https://cella-why.mydigital-store.me/status");
+      const data = await res.json();
+      if (data.connected) {
+        statusEl.innerHTML = `<i class="fas fa-circle" style="color:limegreen;"></i> Connected`;
+      } else {
+        statusEl.innerHTML = `<i class="fas fa-circle" style="color:gray;"></i> Disconnected`;
+      }
+    } catch (err) {
+      statusEl.innerHTML = `<i class="fas fa-circle" style="color:gray;"></i> Disconnected`;
+    }
+  }
+</script>
+<script src="api.js"></script>
+</body>
+</html>
