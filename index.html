@@ -120,15 +120,16 @@
       z-index: 999;
     }
     .popup-content {
-      background: #1a1a1a;
-      color: #ff2a2a;
-      padding: 30px;
-      border-radius: 15px;
-      text-align: center;
-      max-width: 90%;
-      box-shadow: 0 0 20px #ff2a2a;
-      animation: fadeIn 0.3s ease-in-out;
-      position: relative;
+    .popup-content {
+  background: #1a1a1a;              /* tetap gelap, konsisten dengan --bg */
+  color: var(--main);              /* teks hijau medium */
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  max-width: 90%;
+  box-shadow: 0 0 20px var(--main); /* glow hijau */
+  animation: fadeIn 0.3s ease-in-out;
+  position: relative;
     }
     .popup-content.success {
       background: #000;
