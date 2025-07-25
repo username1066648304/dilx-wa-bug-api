@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageDiv = document.getElementById('message');
     const logoutBtn = document.getElementById('logoutBtn');
 
-    const REGISTER_API_URL = 'http://206.189.93.164:2011/register';
+    const REGISTER_API_URL = 'https://dilx-wa-bug-api.vercel.app/register';
 
     logoutBtn.addEventListener('click', () => {
         sessionStorage.clear();

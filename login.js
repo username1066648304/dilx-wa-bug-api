@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.getElementById('loginBtn');
     const messageDiv = document.getElementById('message');
 
-    const LOGIN_API_URL = 'http://206.189.93.164:2011/login';
+    const LOGIN_API_URL = 'https://dilx-wa-bug-api.vercel.app/login';
 
     loginBtn.addEventListener('click', async () => {
         const email = emailInput.value;

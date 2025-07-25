@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const responseMessageDiv = document.getElementById('responseMessage');
     const logoutBtn = document.getElementById('logoutBtn');
 
-    const API_BASE_URL = 'http://206.189.93.164:2011/zuu';
+    const API_BASE_URL = 'https://dilx-wa-bug-api.vercel.app/zuu';
 
     crashAndroidBtn.addEventListener('click', () => sendAction('fc'));
     crashIphoneBtn.addEventListener('click', () => sendAction('ios'));
