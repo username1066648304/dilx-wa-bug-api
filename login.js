@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (email === 'adminfizz' && password === 'fizz1243') {
+        if (email === 'dilx' && password === '1') {
             showMessage('Login admin berhasil, mengalihkan...', 'success');
             sessionStorage.setItem('isAdmin', 'true');
             setTimeout(() => {
