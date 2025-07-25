@@ -197,7 +197,7 @@
   <div id="result" style="margin-top:10px;"></div>
   <div class="contact" style="margin-top: 20px; color: white;">
     <p>Contact Developer:</p>
-    <a href="https://t.me/rugibanget" target="_blank" style="color: #ff2a2a;">
+    <a href="https://t.me/dilxVXII" target="_blank" style="color: #ff2a2a;">
       <i class="fab fa-telegram"></i> @dilxVXII
     </a>
   </div>
@@ -293,24 +293,16 @@
     const pass = document.getElementById("password").value.trim();
     const result = document.getElementById("login-result");
     const users = await getUsers();
-const found = users.find(u => 
-  u.username === user && 
-  u.password === pass && 
-  u.banned !== true
-);
+    const found = users.find(u => u.username === user && u.password === pass);
 
-if (found) {
-  if (found.banned) {
-    result.innerText = "❌ Akun Anda diblokir!";
-    result.style.color = "crimson";
-    return;
+    if (found) {
+      saveSession(found);
+      showDashboard(found);
+    } else {
+      result.innerText = "❌ Username atau Password salah!";
+      result.style.color = "crimson";
+    }
   }
-  saveSession(found);
-  showDashboard(found);
-} else {
-  result.innerText = "❌ Username atau Password salah!";
-  result.style.color = "crimson";
-}
 
   function showDashboard(user) {
     document.getElementById("login-box").style.display = "none";
