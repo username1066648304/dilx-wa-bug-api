@@ -293,16 +293,24 @@
     const pass = document.getElementById("password").value.trim();
     const result = document.getElementById("login-result");
     const users = await getUsers();
-    const found = users.find(u => u.username === user && u.password === pass);
+const found = users.find(u => 
+  u.username === user && 
+  u.password === pass && 
+  u.banned !== true
+);
 
-    if (found) {
-      saveSession(found);
-      showDashboard(found);
-    } else {
-      result.innerText = "❌ Username atau Password salah!";
-      result.style.color = "crimson";
-    }
+if (found) {
+  if (found.banned) {
+    result.innerText = "❌ Akun Anda diblokir!";
+    result.style.color = "crimson";
+    return;
   }
+  saveSession(found);
+  showDashboard(found);
+} else {
+  result.innerText = "❌ Username atau Password salah!";
+  result.style.color = "crimson";
+}
 
   function showDashboard(user) {
     document.getElementById("login-box").style.display = "none";
