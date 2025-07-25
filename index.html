@@ -233,9 +233,15 @@
   };
 
   async function getUsers() {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
-    const data = await res.json();
-    return data.record;
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
+  const data = await res.json();
+  const users = data.record;
+
+  // Buang field Telegram yang tak diperlukan web
+  return users.map(user => {
+    const { telegram_id, login_timestamp, ...webUser } = user;
+    return webUser;
+  });
   }
 
   function logout() {
