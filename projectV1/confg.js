@@ -1,8 +1,0 @@
-module.exports = {
-  ADMIN_ROLE: "owner",
-  SESSION_EXPIRE_DAYS: 30,
-  TELEGRAM: {
-    BOT_TOKEN: "7392047062:AAGSNxMUGr15MHG7hJ5GUXwdUnjmczGdiUw",
-    OWNER_ID: "7339008277"
-  }
-};
