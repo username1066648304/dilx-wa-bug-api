@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showMessage('Login admin berhasil, mengalihkan...', 'success');
             sessionStorage.setItem('isAdmin', 'true');
             setTimeout(() => {
-                window.location.href = 'cadmin.html';
+                window.location.href = 'main.html';
             }, 1000);
             return;
         }
