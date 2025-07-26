@@ -227,6 +227,17 @@ button:disabled {
   </div>
 </div>
 
+<!-- SECTION TAMBAHAN UNTUK ADMIN DAN RESELLER -->
+<div class="glass-box" id="admin-section" style="display:none; margin-top:20px;">
+  <h1>👑 Admin Panel</h1>
+  <button onclick="showAddUserForm()">➕ Tambah User</button>
+</div>
+
+<div class="glass-box" id="reseller-section" style="display:none; margin-top:20px;">
+  <h1>🛒 Reseller Panel</h1>
+  <button onclick="showAddUserResellerForm()">➕ Buat User Biasa</button>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 <script>
   particlesJS("particles-js", {
@@ -384,9 +395,16 @@ function showDashboard(user) {
   document.getElementById("login-box").style.display = "none";
   document.getElementById("main-box").style.display = "block";
   document.getElementById("userLabel").innerText = user.username;
-document.getElementById("welcomeText").innerText = `Welcome, ${user.username}\nExpired: ${new Date(user.expired).toLocaleDateString()}`;
+  document.getElementById("welcomeText").innerText = `Welcome, ${user.username}\nExpired: ${new Date(user.expired).toLocaleDateString()}`;
   checkServerStatus();
   setInterval(checkServerStatus, 3000);
+
+  // Tambah halaman sesuai role
+  if (user.role === "reseller") {
+    showAddUserReseller();
+  } else if (user.role === "admin") {
+    showAddUserAdmin();
+  }
 }
 
   function getSelectedBug() {
@@ -432,6 +450,76 @@ document.getElementById("welcomeText").innerText = `Welcome, ${user.username}\nE
     } catch (err) {
       statusEl.innerHTML = `<i class="fas fa-circle" style="color:gray;"></i> Disconnected`;
     }
+  }
+<!-- Fungsi Tambah User Admin -->
+<script>
+  async function addUserAdmin() {
+    const username = document.getElementById('newUsernameAdmin').value.trim();
+    const password = document.getElementById('newPasswordAdmin').value.trim();
+    const role = document.getElementById('newRoleAdmin').value;
+    const expired = document.getElementById('newExpiredAdmin').value;
+
+    if (!username || !password || !role || !expired) {
+      return showPopup("❗ Lengkapi semua field!");
+    }
+
+    const users = await getUsers();
+    if (users.find(u => u.username === username)) {
+      return showPopup("❌ Username sudah ada!");
+    }
+
+    const newUser = {
+      username,
+      password,
+      role,
+      expired,
+      device_id: "",
+      telegram_id: null
+    };
+
+    users.push(newUser);
+    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(users)
+    });
+
+    showPopup(`✅ User ${username} ditambahkan sebagai ${role}`, true);
+  }
+
+  async function addUserReseller() {
+    const username = document.getElementById('newUsernameReseller').value.trim();
+    const password = document.getElementById('newPasswordReseller').value.trim();
+    const days = document.getElementById('newExpiredReseller').value;
+
+    if (!username || !password || !days) {
+      return showPopup("❗ Lengkapi semua field!");
+    }
+
+    const expired = new Date(Date.now() + days * 86400000).toISOString().split("T")[0];
+
+    const users = await getUsers();
+    if (users.find(u => u.username === username)) {
+      return showPopup("❌ Username sudah ada!");
+    }
+
+    const newUser = {
+      username,
+      password,
+      role: "user",
+      expired,
+      device_id: "",
+      telegram_id: null
+    };
+
+    users.push(newUser);
+    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(users)
+    });
+
+    showPopup(`✅ User ${username} ditambahkan untuk ${days} hari`, true);
   }
 </script>
 <script src="api.js"></script>
