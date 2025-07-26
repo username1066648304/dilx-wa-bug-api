@@ -52,11 +52,25 @@ body {
   border-bottom: 1px solid rgba(76, 175, 80, 0.2);
 }
 
-.hamburger-menu {
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+.hamburger-role-menu {
+  position: absolute;
+  top: 60px;
+  left: 20px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 10px;
+  display: none;
+  z-index: 10;
+}
+.hamburger-role-menu a {
+  display: block;
+  padding: 10px;
+  color: white;
+  text-decoration: none;
+}
+.hamburger-role-menu a:hover {
+  background-color: rgba(255,255,255,0.2);
 }
 
 .hamburger-line {

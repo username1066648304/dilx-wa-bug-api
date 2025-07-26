@@ -186,9 +186,11 @@ function selectRole(element, role) {
 }
 
 // Menu Interactions
-function toggleSideMenu() {
-  // Implement if you want side menu
-  console.log("Hamburger menu clicked");
+function toggleSideMenu(e) {
+  e?.stopPropagation();
+  const roleMenu = document.getElementById('hamburgerRoleMenu');
+  const isVisible = roleMenu.style.display === 'block';
+  roleMenu.style.display = isVisible ? 'none' : 'block';
 }
 
 function toggleProfileDropdown(e) {
@@ -197,9 +199,13 @@ function toggleProfileDropdown(e) {
 }
 
 function closeAllDropdowns(e) {
-  if (!e.target.matches('.profile-icon') && !e.target.matches('.profile-icon *')) {
+  if (!e.target.closest('.profile-icon')) {
     elements.profileDropdown.classList.remove('show');
   }
+  if (!e.target.closest('#hamburgerRoleMenu') && !e.target.closest('.hamburger-menu')) {
+    document.getElementById('hamburgerRoleMenu').style.display = 'none';
+  }
+}
 }
 
 // [Rest of your existing functions (login, sendBug, etc.)]
