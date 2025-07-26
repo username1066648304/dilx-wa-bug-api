@@ -255,6 +255,19 @@ function setButtonLoading(button, isLoading) {
     : '<i class="fas fa-sign-in-alt"></i> Login';
   button.disabled = isLoading;
 }
+// show password 
+function togglePassword() {
+  const passwordInput = document.getElementById('newUserPassword');
+  const toggleIcon = document.querySelector('.password-toggle i');
+  
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+  } else {
+    passwordInput.type = 'password';
+    toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+  }
+} 
 
 // Show dashboard
 function showDashboard() {
