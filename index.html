@@ -80,6 +80,7 @@
       z-index: 999;
       padding: 70px 20px 20px;
       transition: all 0.3s;
+      overflow-y: auto;
     }
 
     .side-menu.active {
@@ -182,6 +183,17 @@
       background: var(--second);
     }
 
+    .btn-telegram {
+      background: #0088cc;
+      margin-top: 15px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-telegram:hover {
+      background: #0077b3;
+    }
+
     /* Dashboard Info */
     .info-grid {
       display: grid;
@@ -204,6 +216,23 @@
 
     .info-value {
       font-size: 1.1rem;
+    }
+
+    /* User List Table */
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .user-table th, .user-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(76, 175, 80, 0.2);
+    }
+
+    .user-table th {
+      color: var(--main);
     }
 
     /* Hidden class */
@@ -233,14 +262,14 @@
   </style>
 </head>
 <body>
-  <!-- Header with Hamburger -->
-  <div class="header">
+  <!-- Header with Hamburger (hidden on login screen) -->
+  <div class="header hidden" id="header">
     <div class="hamburger" id="hamburger">
       <div class="hamburger-line"></div>
       <div class="hamburger-line"></div>
       <div class="hamburger-line"></div>
     </div>
-    <div class="logo">UltraXweb</div>
+    <div class="logo">UltraXweb <span>@F1222</span></div>
     <div></div> <!-- Spacer -->
   </div>
 
@@ -254,7 +283,7 @@
   <div class="main-content">
     <!-- Login Form -->
     <div class="card" id="loginCard">
-      <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+      <h2 style="text-align: center;"><i class="fas fa-sign-in-alt"></i> Login</h2>
       <div class="form-group">
         <label>Username</label>
         <input type="text" id="username" class="form-control">
@@ -266,7 +295,13 @@
       <button class="btn" onclick="login()" id="loginBtn">
         <i class="fas fa-sign-in-alt"></i> Login
       </button>
-      <div id="loginResult" style="margin-top: 15px;"></div>
+      
+      <!-- Buy Access via Telegram Button -->
+      <a href="https://t.me/dilxVXII" target="_blank" class="btn btn-telegram">
+        <i class="fab fa-telegram"></i> Buy Access via Telegram
+      </a>
+      
+      <div id="loginResult" style="margin-top: 15px; text-align: center;"></div>
     </div>
 
     <!-- Dashboard -->
@@ -278,16 +313,16 @@
           <div class="info-value" id="infoUsername">-</div>
         </div>
         <div class="info-item">
-          <div class="info-label">Password</div>
-          <div class="info-value" id="infoPassword">••••••••</div>
-        </div>
-        <div class="info-item">
           <div class="info-label">Role</div>
           <div class="info-value" id="infoRole">-</div>
         </div>
         <div class="info-item">
           <div class="info-label">Device ID</div>
           <div class="info-value" id="infoDeviceId">-</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Expired</div>
+          <div class="info-value" id="infoExpired">-</div>
         </div>
       </div>
     </div>
@@ -304,80 +339,71 @@
         <input type="text" id="myInfoRole" class="form-control" readonly>
       </div>
       <div class="form-group">
-        <label>Device ID</label>
-        <input type="text" id="myInfoDeviceId" class="form-control" readonly>
+        <label>Reset Password</label>
+        <input type="password" id="newPassword" class="form-control" placeholder="New password">
       </div>
-      <button class="btn" onclick="hideAllMenus()">
-        <i class="fas fa-times"></i> Close
-      </button>
-    </div>
-
-    <!-- Attack Menu -->
-    <div class="card hidden fade-in" id="attackMenu">
-      <h2><i class="fas fa-bolt"></i> Attack Menu</h2>
-      <div class="form-group">
-        <label>Target</label>
-        <input type="text" id="attackTarget" class="form-control" placeholder="Enter target">
-      </div>
-      <div class="form-group">
-        <label>Attack Type</label>
-        <select id="attackType" class="form-control">
-          <option value="crash">Crash</option>
-          <option value="delay">Delay</option>
-          <option value="invisible">Invisible</option>
-        </select>
-      </div>
-      <button class="btn" onclick="launchAttack()" id="attackBtn">
-        <i class="fas fa-paper-plane"></i> Launch Attack
+      <button class="btn" onclick="resetPassword()" id="resetPassBtn">
+        <i class="fas fa-key"></i> Reset Password
       </button>
       <button class="btn" onclick="hideAllMenus()" style="margin-left: 10px;">
         <i class="fas fa-times"></i> Close
       </button>
-      <div id="attackResult" style="margin-top: 15px;"></div>
+      <div id="myInfoResult" style="margin-top: 15px;"></div>
     </div>
 
-    <!-- Reseller Menu -->
-    <div class="card hidden fade-in" id="resellerMenu">
-      <h2><i class="fas fa-user-tag"></i> Reseller Menu</h2>
+    <!-- Admin: Create User -->
+    <div class="card hidden fade-in" id="adminCreateUser">
+      <h2><i class="fas fa-user-plus"></i> Create User</h2>
       <div class="form-group">
         <label>Username</label>
-        <input type="text" id="resellerUsername" class="form-control" placeholder="New username">
+        <input type="text" id="newUsername" class="form-control">
       </div>
       <div class="form-group">
         <label>Password</label>
-        <input type="password" id="resellerPassword" class="form-control" placeholder="New password">
+        <input type="password" id="newUserPassword" class="form-control">
       </div>
       <div class="form-group">
-        <label>Days</label>
-        <select id="resellerDays" class="form-control">
-          <option value="1">1 Day</option>
-          <option value="7">7 Days</option>
-          <option value="30">30 Days</option>
+        <label>Role</label>
+        <select id="newUserRole" class="form-control">
+          <option value="admin">Admin</option>
+          <option value="reseller">Reseller</option>
+          <option value="user" selected>User</option>
         </select>
       </div>
-      <button class="btn" onclick="createResellerUser()" id="resellerBtn">
-        <i class="fas fa-user-plus"></i> Create User
+      <div class="form-group">
+        <label>Expiration Days</label>
+        <input type="number" id="newUserDays" class="form-control" min="1" value="30">
+      </div>
+      <button class="btn" onclick="createUser()" id="createUserBtn">
+        <i class="fas fa-save"></i> Create User
       </button>
       <button class="btn" onclick="hideAllMenus()" style="margin-left: 10px;">
         <i class="fas fa-times"></i> Close
       </button>
-      <div id="resellerResult" style="margin-top: 15px;"></div>
+      <div id="createUserResult" style="margin-top: 15px;"></div>
     </div>
 
-    <!-- Admin Menu -->
-    <div class="card hidden fade-in" id="adminMenu">
-      <h2><i class="fas fa-user-shield"></i> Admin Menu</h2>
-      <div class="form-group">
-        <label>Username to Delete</label>
-        <input type="text" id="adminDeleteUsername" class="form-control" placeholder="Username to delete">
+    <!-- Admin: List Users -->
+    <div class="card hidden fade-in" id="adminListUsers">
+      <h2><i class="fas fa-users"></i> User List</h2>
+      <div style="overflow-x: auto;">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Expired</th>
+              <th>Device ID</th>
+            </tr>
+          </thead>
+          <tbody id="userListBody">
+            <!-- Users will be populated here -->
+          </tbody>
+        </table>
       </div>
-      <button class="btn btn-danger" onclick="deleteUser()" id="deleteBtn">
-        <i class="fas fa-trash"></i> Delete User
-      </button>
-      <button class="btn" onclick="hideAllMenus()" style="margin-left: 10px;">
+      <button class="btn" onclick="hideAllMenus()" style="margin-top: 15px;">
         <i class="fas fa-times"></i> Close
       </button>
-      <div id="adminResult" style="margin-top: 15px;"></div>
     </div>
   </div>
 
@@ -404,6 +430,7 @@
     }
 
     // DOM elements
+    const header = document.getElementById('header');
     const hamburger = document.getElementById('hamburger');
     const sideMenu = document.getElementById('sideMenu');
     const menuOverlay = document.getElementById('menuOverlay');
@@ -444,6 +471,11 @@
     function showMenu(menuId) {
       hideAllMenus();
       document.getElementById(menuId).classList.remove('hidden');
+      
+      // If showing user list, load users
+      if (menuId === 'adminListUsers') {
+        loadUserList();
+      }
     }
 
     // Update side menu based on user role
@@ -459,16 +491,10 @@
         { icon: 'fa-user', text: 'My Info', action: () => showMenu('myInfo') }
       );
 
-      if (currentUser.role === 'admin' || currentUser.role === 'reseller') {
-        menuItems.push(
-          { icon: 'fa-bolt', text: 'Attack Menu', action: () => showMenu('attackMenu') }
-        );
-      }
-
       if (currentUser.role === 'admin') {
         menuItems.push(
-          { icon: 'fa-user-tag', text: 'Reseller Menu', action: () => showMenu('resellerMenu') },
-          { icon: 'fa-user-shield', text: 'Admin Menu', action: () => showMenu('adminMenu') }
+          { icon: 'fa-user-plus', text: 'Create User', action: () => showMenu('adminCreateUser') },
+          { icon: 'fa-users', text: 'List Users', action: () => showMenu('adminListUsers') }
         );
       }
 
@@ -571,6 +597,8 @@
 
     // Show dashboard
     function showDashboard() {
+      // Show header and hide login
+      header.classList.remove('hidden');
       loginCard.classList.add('hidden');
       dashboard.classList.remove('hidden');
       
@@ -578,11 +606,11 @@
       document.getElementById('infoUsername').textContent = currentUser.username;
       document.getElementById('infoRole').textContent = currentUser.role;
       document.getElementById('infoDeviceId').textContent = localDeviceId;
+      document.getElementById('infoExpired').textContent = currentUser.expired || 'N/A';
       
       // Update My Info
       document.getElementById('myInfoUsername').value = currentUser.username;
       document.getElementById('myInfoRole').value = currentUser.role;
-      document.getElementById('myInfoDeviceId').value = localDeviceId;
       
       updateSideMenu();
     }
@@ -605,6 +633,7 @@
       } finally {
         currentUser = null;
         localStorage.removeItem('currentUser');
+        header.classList.add('hidden');
         loginCard.classList.remove('hidden');
         dashboard.classList.add('hidden');
         hideAllMenus();
@@ -613,74 +642,86 @@
       }
     }
 
-    // Launch attack
-    async function launchAttack() {
-      const target = document.getElementById('attackTarget').value;
-      const attackType = document.getElementById('attackType').value;
-      const attackResult = document.getElementById('attackResult');
-      const attackBtn = document.getElementById('attackBtn');
+    // Reset password
+    async function resetPassword() {
+      const newPassword = document.getElementById('newPassword').value;
+      const resetPassBtn = document.getElementById('resetPassBtn');
+      const myInfoResult = document.getElementById('myInfoResult');
 
-      if (!target) {
-        attackResult.innerHTML = 'Please enter target';
-        attackResult.style.color = '#f44336';
+      if (!newPassword) {
+        myInfoResult.innerHTML = 'Please enter new password';
+        myInfoResult.style.color = '#f44336';
         return;
       }
 
       // Show loading state
-      attackBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Launching...';
-      attackBtn.disabled = true;
+      resetPassBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Updating...';
+      resetPassBtn.disabled = true;
 
       try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        attackResult.innerHTML = `Attack (${attackType}) launched successfully to ${target}`;
-        attackResult.style.color = 'var(--main)';
+        const users = await getUsers();
+        const updatedUsers = users.map(u => {
+          if (u.username === currentUser.username) {
+            return { ...u, password: newPassword };
+          }
+          return u;
+        });
+
+        await updateUsers(updatedUsers);
+
+        // Update current user
+        currentUser.password = newPassword;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+        myInfoResult.innerHTML = 'Password updated successfully';
+        myInfoResult.style.color = 'var(--main)';
+        document.getElementById('newPassword').value = '';
       } catch (error) {
-        attackResult.innerHTML = 'Attack failed: ' + error.message;
-        attackResult.style.color = '#f44336';
+        myInfoResult.innerHTML = 'Error updating password: ' + error.message;
+        myInfoResult.style.color = '#f44336';
       } finally {
-        attackBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Launch Attack';
-        attackBtn.disabled = false;
+        resetPassBtn.innerHTML = '<i class="fas fa-key"></i> Reset Password';
+        resetPassBtn.disabled = false;
       }
     }
 
-    // Create reseller user
-    async function createResellerUser() {
-      const username = document.getElementById('resellerUsername').value;
-      const password = document.getElementById('resellerPassword').value;
-      const days = document.getElementById('resellerDays').value;
-      const resellerResult = document.getElementById('resellerResult');
-      const resellerBtn = document.getElementById('resellerBtn');
+    // Create new user (admin only)
+    async function createUser() {
+      const username = document.getElementById('newUsername').value;
+      const password = document.getElementById('newUserPassword').value;
+      const role = document.getElementById('newUserRole').value;
+      const days = parseInt(document.getElementById('newUserDays').value);
+      const createUserBtn = document.getElementById('createUserBtn');
+      const createUserResult = document.getElementById('createUserResult');
 
-      if (!username || !password) {
-        resellerResult.innerHTML = 'Please fill all fields';
-        resellerResult.style.color = '#f44336';
+      if (!username || !password || isNaN(days)) {
+        createUserResult.innerHTML = 'Please fill all fields correctly';
+        createUserResult.style.color = '#f44336';
         return;
       }
 
       // Show loading state
-      resellerBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Creating...';
-      resellerBtn.disabled = true;
+      createUserBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Creating...';
+      createUserBtn.disabled = true;
 
       try {
         const users = await getUsers();
         
         // Check if username already exists
         if (users.some(u => u.username === username)) {
-          resellerResult.innerHTML = 'Username already exists';
-          resellerResult.style.color = '#f44336';
+          createUserResult.innerHTML = 'Username already exists';
+          createUserResult.style.color = '#f44336';
           return;
         }
 
         // Calculate expiration date
         const expiredDate = new Date();
-        expiredDate.setDate(expiredDate.getDate() + parseInt(days));
+        expiredDate.setDate(expiredDate.getDate() + days);
 
         const newUser = {
           username,
           password,
-          role: 'user', // Reseller can only create regular users
+          role,
           telegram_id: null,
           device_id: '',
           expired: expiredDate.toISOString().split('T')[0]
@@ -689,68 +730,48 @@
         const updatedUsers = [...users, newUser];
         await updateUsers(updatedUsers);
 
-        resellerResult.innerHTML = `User ${username} created successfully with ${days} days access`;
-        resellerResult.style.color = 'var(--main)';
+        createUserResult.innerHTML = `User ${username} created successfully`;
+        createUserResult.style.color = 'var(--main)';
         
         // Clear form
-        document.getElementById('resellerUsername').value = '';
-        document.getElementById('resellerPassword').value = '';
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newUserPassword').value = '';
+        document.getElementById('newUserDays').value = '30';
       } catch (error) {
-        resellerResult.innerHTML = 'Error creating user: ' + error.message;
-        resellerResult.style.color = '#f44336';
+        createUserResult.innerHTML = 'Error creating user: ' + error.message;
+        createUserResult.style.color = '#f44336';
       } finally {
-        resellerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create User';
-        resellerBtn.disabled = false;
+        createUserBtn.innerHTML = '<i class="fas fa-save"></i> Create User';
+        createUserBtn.disabled = false;
       }
     }
 
-    // Delete user (admin only)
-    async function deleteUser() {
-      const username = document.getElementById('adminDeleteUsername').value;
-      const adminResult = document.getElementById('adminResult');
-      const deleteBtn = document.getElementById('deleteBtn');
-
-      if (!username) {
-        adminResult.innerHTML = 'Please enter username';
-        adminResult.style.color = '#f44336';
-        return;
-      }
-
-      // Show loading state
-      deleteBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Deleting...';
-      deleteBtn.disabled = true;
+    // Load user list for admin
+    async function loadUserList() {
+      const userListBody = document.getElementById('userListBody');
+      userListBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Loading users...</td></tr>';
 
       try {
         const users = await getUsers();
         
-        // Check if user exists
-        if (!users.some(u => u.username === username)) {
-          adminResult.innerHTML = 'User not found';
-          adminResult.style.color = '#f44336';
+        if (users.length === 0) {
+          userListBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No users found</td></tr>';
           return;
         }
 
-        // Can't delete yourself
-        if (username === currentUser.username) {
-          adminResult.innerHTML = 'Cannot delete your own account';
-          adminResult.style.color = '#f44336';
-          return;
-        }
-
-        const updatedUsers = users.filter(u => u.username !== username);
-        await updateUsers(updatedUsers);
-
-        adminResult.innerHTML = `User ${username} deleted successfully`;
-        adminResult.style.color = 'var(--main)';
-        
-        // Clear form
-        document.getElementById('adminDeleteUsername').value = '';
+        userListBody.innerHTML = '';
+        users.forEach(user => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${user.username}</td>
+            <td>${user.role}</td>
+            <td>${user.expired || 'N/A'}</td>
+            <td>${user.device_id || 'Not logged in'}</td>
+          `;
+          userListBody.appendChild(row);
+        });
       } catch (error) {
-        adminResult.innerHTML = 'Error deleting user: ' + error.message;
-        adminResult.style.color = '#f44336';
-      } finally {
-        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Delete User';
-        deleteBtn.disabled = false;
+        userListBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #f44336;">Error loading users</td></tr>';
       }
     }
   </script>
