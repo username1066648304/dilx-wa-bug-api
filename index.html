@@ -5,164 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>UltraXweb</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <style>
-:root {
-  --main: #4CAF50;     /* hijau medium */
-  --second: #2E7D32;   /* hijau tua */
-  --bg: #0a0a0a;       /* latar belakang gelap */
-  --text: #f2f2f2;     /* teks terang */
-}
-
-* {
-  margin: 0; padding: 0; box-sizing: border-box;
-  font-family: sans-serif;
-}
-
-body {
-  background: var(--bg); color: var(--text);
-  min-height: 100vh; display: flex;
-  justify-content: center; align-items: center;
-  padding: 20px; position: relative;
-}
-
-#particles-js {
-  position: fixed; width: 100%; height: 100%; z-index: 0;
-}
-
-.glass-box {
-  background: rgba(76, 175, 80, 0.03); /* hijau transparan */
-  border: 1px solid rgba(76, 175, 80, 0.2);
-  border-radius: 20px;
-  padding: 30px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 25px rgba(76, 175, 80, 0.1);
-  z-index: 2;
-  max-width: 450px;
-  width: 100%;
-}
-
-/* [Previous CSS styles remain the same...] */
-
-/* Role Menu Styles */
-.role-menu {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(10, 10, 10, 0.95);
-  border: 1px solid var(--main);
-  border-radius: 15px;
-  padding: 20px;
-  z-index: 1000;
-  width: 90%;
-  max-width: 400px;
-  animation: fadeIn 0.3s;
-}
-
-.role-menu h2 {
-  color: var(--main);
-  margin-bottom: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.role-menu h2 i {
-  cursor: pointer;
-}
-
-.role-form-group {
-  margin-bottom: 15px;
-}
-
-.role-form-group label {
-  display: block;
-  margin-bottom: 5px;
-  color: #aaa;
-}
-
-.role-input {
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 12px;
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-.role-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.role-selector {
-  display: flex;
-  border: 1px solid var(--main);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 15px;
-}
-
-.role-option {
-  flex: 1;
-  text-align: center;
-  padding: 8px;
-  cursor: pointer;
-  background: rgba(76, 175, 80, 0.1);
-  transition: all 0.3s;
-}
-
-.role-option.active {
-  background: var(--main);
-  color: black;
-  font-weight: bold;
-}
-
-.role-option:not(:last-child) {
-  border-right: 1px solid var(--main);
-}
-
-/* Bug Buttons */
-.bug-buttons {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  margin: 15px 0;
-}
-
-.bug-button {
-  background: rgba(76, 175, 80, 0.1);
-  border: 1px solid rgba(76, 175, 80, 0.3);
-  color: var(--text);
-  padding: 12px;
-  border-radius: 10px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.bug-button:hover {
-  background: rgba(76, 175, 80, 0.2);
-  transform: translateY(-2px);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translate(-50%, -55%); }
-  to { opacity: 1; transform: translate(-50%, -50%); }
-}
-  </style>
+  <link href="style.css" rel="stylesheet">
 </head>
 <body>
 <div id="particles-js"></div>
 
-<!-- Login Box -->
+<div id="popup" style="display:none;">
+  <div class="popup-content">
+    <span class="close-btn" onclick="closePopup()">&times;</span>
+    <p id="popup-message"></p>
+  </div>
+</div>
+
+<div class="header">
+<div class="hamburger-role-menu" id="hamburgerRoleMenu" style="display:none;">
+  <a href="#" onclick="showRoleMenu('admin')"><i class="fas fa-user-shield"></i> Admin</a>
+  <a href="#" onclick="showRoleMenu('reseller')"><i class="fas fa-user-tag"></i> Reseller</a>
+  <a href="#" onclick="showRoleMenu('account')"><i class="fas fa-user-cog"></i> Account</a>
+</div>
+  
+  <div class="profile-dropdown">
+    <div class="profile-icon">
+      <i class="fas fa-user"></i>
+    </div>
+    <div class="dropdown-content" id="profileDropdown"></div>
+  </div>
+</div>
+
 <div id="login-box" class="glass-box">
   <h1>Welcome To UltraXweb</h1>
   <div style="position: relative; margin-bottom: 10px;">
@@ -177,10 +46,16 @@ body {
   <div id="login-result" style="margin-top:10px; text-align:center;"></div>
 </div>
 
-<!-- Main Box -->
 <div class="glass-box" id="main-box" style="display:none;">
   <div class="profile">
-    <img src="" alt="profile">
+    <div class="profile-dropdown">
+      <div class="profile-icon" style="width: 65px; height: 65px;">
+        <i class="fas fa-user" style="font-size: 24px;"></i>
+      </div>
+      <div class="dropdown-content">
+        <a href="#" onclick="showRoleMenu('account')"><i class="fas fa-user-cog"></i> Account</a>
+      </div>
+    </div>
     <div class="profile-info">
       <h2 id="userLabel">Api Bug</h2>
       <span class="status"><i class="fas fa-circle"></i> Checking...</span>
@@ -188,656 +63,149 @@ body {
   </div>
   <h1 id="welcomeText">Welcome, username</h1>
   <input type="text" id="target" placeholder="Please input target number. Example 62xxx" />
-  
-  <div class="bug-buttons">
-    <div class="bug-button" onclick="sendBug('xinvis')">
-      <i class="fas fa-ghost"></i> Invisible Crash +
-    </div>
-    <div class="bug-button" onclick="sendBug('xios')">
-      <i class="fab fa-apple"></i> Invisible IOS +
-    </div>
-    <div class="bug-button" onclick="sendBug('xdelay')">
-      <i class="fas fa-clock"></i> Delay MSC +
-    </div>
-  </div>
-
+  <select id="bugType">
+    <option value="crashtotal">Force Close Android</option>
+    <option value="crashtotal">Force Close IPhone</option>  
+    <option value="delay">Delay Invisible</option>   
+  </select>
+  <button id="sendBtn" onclick="sendBug()">
+    <i class="fab fa-telegram-plane"></i> Kirim Bug
+  </button>
   <button class="small-logout" onclick="logout()">Logout</button>
   <div id="result" style="margin-top:10px;"></div>
+  <div class="contact" style="margin-top: 20px; color: white;">
+    <p>Contact Developer:</p>
+    <a href="https://t.me/dilxVXII" target="_blank" style="color: var(--main);">
+      <i class="fab fa-telegram"></i> Owner UltraXweb 
+    </a>
+  </div>
 </div>
 
-<!-- Admin Menu: Create User -->
-<div id="admin-create-user" class="role-menu">
-  <h2>Create User <i class="fas fa-times" onclick="hideRoleMenu()"></i></h2>
-  <div class="role-form-group">
-    <label>Username</label>
-    <input type="text" id="new-username" class="role-input">
+<!-- Role Menu Templates -->
+<div id="adminMenu" class="role-menu">
+  <div class="role-tabs">
+    <button class="role-tab active" onclick="openRoleTab('createUser')">Create User</button>
+    <button class="role-tab" onclick="openRoleTab('deleteUser')">Delete User</button>
+    <button class="role-tab" onclick="openRoleTab('resetPass')">Reset Password</button>
+    <button class="role-tab" onclick="openRoleTab('sendNotif')">Notification</button>
   </div>
-  <div class="role-form-group">
-    <label>Password</label>
-    <input type="password" id="new-password" class="role-input">
-  </div>
-  <div class="role-form-group">
-    <label>Role</label>
-    <div class="role-selector">
-      <div class="role-option active" onclick="selectRole(this, 'admin')">Admin</div>
-      <div class="role-option" onclick="selectRole(this, 'reseller')">Reseller</div>
-      <div class="role-option" onclick="selectRole(this, 'user')">User</div>
+
+  <div id="createUser" class="role-tab-content" style="display: block;">
+    <h3><i class="fas fa-user-plus"></i> Create New User</h3>
+    <div class="role-info">
+      <i class="fas fa-info-circle"></i> Anda bisa membuat user dengan role Admin, Reseller, atau User biasa.
+    </div>
+    <div class="role-form-group">
+      <label>Username</label>
+      <input type="text" id="newUsername" class="role-input">
+    </div>
+    <div class="role-form-group">
+      <label>Password</label>
+      <input type="password" id="newPassword" class="role-input">
+    </div>
+    <div class="role-form-group">
+      <label>Role</label>
+      <div class="role-selector">
+        <div class="role-option active" onclick="selectRole(this, 'admin')">Admin</div>
+        <div class="role-option" onclick="selectRole(this, 'reseller')">Reseller</div>
+        <div class="role-option" onclick="selectRole(this, 'user')">User</div>
+      </div>
+    </div>
+    <div class="role-form-group">
+      <label>Days</label>
+      <input type="number" id="newDays" class="role-input" min="1" value="30">
+    </div>
+    <div class="role-actions">
+      <button class="small-logout" onclick="createUser()"><i class="fas fa-save"></i> Create</button>
     </div>
   </div>
-  <div class="role-form-group">
-    <label>Days</label>
-    <input type="number" id="new-days" class="role-input" min="1" value="30">
+
+  <div id="deleteUser" class="role-tab-content">
+    <h3><i class="fas fa-user-times"></i> Delete User</h3>
+    <div class="role-info">
+      <i class="fas fa-exclamation-triangle"></i> Hati-hati! Aksi ini tidak dapat dibatalkan.
+    </div>
+    <div class="role-form-group">
+      <label>Username</label>
+      <input type="text" id="delUsername" class="role-input">
+    </div>
+    <div class="role-actions">
+      <button class="small-logout" style="background: #f44336;" onclick="deleteUser()"><i class="fas fa-trash"></i> Delete</button>
+    </div>
   </div>
-  <div class="role-actions">
-    <button onclick="createUser()"><i class="fas fa-save"></i> Create</button>
+
+  <div id="resetPass" class="role-tab-content">
+    <h3><i class="fas fa-key"></i> Reset Password</h3>
+    <div class="role-form-group">
+      <label>Old Password</label>
+      <input type="password" id="oldPass" class="role-input">
+    </div>
+    <div class="role-form-group">
+      <label>New Password</label>
+      <input type="password" id="newPass" class="role-input">
+    </div>
+    <div class="role-actions">
+      <button class="small-logout" onclick="resetPassword()"><i class="fas fa-sync-alt"></i> Reset</button>
+    </div>
+  </div>
+
+  <div id="sendNotif" class="role-tab-content">
+    <h3><i class="fas fa-bell"></i> Send Notification</h3>
+    <div class="role-info">
+      <i class="fas fa-info-circle"></i> Notifikasi akan dikirim ke semua user.
+    </div>
+    <div class="role-form-group">
+      <label>Message</label>
+      <textarea id="notifMessage" class="role-input" style="height: 100px;"></textarea>
+    </div>
+    <div class="role-actions">
+      <button class="small-logout" onclick="sendNotification()"><i class="fas fa-paper-plane"></i> Send</button>
+    </div>
   </div>
 </div>
 
-<!-- Admin Menu: Delete User -->
-<div id="admin-delete-user" class="role-menu">
-  <h2>Delete User <i class="fas fa-times" onclick="hideRoleMenu()"></i></h2>
+<div id="resellerMenu" class="role-menu">
+  <h3><i class="fas fa-user-tag"></i> Create User</h3>
+  <div class="role-info">
+    <i class="fas fa-info-circle"></i> Anda hanya bisa membuat user biasa (1-30 hari).
+  </div>
   <div class="role-form-group">
     <label>Username</label>
-    <input type="text" id="delete-username" class="role-input" placeholder="Enter username to delete">
-  </div>
-  <div class="role-actions">
-    <button style="background: #f44336;" onclick="deleteUser()"><i class="fas fa-trash"></i> Delete</button>
-  </div>
-</div>
-
-<!-- Admin Menu: Reset Password -->
-<div id="admin-reset-pass" class="role-menu">
-  <h2>Reset Password <i class="fas fa-times" onclick="hideRoleMenu()"></i></h2>
-  <div class="role-form-group">
-    <label>Old Password</label>
-    <input type="password" id="old-pass" class="role-input">
-  </div>
-  <div class="role-form-group">
-    <label>New Password</label>
-    <input type="password" id="new-pass" class="role-input">
-  </div>
-  <div class="role-actions">
-    <button onclick="adminResetPassword()"><i class="fas fa-sync-alt"></i> Reset</button>
-  </div>
-</div>
-
-<!-- Admin Menu: Send Notification -->
-<div id="admin-send-notif" class="role-menu">
-  <h2>Send Notification <i class="fas fa-times" onclick="hideRoleMenu()"></i></h2>
-  <div class="role-form-group">
-    <label>Message</label>
-    <textarea id="notif-message" class="role-input" style="height: 100px;"></textarea>
-  </div>
-  <div class="role-actions">
-    <button onclick="sendNotification()"><i class="fas fa-paper-plane"></i> Send</button>
-  </div>
-</div>
-
-<!-- Reseller Menu: Create User -->
-<div id="reseller-create-user" class="role-menu">
-  <h2>Create User <i class="fas fa-times" onclick="hideRoleMenu()"></i></h2>
-  <div class="role-form-group">
-    <label>Username</label>
-    <input type="text" id="reseller-username" class="role-input">
+    <input type="text" id="resellerUsername" class="role-input">
   </div>
   <div class="role-form-group">
     <label>Password</label>
-    <input type="password" id="reseller-password" class="role-input">
+    <input type="password" id="resellerPassword" class="role-input">
   </div>
   <div class="role-form-group">
     <label>Days</label>
-    <select id="reseller-days" class="role-input">
+    <select id="resellerDays" class="role-input">
       <option value="1">1 Day</option>
       <option value="7">7 Days</option>
       <option value="30">30 Days</option>
     </select>
   </div>
   <div class="role-actions">
-    <button onclick="resellerCreateUser()"><i class="fas fa-save"></i> Create</button>
+    <button class="small-logout" onclick="resellerCreateUser()"><i class="fas fa-save"></i> Create</button>
   </div>
 </div>
 
-<!-- Account Menu: Reset Password -->
-<div id="account-reset-pass" class="role-menu">
-  <h2>Reset Password <i class="fas fa-times" onclick="hideRoleMenu()"></i></h2>
+<div id="accountMenu" class="role-menu">
+  <h3><i class="fas fa-key"></i> Reset Password</h3>
   <div class="role-form-group">
     <label>Old Password</label>
-    <input type="password" id="user-old-pass" class="role-input">
+    <input type="password" id="userOldPass" class="role-input">
   </div>
   <div class="role-form-group">
     <label>New Password</label>
-    <input type="password" id="user-new-pass" class="role-input">
+    <input type="password" id="userNewPass" class="role-input">
   </div>
   <div class="role-actions">
-    <button onclick="userResetPassword()"><i class="fas fa-sync-alt"></i> Reset</button>
+    <button class="small-logout" onclick="userResetPassword()"><i class="fas fa-sync-alt"></i> Reset</button>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-<script>
-// System Variables
-const BIN_ID = "688384cdae596e708fbb97e4";
-const API_KEY = "$2a$10$55IAjRl7i3QlilxdTPmqx.5/Idiemz453V9zHKc76Z9q4jDPhvL.C";
-const headers = {
-  "Content-Type": "application/json",
-  "X-Master-Key": API_KEY
-};
-
-// State Management
-let currentRole = '';
-let selectedRole = 'admin';
-
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-  particlesJS("particles-js", {
-    particles: {
-      number: { value: 60, density: { enable: true, value_area: 800 }},
-      color: { value: "#ffffff" },
-      shape: { type: "circle" },
-      opacity: { value: 0.3 },
-      size: { value: 3, random: true },
-      line_linked: {
-        enable: true, distance: 150,
-        color: "#ffffff", opacity: 0.2, width: 1
-      },
-      move: { enable: true, speed: 2 }
-    },
-    interactivity: {
-      events: { onhover: { enable: true, mode: "grab" }},
-      modes: { grab: { distance: 200, line_linked: { opacity: 1 }}}
-    },
-    retina_detect: true
-  });
-
-  // Check session on load
-  const user = getSession();
-  if (user) showDashboard(user);
-});
-
-// Core Functions
-async function getUsers() {
-  const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
-  const data = await res.json();
-  return data.record;
-}
-
-function saveSession(user) {
-  sessionStorage.setItem("currentUser", JSON.stringify(user));
-}
-
-function getSession() {
-  return JSON.parse(sessionStorage.getItem("currentUser"));
-}
-
-function logout() {
-  sessionStorage.removeItem("currentUser");
-  location.reload();
-}
-
-function showPopup(message, isSuccess = false) {
-  const popup = document.createElement('div');
-  popup.id = 'custom-popup';
-  popup.style.position = 'fixed';
-  popup.style.top = '20px';
-  popup.style.left = '50%';
-  popup.style.transform = 'translateX(-50%)';
-  popup.style.backgroundColor = isSuccess ? '#2E7D32' : '#f44336';
-  popup.style.color = 'white';
-  popup.style.padding = '15px 25px';
-  popup.style.borderRadius = '5px';
-  popup.style.zIndex = '9999';
-  popup.style.boxShadow = '0 3px 10px rgba(0,0,0,0.3)';
-  popup.style.display = 'flex';
-  popup.style.alignItems = 'center';
-  popup.style.gap = '10px';
-  popup.innerHTML = `
-    <i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-    <span>${message}</span>
-    <i class="fas fa-times" style="margin-left: 15px; cursor: pointer;" 
-       onclick="this.parentElement.remove()"></i>
-  `;
-  document.body.appendChild(popup);
-  
-  // Auto remove after 5 seconds
-  setTimeout(() => {
-    if (document.body.contains(popup)) {
-      popup.remove();
-    }
-  }, 5000);
-}
-
-// Role Menu Functions
-function showRoleMenu(menuType) {
-  const user = getSession();
-  if (!user) return;
-  
-  // Validate role access
-  if (menuType.includes('admin') && user.role !== 'admin') {
-    showPopup("⚠️ Akses ditolak! Hanya untuk Admin.");
-    return;
-  }
-  
-  if (menuType.includes('reseller') && !['admin', 'reseller'].includes(user.role)) {
-    showPopup("⚠️ Akses ditolak! Hanya untuk Admin/Reseller.");
-    return;
-  }
-  
-  // Hide all menus first
-  hideRoleMenu();
-  
-  // Show selected menu
-  document.getElementById(menuType).style.display = 'block';
-}
-
-function hideRoleMenu() {
-  document.querySelectorAll('.role-menu').forEach(menu => {
-    menu.style.display = 'none';
-  });
-}
-
-function selectRole(element, role) {
-  // Remove active class from all options
-  document.querySelectorAll('.role-option').forEach(opt => {
-    opt.classList.remove('active');
-  });
-  
-  // Add active class to selected
-  element.classList.add('active');
-  selectedRole = role;
-}
-
-// User Management Functions
-async function createUser() {
-  const username = document.getElementById('new-username').value.trim();
-  const password = document.getElementById('new-password').value.trim();
-  const days = parseInt(document.getElementById('new-days').value);
-
-  if (!username || !password || isNaN(days)) {
-    showPopup("Harap isi semua field dengan benar!");
-    return;
-  }
-
-  try {
-    const users = await getUsers();
-    
-    // Check if username already exists
-    if (users.some(u => u.username === username)) {
-      showPopup("Username sudah digunakan!");
-      return;
-    }
-
-    // Calculate expiration date
-    const expiredDate = new Date();
-    expiredDate.setDate(expiredDate.getDate() + days);
-
-    const newUser = {
-      username,
-      password,
-      role: selectedRole,
-      expired: expiredDate.toISOString(),
-      device_id: ""
-    };
-
-    // Update users list
-    const updatedUsers = [...users, newUser];
-    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(updatedUsers)
-    });
-
-    showPopup(`User ${username} berhasil dibuat!`, true);
-    hideRoleMenu();
-  } catch (error) {
-    showPopup("Gagal membuat user: " + error.message);
-  }
-}
-
-async function resellerCreateUser() {
-  const username = document.getElementById('reseller-username').value.trim();
-  const password = document.getElementById('reseller-password').value.trim();
-  const days = parseInt(document.getElementById('reseller-days').value);
-
-  if (!username || !password) {
-    showPopup("Harap isi semua field dengan benar!");
-    return;
-  }
-
-  try {
-    const users = await getUsers();
-    
-    if (users.some(u => u.username === username)) {
-      showPopup("Username sudah digunakan!");
-      return;
-    }
-
-    const expiredDate = new Date();
-    expiredDate.setDate(expiredDate.getDate() + days);
-
-    const newUser = {
-      username,
-      password,
-      role: 'user', // Reseller can only create regular users
-      expired: expiredDate.toISOString(),
-      device_id: ""
-    };
-
-    const updatedUsers = [...users, newUser];
-    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(updatedUsers)
-    });
-
-    showPopup(`User ${username} berhasil dibuat!`, true);
-    hideRoleMenu();
-  } catch (error) {
-    showPopup("Gagal membuat user: " + error.message);
-  }
-}
-
-async function deleteUser() {
-  const username = document.getElementById('delete-username').value.trim();
-
-  if (!username) {
-    showPopup("Harap masukkan username!");
-    return;
-  }
-
-  try {
-    const users = await getUsers();
-    const currentUser = getSession();
-    
-    if (username === currentUser.username) {
-      showPopup("Tidak bisa menghapus akun sendiri!");
-      return;
-    }
-
-    const updatedUsers = users.filter(u => u.username !== username);
-    
-    if (updatedUsers.length === users.length) {
-      showPopup("User tidak ditemukan!");
-      return;
-    }
-
-    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(updatedUsers)
-    });
-
-    showPopup(`User ${username} berhasil dihapus!`, true);
-    hideRoleMenu();
-  } catch (error) {
-    showPopup("Gagal menghapus user: " + error.message);
-  }
-}
-
-async function adminResetPassword() {
-  const oldPass = document.getElementById('old-pass').value;
-  const newPass = document.getElementById('new-pass').value;
-
-  if (!oldPass || !newPass) {
-    showPopup("Harap isi semua field!");
-    return;
-  }
-
-  try {
-    const users = await getUsers();
-    const currentUser = getSession();
-    
-    if (currentUser.password !== oldPass) {
-      showPopup("Password lama salah!");
-      return;
-    }
-
-    const updatedUsers = users.map(u => {
-      if (u.username === currentUser.username) {
-        return { ...u, password: newPass };
-      }
-      return u;
-    });
-
-    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(updatedUsers)
-    });
-
-    // Update session
-    currentUser.password = newPass;
-    saveSession(currentUser);
-
-    showPopup("Password berhasil diubah!", true);
-    hideRoleMenu();
-  } catch (error) {
-    showPopup("Gagal mengubah password: " + error.message);
-  }
-}
-
-async function userResetPassword() {
-  const oldPass = document.getElementById('user-old-pass').value;
-  const newPass = document.getElementById('user-new-pass').value;
-
-  if (!oldPass || !newPass) {
-    showPopup("Harap isi semua field!");
-    return;
-  }
-
-  try {
-    const users = await getUsers();
-    const currentUser = getSession();
-    
-    if (currentUser.password !== oldPass) {
-      showPopup("Password lama salah!");
-      return;
-    }
-
-    const updatedUsers = users.map(u => {
-      if (u.username === currentUser.username) {
-        return { ...u, password: newPass };
-      }
-      return u;
-    });
-
-    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(updatedUsers)
-    });
-
-    // Update session
-    currentUser.password = newPass;
-    saveSession(currentUser);
-
-    showPopup("Password berhasil diubah!", true);
-    hideRoleMenu();
-  } catch (error) {
-    showPopup("Gagal mengubah password: " + error.message);
-  }
-}
-
-async function sendNotification() {
-  const message = document.getElementById('notif-message').value.trim();
-
-  if (!message) {
-    showPopup("Harap isi pesan notifikasi!");
-    return;
-  }
-
-  // In a real app, you would send this to your backend
-  // to broadcast to all connected users
-  showPopup("Notifikasi berhasil dikirim!", true);
-  hideRoleMenu();
-}
-
-// Login and Dashboard Functions
-async function login() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const result = document.getElementById("login-result");
-
-  try {
-    const users = await getUsers();
-    const found = users.find(u => u.username === username && u.password === password);
-
-    if (!found) {
-      result.innerText = "❌ Username atau Password salah!";
-      result.style.color = "crimson";
-      return;
-    }
-
-    if (found.banned === true) {
-      result.innerText = "🚫 Akun ini telah dibanned!";
-      result.style.color = "orangered";
-      return;
-    }
-
-    const now = new Date();
-    const expiredDate = new Date(found.expired);
-    if (now > expiredDate) {
-      result.innerText = "❌ Akun sudah expired!";
-      result.style.color = "crimson";
-      return;
-    }
-
-    // Set default role if not exists
-    found.role = found.role || 'user';
-    saveSession(found);
-    showDashboard(found);
-  } catch (error) {
-    result.innerText = "❌ Error: " + error.message;
-    result.style.color = "crimson";
-  }
-}
-
-function showDashboard(user) {
-  document.getElementById("login-box").style.display = "none";
-  document.getElementById("main-box").style.display = "block";
-  document.getElementById("userLabel").innerText = user.username;
-  document.getElementById("welcomeText").innerText = `Welcome, ${user.username}\nExpired: ${new Date(user.expired).toLocaleDateString()}`;
-  
-  // Update UI based on role
-  updateProfileDropdown(user.role);
-  checkServerStatus();
-  setInterval(checkServerStatus, 3000);
-}
-
-function updateProfileDropdown(role) {
-  currentRole = role;
-  const dropdown = document.createElement('div');
-  dropdown.className = 'dropdown-content';
-  dropdown.style.position = 'absolute';
-  dropdown.style.right = '0';
-  dropdown.style.top = '50px';
-  dropdown.style.backgroundColor = 'rgba(10, 10, 10, 0.95)';
-  dropdown.style.border = '1px solid var(--main)';
-  dropdown.style.borderRadius = '10px';
-  dropdown.style.padding = '10px 0';
-  dropdown.style.zIndex = '1001';
-  dropdown.style.minWidth = '160px';
-  dropdown.style.boxShadow = '0 0 15px rgba(76, 175, 80, 0.3)';
-
-  if (role === 'admin') {
-    dropdown.innerHTML = `
-      <div class="dropdown-item" onclick="showRoleMenu('admin-create-user')">
-        <i class="fas fa-user-plus"></i> Create User
-      </div>
-      <div class="dropdown-item" onclick="showRoleMenu('admin-delete-user')">
-        <i class="fas fa-user-times"></i> Delete User
-      </div>
-      <div class="dropdown-item" onclick="showRoleMenu('admin-reset-pass')">
-        <i class="fas fa-key"></i> Reset Password
-      </div>
-      <div class="dropdown-item" onclick="showRoleMenu('admin-send-notif')">
-        <i class="fas fa-bell"></i> Send Notification
-      </div>
-      <div class="dropdown-item" onclick="showRoleMenu('account-reset-pass')">
-        <i class="fas fa-user-cog"></i> Account
-      </div>
-    `;
-  } else if (role === 'reseller') {
-    dropdown.innerHTML = `
-      <div class="dropdown-item" onclick="showRoleMenu('reseller-create-user')">
-        <i class="fas fa-user-plus"></i> Create User
-      </div>
-      <div class="dropdown-item" onclick="showRoleMenu('account-reset-pass')">
-        <i class="fas fa-user-cog"></i> Account
-      </div>
-    `;
-  } else {
-    dropdown.innerHTML = `
-      <div class="dropdown-item" onclick="showRoleMenu('account-reset-pass')">
-        <i class="fas fa-user-cog"></i> Account
-      </div>
-    `;
-  }
-
-  // Add click event to close when clicking outside
-  document.addEventListener('click', function closeDropdown(e) {
-    if (!e.target.closest('.profile-icon') && !e.target.closest('.dropdown-content')) {
-      dropdown.remove();
-      document.removeEventListener('click', closeDropdown);
-    }
-  });
-
-  document.querySelector('.profile-icon').parentNode.appendChild(dropdown);
-}
-
-async function sendBug(type) {
-  const target = document.getElementById("target").value.trim();
-  const resultDiv = document.getElementById("result");
-  const sendBtn = document.querySelector(`.bug-button[onclick="sendBug('${type}')"]`);
-
-  if (!target) {
-    showPopup("⚠️ Masukkan nomor target!");
-    return;
-  }
-
-  const originalContent = sendBtn.innerHTML;
-  sendBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Mengirim...`;
-  sendBtn.style.opacity = "0.7";
-  sendBtn.style.pointerEvents = "none";
-
-  try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    showPopup(`Bug ${type} berhasil dikirim ke ${target}`, true);
-    resultDiv.innerText = "";
-  } catch (err) {
-    showPopup("❌ Gagal mengirim bug!");
-  } finally {
-    sendBtn.innerHTML = originalContent;
-    sendBtn.style.opacity = "1";
-    sendBtn.style.pointerEvents = "auto";
-  }
-}
-
-async function checkServerStatus() {
-  const statusEl = document.querySelector(".status");
-  try {
-    const res = await fetch("https://cella-why.mydigital-store.me/status");
-    const data = await res.json();
-    if (data.connected) {
-      statusEl.innerHTML = `<i class="fas fa-circle" style="color:limegreen;"></i> Connected`;
-    } else {
-      statusEl.innerHTML = `<i class="fas fa-circle" style="color:gray;"></i> Disconnected`;
-    }
-  } catch (err) {
-    statusEl.innerHTML = `<i class="fas fa-circle" style="color:gray;"></i> Disconnected`;
-  }
-}
-
-// Profile icon click handler
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelector('.profile-icon').addEventListener('click', function(e) {
-    e.stopPropagation();
-    const user = getSession();
-    if (user) {
-      updateProfileDropdown(user.role);
-    }
-  });
-});
-</script>
+<script src="script.js"></script>
 </body>
 </html>
