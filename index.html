@@ -227,17 +227,6 @@ button:disabled {
   </div>
 </div>
 
-<!-- SECTION TAMBAHAN UNTUK ADMIN DAN RESELLER -->
-<div class="glass-box" id="admin-section" style="display:none; margin-top:20px;">
-  <h1>👑 Admin Panel</h1>
-  <button onclick="showAddUserForm()">➕ Tambah User</button>
-</div>
-
-<div class="glass-box" id="reseller-section" style="display:none; margin-top:20px;">
-  <h1>🛒 Reseller Panel</h1>
-  <button onclick="showAddUserResellerForm()">➕ Buat User Biasa</button>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 <script>
   particlesJS("particles-js", {
@@ -392,18 +381,17 @@ async function login() {
 }
 
 function showDashboard(user) {
-  document.getElementById("login-box").style.display = "none";
-  document.getElementById("main-box").style.display = "block";
-  document.getElementById("userLabel").innerText = user.username;
-  document.getElementById("welcomeText").innerText = `Welcome, ${user.username}\nExpired: ${new Date(user.expired).toLocaleDateString()}`;
-  checkServerStatus();
-  setInterval(checkServerStatus, 3000);
+  document.getElementById('login-box').style.display = 'none';
+  document.getElementById('main-box').style.display = 'block';
+  document.getElementById('userLabel').innerText = user.username;
+  document.getElementById('welcomeText').innerText = `Welcome, ${user.username}\nExpired: ${new Date(user.expired).toLocaleDateString()}`;
+  checkServerStatus(); setInterval(checkServerStatus, 3000);
 
-  // Tambah halaman sesuai role
-  if (user.role === "reseller") {
-    showAddUserReseller();
-  } else if (user.role === "admin") {
-    showAddUserAdmin();
+  // tampilkan panel sesuai role
+  if (user.role === 'reseller') {
+    document.getElementById('reseller-section').style.display = 'block';
+  } else if (user.role === 'admin') {
+    document.getElementById('admin-section').style.display = 'block';
   }
 }
 
@@ -451,76 +439,72 @@ function showDashboard(user) {
       statusEl.innerHTML = `<i class="fas fa-circle" style="color:gray;"></i> Disconnected`;
     }
   }
-<!-- Fungsi Tambah User Admin -->
-<script>
-  async function addUserAdmin() {
-    const username = document.getElementById('newUsernameAdmin').value.trim();
-    const password = document.getElementById('newPasswordAdmin').value.trim();
-    const role = document.getElementById('newRoleAdmin').value;
-    const expired = document.getElementById('newExpiredAdmin').value;
+  
+<!-- FORM TAMBAHAN SESUAI ROLE -->
+  <div id="admin-section" class="glass-box" style="display:none; margin-top:20px;">
+    <h2>👑 Panel Admin</h2>
+    <input type="text" id="newUsernameAdmin" placeholder="Username admin/user" />
+    <select id="newRoleAdmin">
+      <option value="admin">Admin</option>
+      <option value="reseller">Reseller</option>
+      <option value="user">User</option>
+    </select>
+    <input type="date" id="newExpiredAdmin" placeholder="Expired date (YYYY-MM-DD)" />
+    <button onclick="addUserAdminUI()">Tambah User (Admin)</button>
+  </div>
 
-    if (!username || !password || !role || !expired) {
-      return showPopup("❗ Lengkapi semua field!");
-    }
+  <div id="reseller-section" class="glass-box" style="display:none; margin-top:20px;">
+    <h2>🛒 Panel Reseller</h2>
+    <input type="text" id="newUsernameReseller" placeholder="Username user biasa" />
+    <select id="newExpiredReseller">
+      <option value="1">1 Hari</option>
+      <option value="7" selected>7 Hari</option>
+      <option value="30">30 Hari</option>
+    </select>
+    <button onclick="addUserResellerUI()">Tambah User (Reseller)</button>
+  </div>
+    
+ function generateNumericPassword(length = 6) {
+  return Math.floor(
+    Math.pow(10, length - 1) +
+    Math.random() * 9 * Math.pow(10, length - 1)
+  ).toString();
+}
 
-    const users = await getUsers();
-    if (users.find(u => u.username === username)) {
-      return showPopup("❌ Username sudah ada!");
-    }
+async function addUserResellerUI() {
+  const username = document.getElementById('newUsernameReseller').value.trim();
+  const days = parseInt(document.getElementById('newExpiredReseller').value, 10);
+  if (!username || isNaN(days)) return showPopup('❗ Lengkapi field!');
+  const password = generateNumericPassword();
+  const expired = new Date(Date.now() + days * 86400000).toISOString().split('T')[0];
+  const users = await getUsers();
+  if (users.find(u => u.username === username))
+    return showPopup('❌ Username sudah ada!');
+  users.push({ username, password, role: 'user', expired, device_id: '', telegram_id: null });
+  await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+    method: 'PUT', headers, body: JSON.stringify(users)
+  });
+  showPopup(`✅ User dibuat:\n• ${username}\n• Pass: ${password}\n• Expired: ${days} hari`, true);
+}
 
-    const newUser = {
-      username,
-      password,
-      role,
-      expired,
-      device_id: "",
-      telegram_id: null
-    };
+async function addUserAdminUI() {
+  const username = document.getElementById('newUsernameAdmin').value.trim();
+  const role = document.getElementById('newRoleAdmin').value;
+  const expired = document.getElementById('newExpiredAdmin').value;
+  if (!username || !role || !expired) return showPopup('❗ Lengkapi field!');
+  const password = generateNumericPassword();
+  const users = await getUsers();
+  if (users.find(u => u.username === username))
+    return showPopup('❌ Username sudah ada!');
+  users.push({ username, password, role, expired, device_id: '', telegram_id: null });
+  await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+    method: 'PUT', headers, body: JSON.stringify(users)
+  });
+  showPopup(`✅ User dibuat:\n• ${username}\n• Pass: ${password}\n• Role: ${role}\n• Expired: ${expired}`, true);
+}
 
-    users.push(newUser);
-    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(users)
-    });
-
-    showPopup(`✅ User ${username} ditambahkan sebagai ${role}`, true);
-  }
-
-  async function addUserReseller() {
-    const username = document.getElementById('newUsernameReseller').value.trim();
-    const password = document.getElementById('newPasswordReseller').value.trim();
-    const days = document.getElementById('newExpiredReseller').value;
-
-    if (!username || !password || !days) {
-      return showPopup("❗ Lengkapi semua field!");
-    }
-
-    const expired = new Date(Date.now() + days * 86400000).toISOString().split("T")[0];
-
-    const users = await getUsers();
-    if (users.find(u => u.username === username)) {
-      return showPopup("❌ Username sudah ada!");
-    }
-
-    const newUser = {
-      username,
-      password,
-      role: "user",
-      expired,
-      device_id: "",
-      telegram_id: null
-    };
-
-    users.push(newUser);
-    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(users)
-    });
-
-    showPopup(`✅ User ${username} ditambahkan untuk ${days} hari`, true);
-  }
+   
+    
 </script>
 <script src="api.js"></script>
 </body>
