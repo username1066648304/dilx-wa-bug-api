@@ -1,8 +1,8 @@
 :root {
   --main: #4CAF50;
   --second: #2E7D32;
-  --bg: #0a0a0a;
-  --text: #000000;
+  --bg: #000000;
+  --text: #f2f2f2;
 }
 
 * {
