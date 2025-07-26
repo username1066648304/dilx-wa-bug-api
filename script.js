@@ -181,73 +181,80 @@ async function login() {
 
   // Validate inputs
   if (!username || !password) {
-    loginResult.innerHTML = 'Please enter both username and password';
-    loginResult.style.color = '#f44336';
+    showError(loginResult, 'Please enter both username and password');
     return;
   }
 
   // Set loading state
-  loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-  loginBtn.disabled = true;
+  setButtonLoading(loginBtn, true);
 
   try {
-    // Fetch users from API
     const users = await getUsers();
     const user = users.find(u => u.username === username && u.password === password);
 
-    // User not found or invalid credentials
     if (!user) {
-      loginResult.innerHTML = 'Invalid username or password';
-      loginResult.style.color = '#f44336';
+      showError(loginResult, 'Invalid username or password');
       return;
     }
 
-    // Check if account is already in use on another device
+    // Check if account is already in use
     if (user.device_id && user.device_id !== localDeviceId) {
-      loginResult.innerHTML = 'Account is already active on another device. Logout there first or contact admin.';
-      loginResult.style.color = '#f44336';
+      showError(loginResult, `Account is active on another device (ID: ${user.device_id})`);
       return;
     }
 
-    // Check account expiration
-    if (user.expired && new Date(user.expired) < new Date()) {
-      loginResult.innerHTML = 'Account has expired. Please renew your subscription.';
-      loginResult.style.color = '#f44336';
-      return;
+    // Check account expiration (for non-admin users)
+    if (user.role !== 'admin' && user.expired) {
+      const today = new Date();
+      const expiryDate = new Date(user.expired);
+      if (expiryDate < today) {
+        showError(loginResult, `Account expired on ${user.expired}. Please renew.`);
+        return;
+      }
     }
 
-    // Update user device info
-    user.device_id = localDeviceId;
+    // Update user data
+    const updatedUser = {
+      ...user,
+      device_id: localDeviceId,
+      last_login: new Date().toISOString()
+    };
 
-    // Update users in API
-    const updatedUsers = users.map(u => u.username === user.username ? user : u);
-    const updateResponse = await updateUsers(updatedUsers);
+    // Update in API
+    const updatedUsers = users.map(u => u.username === username ? updatedUser : u);
+    await updateUsers(updatedUsers);
 
-    if (!updateResponse || !updateResponse.success) {
-      throw new Error('Failed to update user data in database');
-    }
-
-    // Store user locally
-    currentUser = user;
-    localStorage.setItem('currentUser', JSON.stringify(user));
-
-    // Show success and redirect to dashboard
-    loginResult.innerHTML = 'Login successful! Redirecting...';
-    loginResult.style.color = 'var(--main)';
+    // Store locally and show dashboard
+    currentUser = updatedUser;
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
     
-    setTimeout(() => {
-      showDashboard();
-    }, 1000);
+    showSuccess(loginResult, `Welcome back, ${username}!`);
+    setTimeout(showDashboard, 1000);
 
   } catch (error) {
     console.error('Login error:', error);
-    loginResult.innerHTML = `Login failed: ${error.message || 'Server error'}`;
-    loginResult.style.color = '#f44336';
+    showError(loginResult, `System error: ${error.message || 'Please try again later'}`);
   } finally {
-    // Reset button state
-    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-    loginBtn.disabled = false;
+    setButtonLoading(loginBtn, false);
   }
+}
+
+// Helper functions
+function showError(element, message) {
+  element.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+  element.style.color = '#f44336';
+}
+
+function showSuccess(element, message) {
+  element.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+  element.style.color = 'var(--main)';
+}
+
+function setButtonLoading(button, isLoading) {
+  button.innerHTML = isLoading 
+    ? '<i class="fas fa-spinner fa-spin"></i> Processing...' 
+    : '<i class="fas fa-sign-in-alt"></i> Login';
+  button.disabled = isLoading;
 }
 
 // Show dashboard
