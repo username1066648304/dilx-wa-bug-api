@@ -275,25 +275,7 @@ function showDashboard() {
 
 // Logout function
 async function logout() {
-  const logoutBtn = document.getElementById('logoutBtn'); // Add this ID to your logout button in HTML
-  const logoutResult = document.getElementById('logoutResult'); // Add this element in your HTML
-  
   try {
-    // Show loading animation
-    if (logoutBtn) {
-      logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging out...';
-      logoutBtn.disabled = true;
-    }
-
-    // Fade out dashboard
-    if (dashboard) {
-      dashboard.style.transition = 'opacity 0.5s ease';
-      dashboard.style.opacity = '0';
-    }
-
-    // Wait for animation to complete
-    await new Promise(resolve => setTimeout(resolve, 500));
-
     if (currentUser) {
       const users = await getUsers();
       const updatedUsers = users.map(u => {
@@ -304,48 +286,17 @@ async function logout() {
       });
       await updateUsers(updatedUsers);
     }
-
-    // Show success message
-    if (logoutResult) {
-      logoutResult.innerHTML = '<i class="fas fa-check-circle"></i> Logged out successfully';
-      logoutResult.style.color = 'var(--main)';
-    }
-
   } catch (error) {
     console.error('Error during logout:', error);
-    if (logoutResult) {
-      logoutResult.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error during logout';
-      logoutResult.style.color = '#f44336';
-    }
   } finally {
-    // Clear user data
     currentUser = null;
     localStorage.removeItem('currentUser');
-
-    // Reset UI with animations
-    if (dashboard) {
-      dashboard.classList.add('hidden');
-      dashboard.style.opacity = '1'; // Reset for next login
-    }
-    
-    if (header) header.classList.add('hidden');
-    
-    // Fade in login card
-    if (loginCard) {
-      loginCard.classList.remove('hidden');
-      loginCard.style.animation = 'fadeIn 0.5s ease';
-      setTimeout(() => loginCard.style.animation = '', 500);
-    }
-
+    header.classList.add('hidden');
+    loginCard.classList.remove('hidden');
+    dashboard.classList.add('hidden');
     hideAllMenus();
     document.getElementById('username').value = '';
     document.getElementById('password').value = '';
-
-    // Reset logout button if exists
-    if (logoutBtn) {
-      logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
-      logoutBtn.disabled = false;
-    }
   }
 }
 
