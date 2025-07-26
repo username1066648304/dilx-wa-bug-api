@@ -170,47 +170,81 @@ async function updateUsers(users) {
 
 // Login function
 async function login() {
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
   const loginResult = document.getElementById('loginResult');
   const loginBtn = document.getElementById('loginBtn');
 
+  // Clear previous messages
+  loginResult.innerHTML = '';
+  loginResult.style.color = '';
+
+  // Validate inputs
   if (!username || !password) {
-    loginResult.innerHTML = 'Please enter username and password';
+    loginResult.innerHTML = 'Please enter both username and password';
     loginResult.style.color = '#f44336';
     return;
   }
 
-  loginBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Logging in...';
+  // Set loading state
+  loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
   loginBtn.disabled = true;
 
   try {
+    // Fetch users from API
     const users = await getUsers();
     const user = users.find(u => u.username === username && u.password === password);
 
+    // User not found or invalid credentials
     if (!user) {
       loginResult.innerHTML = 'Invalid username or password';
       loginResult.style.color = '#f44336';
       return;
     }
 
+    // Check if account is already in use on another device
     if (user.device_id && user.device_id !== localDeviceId) {
-      loginResult.innerHTML = 'Account is already in use on another device';
+      loginResult.innerHTML = 'Account is already active on another device. Logout there first or contact admin.';
       loginResult.style.color = '#f44336';
       return;
     }
 
-    user.device_id = localDeviceId;
-    const updatedUsers = users.map(u => u.username === user.username ? user : u);
-    await updateUsers(updatedUsers);
+    // Check account expiration
+    if (user.expired && new Date(user.expired) < new Date()) {
+      loginResult.innerHTML = 'Account has expired. Please renew your subscription.';
+      loginResult.style.color = '#f44336';
+      return;
+    }
 
+    // Update user device info
+    user.device_id = localDeviceId;
+
+    // Update users in API
+    const updatedUsers = users.map(u => u.username === user.username ? user : u);
+    const updateResponse = await updateUsers(updatedUsers);
+
+    if (!updateResponse || !updateResponse.success) {
+      throw new Error('Failed to update user data in database');
+    }
+
+    // Store user locally
     currentUser = user;
     localStorage.setItem('currentUser', JSON.stringify(user));
-    showDashboard();
+
+    // Show success and redirect to dashboard
+    loginResult.innerHTML = 'Login successful! Redirecting...';
+    loginResult.style.color = 'var(--main)';
+    
+    setTimeout(() => {
+      showDashboard();
+    }, 1000);
+
   } catch (error) {
-    loginResult.innerHTML = 'Login failed: ' + error.message;
+    console.error('Login error:', error);
+    loginResult.innerHTML = `Login failed: ${error.message || 'Server error'}`;
     loginResult.style.color = '#f44336';
   } finally {
+    // Reset button state
     loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
     loginBtn.disabled = false;
   }
