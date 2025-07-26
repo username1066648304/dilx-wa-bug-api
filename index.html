@@ -306,27 +306,79 @@ button:disabled {
     }
   }, { once: true });
 
-  async function login() {
-    const user = document.getElementById("username").value.trim();
-    const pass = document.getElementById("password").value.trim();
-    const result = document.getElementById("login-result");
-    const users = await getUsers();
-    const found = users.find(u => u.username === user && u.password === pass);
-
-    if (found) {
-      saveSession(found);
-      showDashboard(found);
-    } else {
-      result.innerText = "❌ Username atau Password salah!";
-      result.style.color = "crimson";
-    }
+// Mendapatkan atau membuat device_id untuk user di localStorage
+function generateDeviceId() {
+  let id = localStorage.getItem("device_id");
+  if (!id) {
+    id = Math.random().toString(36).substring(2, 12); // contoh ID acak
+    localStorage.setItem("device_id", id);
   }
+  return id;
+}
+
+// Mengupdate device_id user di JSONBin
+async function updateUserDeviceId(username, newDeviceId) {
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
+  const data = await res.json();
+  const users = data.record;
+
+  const updatedUsers = users.map(user => {
+    if (user.username === username) {
+      return { ...user, device_id: newDeviceId };
+    }
+    return user;
+  });
+
+  await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(updatedUsers)
+  });
+}
+
+async function login() {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const result = document.getElementById("login-result");
+
+  const users = await getUsers();
+  const found = users.find(u => u.username === username && u.password === password);
+
+  if (!found) {
+    result.innerText = "❌ Username atau Password salah!";
+    result.style.color = "crimson";
+    return;
+  }
+
+  // Cek expired
+  const now = new Date();
+  const expiredDate = new Date(found.expired);
+  if (now > expiredDate) {
+    result.innerText = "❌ Akun sudah expired!";
+    result.style.color = "crimson";
+    return;
+  }
+
+  // Cek dan validasi device ID
+  const currentDeviceId = generateDeviceId();
+  if (!found.device_id || found.device_id === "") {
+    await updateUserDeviceId(found.username, currentDeviceId);
+    found.device_id = currentDeviceId;
+  } else if (found.device_id !== currentDeviceId) {
+    result.innerText = "❌ Akun ini sudah digunakan di perangkat lain!";
+    result.style.color = "crimson";
+    return;
+  }
+
+  saveSession(found);
+  showDashboard(found);
+}
 
 function showDashboard(user) {
   document.getElementById("login-box").style.display = "none";
   document.getElementById("main-box").style.display = "block";
   document.getElementById("userLabel").innerText = user.username;
-  document.getElementById("welcomeText").innerText = `Welcome, ${user.username}`;
+document.getElementById("welcomeText").innerText = `Welcome, ${user.username}\nExpired: ${new Date(user.expired).toLocaleDateString()}`;
   checkServerStatus();
   setInterval(checkServerStatus, 3000);
 }
