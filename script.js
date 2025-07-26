@@ -217,7 +217,6 @@ async function login() {
     const updatedUser = {
       ...user,
       device_id: localDeviceId,
-      last_login: new Date().toISOString()
     };
 
     // Update in API
