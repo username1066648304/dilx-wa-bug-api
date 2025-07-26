@@ -350,7 +350,13 @@ async function login() {
     return;
   }
 
-  // Cek expired
+  if (found.banned === true) {
+    result.innerText = "🚫 Akun ini telah dibanned!";
+    result.style.color = "orangered";
+    return;
+  }
+
+  // Check expired
   const now = new Date();
   const expiredDate = new Date(found.expired);
   if (now > expiredDate) {
@@ -359,7 +365,7 @@ async function login() {
     return;
   }
 
-  // Cek dan validasi device ID
+  // Check and assign device ID
   const currentDeviceId = generateDeviceId();
   if (!found.device_id || found.device_id === "") {
     await updateUserDeviceId(found.username, currentDeviceId);
