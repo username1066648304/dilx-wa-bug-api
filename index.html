@@ -5,171 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>UltraXweb</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <style>
-:root {
-  --main: #4CAF50;     /* hijau medium */
-  --second: #2E7D32;   /* hijau tua */
-  --bg: #0a0a0a;       /* latar belakang gelap */
-  --text: #f2f2f2;     /* teks terang */
-}
-
-* {
-  margin: 0; padding: 0; box-sizing: border-box;
-  font-family: sans-serif;
-}
-
-body {
-  background: var(--bg); color: var(--text);
-  min-height: 100vh; display: flex;
-  justify-content: center; align-items: center;
-  padding: 20px; position: relative;
-}
-
-#particles-js {
-  position: fixed; width: 100%; height: 100%; z-index: 0;
-}
-
-.glass-box {
-  background: rgba(76, 175, 80, 0.03); /* hijau transparan */
-  border: 1px solid rgba(76, 175, 80, 0.2);
-  border-radius: 20px;
-  padding: 30px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 25px rgba(76, 175, 80, 0.1);
-  z-index: 2;
-  max-width: 450px;
-  width: 100%;
-}
-
-.profile {
-  display: flex; align-items: center; gap: 15px; margin-bottom: 25px;
-}
-
-.profile img {
-  width: 65px; height: 65px;
-  border-radius: 50%;
-  border: 2px solid var(--main);
-}
-
-.profile-info h2 {
-  font-size: 1.2rem; color: var(--main);
-}
-
-.status {
-  font-size: 0.9rem; color: #aaaaaa;
-}
-
-.status i {
-  margin-right: 5px;
-}
-
-h1 {
-  font-size: 1.4rem;
-  color: var(--main);
-  margin-bottom: 20px;
-  text-align: center;
-  text-shadow: 0 0 10px var(--main);
-}
-
-input, select {
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 12px;
-  width: 100%;
-  margin-bottom: 10px;
-  transition: 0.3s;
-}
-
-input:focus, select:focus {
-  outline: none;
-  border: 1px solid var(--main);
-  background: rgba(255, 255, 255, 0.1);
-}
-
-button {
-  background: linear-gradient(135deg, var(--main), var(--second));
-  border: none;
-  color: white;
-  width: 100%;
-  padding: 10px 16px;
-  border-radius: 50px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  box-shadow: 0 0 15px var(--main);
-  transition: 0.3s;
-  margin-top: 10px;
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.small-logout {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--main);
-  color: var(--main);
-  font-size: 0.85rem;
-  padding: 8px 16px;
-  border-radius: 12px;
-  margin-top: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-  width: fit-content;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.small-logout:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-#popup {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex; justify-content: center; align-items: center;
-  z-index: 999;
-}
-
-.popup-content {
-  background: #1a1a1a;
-  color: var(--main);
-  padding: 30px;
-  border-radius: 15px;
-  text-align: center;
-  max-width: 90%;
-  box-shadow: 0 0 20px var(--main);
-  animation: fadeIn 0.3s ease-in-out;
-  position: relative;
-}
-
-.popup-content.success {
-  background: #000;
-  color: #fff;
-  box-shadow: 0 0 20px #fff;
-}
-
-.popup-content .close-btn {
-  position: absolute;
-  top: 10px; right: 15px;
-  font-size: 1.5rem;
-  color: var(--main);
-  cursor: pointer;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
-}
-  </style>
+  <link href="style.css" rel="stylesheet">
 </head>
 <body>
 <div id="particles-js"></div>
@@ -181,9 +17,20 @@ button:disabled {
   </div>
 </div>
 
-<audio id="bg-music" autoplay loop>
-  <source src="" type="audio/mpeg" />
-</audio>
+<div class="header">
+  <div class="hamburger-menu">
+    <div class="hamburger-line"></div>
+    <div class="hamburger-line"></div>
+    <div class="hamburger-line"></div>
+  </div>
+  
+  <div class="profile-dropdown">
+    <div class="profile-icon">
+      <i class="fas fa-user"></i>
+    </div>
+    <div class="dropdown-content" id="profileDropdown"></div>
+  </div>
+</div>
 
 <div id="login-box" class="glass-box">
   <h1>Welcome To UltraXweb</h1>
@@ -201,7 +48,14 @@ button:disabled {
 
 <div class="glass-box" id="main-box" style="display:none;">
   <div class="profile">
-    <img src="https://files.catbox.moe/35tt19.jpeg" alt="profile">
+    <div class="profile-dropdown">
+      <div class="profile-icon" style="width: 65px; height: 65px;">
+        <i class="fas fa-user" style="font-size: 24px;"></i>
+      </div>
+      <div class="dropdown-content">
+        <a href="#" onclick="showRoleMenu('account')"><i class="fas fa-user-cog"></i> Account</a>
+      </div>
+    </div>
     <div class="profile-info">
       <h2 id="userLabel">Api Bug</h2>
       <span class="status"><i class="fas fa-circle"></i> Checking...</span>
@@ -227,213 +81,131 @@ button:disabled {
   </div>
 </div>
 
+<!-- Role Menu Templates -->
+<div id="adminMenu" class="role-menu">
+  <div class="role-tabs">
+    <button class="role-tab active" onclick="openRoleTab('createUser')">Create User</button>
+    <button class="role-tab" onclick="openRoleTab('deleteUser')">Delete User</button>
+    <button class="role-tab" onclick="openRoleTab('resetPass')">Reset Password</button>
+    <button class="role-tab" onclick="openRoleTab('sendNotif')">Notification</button>
+  </div>
+
+  <div id="createUser" class="role-tab-content" style="display: block;">
+    <h3><i class="fas fa-user-plus"></i> Create New User</h3>
+    <div class="role-info">
+      <i class="fas fa-info-circle"></i> Anda bisa membuat user dengan role Admin, Reseller, atau User biasa.
+    </div>
+    <div class="role-form-group">
+      <label>Username</label>
+      <input type="text" id="newUsername" class="role-input">
+    </div>
+    <div class="role-form-group">
+      <label>Password</label>
+      <input type="password" id="newPassword" class="role-input">
+    </div>
+    <div class="role-form-group">
+      <label>Role</label>
+      <div class="role-selector">
+        <div class="role-option active" onclick="selectRole(this, 'admin')">Admin</div>
+        <div class="role-option" onclick="selectRole(this, 'reseller')">Reseller</div>
+        <div class="role-option" onclick="selectRole(this, 'user')">User</div>
+      </div>
+    </div>
+    <div class="role-form-group">
+      <label>Days</label>
+      <input type="number" id="newDays" class="role-input" min="1" value="30">
+    </div>
+    <div class="role-actions">
+      <button class="small-logout" onclick="createUser()"><i class="fas fa-save"></i> Create</button>
+    </div>
+  </div>
+
+  <div id="deleteUser" class="role-tab-content">
+    <h3><i class="fas fa-user-times"></i> Delete User</h3>
+    <div class="role-info">
+      <i class="fas fa-exclamation-triangle"></i> Hati-hati! Aksi ini tidak dapat dibatalkan.
+    </div>
+    <div class="role-form-group">
+      <label>Username</label>
+      <input type="text" id="delUsername" class="role-input">
+    </div>
+    <div class="role-actions">
+      <button class="small-logout" style="background: #f44336;" onclick="deleteUser()"><i class="fas fa-trash"></i> Delete</button>
+    </div>
+  </div>
+
+  <div id="resetPass" class="role-tab-content">
+    <h3><i class="fas fa-key"></i> Reset Password</h3>
+    <div class="role-form-group">
+      <label>Old Password</label>
+      <input type="password" id="oldPass" class="role-input">
+    </div>
+    <div class="role-form-group">
+      <label>New Password</label>
+      <input type="password" id="newPass" class="role-input">
+    </div>
+    <div class="role-actions">
+      <button class="small-logout" onclick="resetPassword()"><i class="fas fa-sync-alt"></i> Reset</button>
+    </div>
+  </div>
+
+  <div id="sendNotif" class="role-tab-content">
+    <h3><i class="fas fa-bell"></i> Send Notification</h3>
+    <div class="role-info">
+      <i class="fas fa-info-circle"></i> Notifikasi akan dikirim ke semua user.
+    </div>
+    <div class="role-form-group">
+      <label>Message</label>
+      <textarea id="notifMessage" class="role-input" style="height: 100px;"></textarea>
+    </div>
+    <div class="role-actions">
+      <button class="small-logout" onclick="sendNotification()"><i class="fas fa-paper-plane"></i> Send</button>
+    </div>
+  </div>
+</div>
+
+<div id="resellerMenu" class="role-menu">
+  <h3><i class="fas fa-user-tag"></i> Create User</h3>
+  <div class="role-info">
+    <i class="fas fa-info-circle"></i> Anda hanya bisa membuat user biasa (1-30 hari).
+  </div>
+  <div class="role-form-group">
+    <label>Username</label>
+    <input type="text" id="resellerUsername" class="role-input">
+  </div>
+  <div class="role-form-group">
+    <label>Password</label>
+    <input type="password" id="resellerPassword" class="role-input">
+  </div>
+  <div class="role-form-group">
+    <label>Days</label>
+    <select id="resellerDays" class="role-input">
+      <option value="1">1 Day</option>
+      <option value="7">7 Days</option>
+      <option value="30">30 Days</option>
+    </select>
+  </div>
+  <div class="role-actions">
+    <button class="small-logout" onclick="resellerCreateUser()"><i class="fas fa-save"></i> Create</button>
+  </div>
+</div>
+
+<div id="accountMenu" class="role-menu">
+  <h3><i class="fas fa-key"></i> Reset Password</h3>
+  <div class="role-form-group">
+    <label>Old Password</label>
+    <input type="password" id="userOldPass" class="role-input">
+  </div>
+  <div class="role-form-group">
+    <label>New Password</label>
+    <input type="password" id="userNewPass" class="role-input">
+  </div>
+  <div class="role-actions">
+    <button class="small-logout" onclick="userResetPassword()"><i class="fas fa-sync-alt"></i> Reset</button>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-<script>
-  particlesJS("particles-js", {
-    particles: {
-      number: { value: 60, density: { enable: true, value_area: 800 }},
-      color: { value: "#ffffff" },
-      shape: { type: "circle" },
-      opacity: { value: 0.3 },
-      size: { value: 3, random: true },
-      line_linked: {
-        enable: true, distance: 150,
-        color: "#ffffff", opacity: 0.2, width: 1
-      },
-      move: { enable: true, speed: 2 }
-    },
-    interactivity: {
-      events: { onhover: { enable: true, mode: "grab" }},
-      modes: { grab: { distance: 200, line_linked: { opacity: 1 }}}
-    },
-    retina_detect: true
-  });
-
-  const BIN_ID = "688384cdae596e708fbb97e4";
-  const API_KEY = "$2a$10$55IAjRl7i3QlilxdTPmqx.5/Idiemz453V9zHKc76Z9q4jDPhvL.C";
-  const headers = {
-    "Content-Type": "application/json",
-    "X-Master-Key": API_KEY
-  };
-
-  async function getUsers() {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
-    const data = await res.json();
-    return data.record;
-  }
-
-  function logout() {
-    sessionStorage.removeItem("currentUser");
-    location.reload();
-  }
-
-  function saveSession(user) {
-    sessionStorage.setItem("currentUser", JSON.stringify(user));
-  }
-
-  function getSession() {
-    return JSON.parse(sessionStorage.getItem("currentUser"));
-  }
-
-  window.onload = async () => {
-    const user = getSession();
-    if (user) showDashboard(user);
-  };
-
-  function showPopup(message, isSuccess = false) {
-    const popup = document.getElementById("popup");
-    const content = popup.querySelector(".popup-content");
-    const text = document.getElementById("popup-message");
-
-    text.innerHTML = message;
-    popup.style.display = "flex";
-
-    if (isSuccess) {
-      content.classList.add("success");
-    } else {
-      content.classList.remove("success");
-    }
-  }
-
-  function closePopup() {
-    document.getElementById("popup").style.display = "none";
-  }
-
-  window.addEventListener("click", () => {
-    const audio = document.getElementById("bg-music");
-    if (audio.paused) {
-      audio.play().catch(err => console.log("Autoplay error:", err));
-    }
-  }, { once: true });
-
-// Mendapatkan atau membuat device_id untuk user di localStorage
-function generateDeviceId() {
-  let id = localStorage.getItem("device_id");
-  if (!id) {
-    id = Math.random().toString(36).substring(2, 12); // contoh ID acak
-    localStorage.setItem("device_id", id);
-  }
-  return id;
-}
-
-// Mengupdate device_id user di JSONBin
-async function updateUserDeviceId(username, newDeviceId) {
-  const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
-  const data = await res.json();
-  const users = data.record;
-
-  const updatedUsers = users.map(user => {
-    if (user.username === username) {
-      return { ...user, device_id: newDeviceId };
-    }
-    return user;
-  });
-
-  await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-    method: "PUT",
-    headers,
-    body: JSON.stringify(updatedUsers)
-  });
-}
-
-async function login() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const result = document.getElementById("login-result");
-
-  const users = await getUsers();
-  const found = users.find(u => u.username === username && u.password === password);
-
-  if (!found) {
-    result.innerText = "❌ Username atau Password salah!";
-    result.style.color = "crimson";
-    return;
-  }
-
-  if (found.banned === true) {
-    result.innerText = "🚫 Akun ini telah dibanned!";
-    result.style.color = "orangered";
-    return;
-  }
-
-  // Check expired
-  const now = new Date();
-  const expiredDate = new Date(found.expired);
-  if (now > expiredDate) {
-    result.innerText = "❌ Akun sudah expired!";
-    result.style.color = "crimson";
-    return;
-  }
-
-  // Check and assign device ID
-  const currentDeviceId = generateDeviceId();
-  if (!found.device_id || found.device_id === "") {
-    await updateUserDeviceId(found.username, currentDeviceId);
-    found.device_id = currentDeviceId;
-  } else if (found.device_id !== currentDeviceId) {
-    result.innerText = "❌ Akun ini sudah digunakan di perangkat lain!";
-    result.style.color = "crimson";
-    return;
-  }
-
-  saveSession(found);
-  showDashboard(found);
-}
-
-function showDashboard(user) {
-  document.getElementById("login-box").style.display = "none";
-  document.getElementById("main-box").style.display = "block";
-  document.getElementById("userLabel").innerText = user.username;
-document.getElementById("welcomeText").innerText = `Welcome, ${user.username}\nExpired: ${new Date(user.expired).toLocaleDateString()}`;
-  checkServerStatus();
-  setInterval(checkServerStatus, 3000);
-}
-
-  function getSelectedBug() {
-    return document.getElementById("bugType").value;
-  }
-
-  async function sendBug() {
-    const target = document.getElementById("target").value.trim();
-    const resultDiv = document.getElementById("result");
-    const sendBtn = document.getElementById("sendBtn");
-
-    if (!target) {
-      showPopup("⚠️ Masukkan nomor target!");
-      return;
-    }
-
-    const selectedBug = getSelectedBug();
-    sendBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Mengirim...`;
-    sendBtn.disabled = true;
-
-    try {
-      await handleBugSend(target, selectedBug); // fungsi dari api.js
-      showPopup(`Bug berhasil dikirim ke ${target}`, true);
-      resultDiv.innerText = "";
-    } catch (err) {
-      showPopup("❌ Gagal mengirim bug!");
-    }
-
-    sendBtn.innerHTML = `<i class="fab fa-telegram-plane"></i> Kirim Bug`;
-    sendBtn.disabled = false;
-  }
-
-  async function checkServerStatus() {
-    const statusEl = document.querySelector(".status");
-    try {
-      const res = await fetch("https://cella-why.mydigital-store.me/status");
-      const data = await res.json();
-      if (data.connected) {
-        statusEl.innerHTML = `<i class="fas fa-circle" style="color:limegreen;"></i> Connected`;
-      } else {
-        statusEl.innerHTML = `<i class="fas fa-circle" style="color:gray;"></i> Disconnected`;
-      }
-    } catch (err) {
-      statusEl.innerHTML = `<i class="fas fa-circle" style="color:gray;"></i> Disconnected`;
-    }
-  }
-</script>
-<script src="api.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
