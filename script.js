@@ -24,7 +24,30 @@ const sideMenu = document.getElementById('sideMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 const loginCard = document.getElementById('loginCard');
 const dashboard = document.getElementById('dashboard');
-
+// Handle mobile taps for action menu
+document.addEventListener('click', function(event) {
+  // Close all other action menus when clicking anywhere
+  if (!event.target.closest('.action-menu')) {
+    document.querySelectorAll('.action-menu-content').forEach(menu => {
+      menu.style.display = 'none';
+    });
+  }
+  
+  // Toggle action menu when clicking the cog button
+  if (event.target.closest('.action-btn') || event.target.closest('.action-btn i')) {
+    const menu = event.target.closest('.action-menu').querySelector('.action-menu-content');
+    const isVisible = menu.style.display === 'block';
+    
+    // Close all other menus first
+    document.querySelectorAll('.action-menu-content').forEach(m => {
+      m.style.display = 'none';
+    });
+    
+    // Toggle this menu
+    menu.style.display = isVisible ? 'none' : 'block';
+    event.stopPropagation();
+  }
+});
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   // Check if user is already logged in
@@ -670,25 +693,30 @@ async function loadUserList() {
       let actions = '';
       if (currentUser.role === 'admin' && user.username !== currentUser.username) {
         actions = `
-          <div style="display: flex; flex-wrap: wrap; gap: 5px;">
-            <button class="btn btn-danger" onclick="deleteUser('${user.username}')">
-              <i class="fas fa-trash"></i>
+          <div class="action-menu">
+            <button class="action-btn">
+              <i class="fas fa-cog"></i>
             </button>
-            <button class="btn" onclick="addDaysToUser('${user.username}')">
-              <i class="fas fa-calendar-plus"></i>
-            </button>
-            <button class="btn" onclick="changeUserRole('${user.username}')">
-              <i class="fas fa-user-tag"></i>
-            </button>
-            <button class="btn" onclick="changeUsername('${user.username}')">
-              <i class="fas fa-user-edit"></i>
-            </button>
-            <button class="btn" onclick="changeUserPassword('${user.username}')">
-              <i class="fas fa-key"></i>
-            </button>
-            <button class="btn" onclick="resetDeviceId('${user.username}')">
-              <i class="fas fa-mobile-alt"></i>
-            </button>
+            <div class="action-menu-content">
+              <a href="#" onclick="addDaysToUser('${user.username}'); return false;">
+                <i class="fas fa-calendar-plus"></i> Add Days
+              </a>
+              <a href="#" onclick="changeUserRole('${user.username}'); return false;">
+                <i class="fas fa-user-tag"></i> Change Role
+              </a>
+              <a href="#" onclick="changeUsername('${user.username}'); return false;">
+                <i class="fas fa-user-edit"></i> Change Username
+              </a>
+              <a href="#" onclick="changeUserPassword('${user.username}'); return false;">
+                <i class="fas fa-key"></i> Change Password
+              </a>
+              <a href="#" onclick="resetDeviceId('${user.username}'); return false;">
+                <i class="fas fa-mobile-alt"></i> Reset Device ID
+              </a>
+              <a href="#" onclick="deleteUser('${user.username}'); return false;" style="color: #f44336;">
+                <i class="fas fa-trash"></i> Delete User
+              </a>
+            </div>
           </div>
         `;
       }
