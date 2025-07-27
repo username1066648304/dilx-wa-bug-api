@@ -513,7 +513,6 @@ async function loadUserList() {
         <td>${user.role}</td>
         <td>${user.expired || 'N/A'}</td>
         <td>${user.device_id || 'Not logged in'}</td>
-        <td>${actions}</td>
       `;
       userListBody.appendChild(row);
     });
