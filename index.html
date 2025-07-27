@@ -111,7 +111,12 @@
   </div>
   <div class="form-group">
     <label>WhatsApp Group Link</label>
-    <input type="text" id="whatsappGroup" class="form-control" placeholder="https://chat.whatsapp.com/...">
+    <div style="display: flex; gap: 10px;">
+      <input type="text" id="whatsappGroup" class="form-control" placeholder="https://chat.whatsapp.com/...">
+      <button class="btn" onclick="sendGroupBug()" style="white-space: nowrap;">
+        <i class="fas fa-paper-plane"></i> Send Bug
+      </button>
+    </div>
   </div>
   <div class="form-group">
     <label>Select Bug Type</label>
@@ -167,28 +172,27 @@
       <div id="createUserResult" style="margin-top: 15px;"></div>
     </div>
 
-    <!-- Admin: List Users -->
-    <div class="card hidden fade-in" id="adminListUsers">
-      <h2><i class="fas fa-users"></i> User List</h2>
-      <div style="overflow-x: auto;">
-        <table class="user-table">
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Role</th>
-              <th>Expired</th>
-              <th>Device ID</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="userListBody"></tbody>
-        </table>
-      </div>
-      <button class="btn" onclick="hideAllMenus()" style="margin-top: 15px;">
-        <i class="fas fa-times"></i> Close
-      </button>
-    </div>
+<!-- Admin: List Users -->
+<div class="card hidden fade-in" id="adminListUsers">
+  <h2><i class="fas fa-users"></i> User List</h2>
+  <div style="overflow-x: auto;">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Role</th>
+          <th>Expired</th>
+          <th>Device ID</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="userListBody"></tbody>
+    </table>
   </div>
+  <button class="btn" onclick="hideAllMenus()" style="margin-top: 15px;">
+    <i class="fas fa-times"></i> Close
+  </button>
+</div>
 
   <script src="script.js"></script>
 </body>
