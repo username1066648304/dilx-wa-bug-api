@@ -47,6 +47,20 @@ function generateDeviceId() {
   return Math.random().toString(36).substring(2, 15);
 }
 
+// Toggle password visibility
+function togglePassword(inputId) {
+  const input = document.getElementById(inputId);
+  const icon = input.nextElementSibling.querySelector('i');
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.classList.replace('fa-eye', 'fa-eye-slash');
+  } else {
+    input.type = 'password';
+    icon.classList.replace('fa-eye-slash', 'fa-eye');
+  }
+}
+
 // Toggle side menu
 function toggleMenu() {
   sideMenu.classList.toggle('active');
@@ -490,15 +504,10 @@ async function loadUserList() {
     users.forEach(user => {
       const row = document.createElement('tr');
       
-      // Only show delete button for admin users (and not for themselves)
-      let actions = '';
-      if (currentUser.role === 'admin' && user.username !== currentUser.username) {
-        actions = `
-          <button class="btn btn-danger" onclick="deleteUser('${user.username}')">
-            <i class="fas fa-trash"></i> Delete
-          </button>
-        `;
-      }
+      const actions = currentUser.role === 'admin' && user.username !== currentUser.username ? 
+        `<button class="btn btn-danger" onclick="deleteUser('${user.username}')">
+          <i class="fas fa-trash"></i> Delete
+        </button>` : '';
       
       row.innerHTML = `
         <td>${user.username}</td>
@@ -510,13 +519,6 @@ async function loadUserList() {
       userListBody.appendChild(row);
     });
   } catch (error) {
-    console.error('Error loading user list:', error);
-    userListBody.innerHTML = `
-      <tr>
-        <td colspan="5" style="text-align: center; color: #f44336;">
-          Error loading users. Please try again.
-        </td>
-      </tr>
-    `;
+    userListBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #f44336;">Error loading users</td></tr>';
   }
 }
