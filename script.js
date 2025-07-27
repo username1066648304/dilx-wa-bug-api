@@ -122,13 +122,13 @@ function showMenu(menuId) {
 async function checkApiConnection() {
   try {
     const response = await fetch(STATUS_API_URL);
+    const data = await response.json();
     const statusElement = document.getElementById('apiStatus');
     
     if (statusElement) {
-      if (response.ok) {
-        const data = await response.json();
+      if (data.connected === true) {
         statusElement.className = 'status-connected';
-        statusElement.innerHTML = `<i class="fas fa-check-circle"></i> Connected (${data.status || 'Operational'})`;
+        statusElement.innerHTML = '<i class="fas fa-check-circle"></i> Connected';
         return true;
       } else {
         statusElement.className = 'status-disconnected';
@@ -136,7 +136,7 @@ async function checkApiConnection() {
         return false;
       }
     }
-    return response.ok;
+    return data.connected === true;
   } catch (error) {
     console.error('API connection check failed:', error);
     const statusElement = document.getElementById('apiStatus');
