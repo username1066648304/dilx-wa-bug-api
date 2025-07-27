@@ -255,19 +255,6 @@ function setButtonLoading(button, isLoading) {
     : '<i class="fas fa-sign-in-alt"></i> Login';
   button.disabled = isLoading;
 }
-// show password 
-function togglePassword() {
-  const passwordInput = document.getElementById('newUserPassword');
-  const toggleIcon = document.querySelector('.password-toggle i');
-  
-  if (passwordInput.type === 'password') {
-    passwordInput.type = 'text';
-    toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
-  } else {
-    passwordInput.type = 'password';
-    toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
-  }
-} 
 
 // Show dashboard
 function showDashboard() {
@@ -503,20 +490,33 @@ async function loadUserList() {
     users.forEach(user => {
       const row = document.createElement('tr');
       
-      const actions = currentUser.role === 'admin' ? 
-        `<button class="btn btn-danger" onclick="deleteUser('${user.username}')">
-          <i class="fas fa-trash"></i> Delete
-        </button>` : '';
+      // Only show delete button for admin users (and not for themselves)
+      let actions = '';
+      if (currentUser.role === 'admin' && user.username !== currentUser.username) {
+        actions = `
+          <button class="btn btn-danger" onclick="deleteUser('${user.username}')">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        `;
+      }
       
       row.innerHTML = `
         <td>${user.username}</td>
         <td>${user.role}</td>
         <td>${user.expired || 'N/A'}</td>
         <td>${user.device_id || 'Not logged in'}</td>
+        <td>${actions}</td>
       `;
       userListBody.appendChild(row);
     });
   } catch (error) {
-    userListBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #f44336;">Error loading users</td></tr>';
+    console.error('Error loading user list:', error);
+    userListBody.innerHTML = `
+      <tr>
+        <td colspan="5" style="text-align: center; color: #f44336;">
+          Error loading users. Please try again.
+        </td>
+      </tr>
+    `;
   }
 }
