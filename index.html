@@ -103,18 +103,8 @@
 <div class="card hidden fade-in" id="attackMenu">
   <h2><i class="fas fa-bug"></i> Attack Menu</h2>
   
-  <!-- Target Selection Tabs -->
-  <div class="target-type-tabs">
-    <button class="tab-btn active" onclick="switchAttackTab('number')">
-      <i class="fas fa-phone"></i> Phone Number
-    </button>
-    <button class="tab-btn" onclick="switchAttackTab('whatsapp')">
-      <i class="fab fa-whatsapp"></i> WhatsApp Group
-    </button>
-  </div>
-
-  <!-- Phone Number Target -->
-  <div class="target-content" id="numberTarget">
+  <!-- Phone Number Attack (Default Visible) -->
+  <div id="phoneAttackSection">
     <div class="form-group">
       <label>Target Number</label>
       <input type="text" id="targetNumber" class="form-control" placeholder="Example: 6281234567890">
@@ -132,14 +122,21 @@
     </button>
   </div>
 
-  <!-- WhatsApp Group Target -->
-  <div class="target-content hidden" id="whatsappTarget">
+  <!-- WhatsApp Group Toggle Button -->
+  <div class="form-group" style="margin-top: 15px; text-align: center;">
+    <button class="btn btn-secondary" onclick="toggleWhatsAppAttack()" id="toggleWhatsAppBtn">
+      <i class="fab fa-whatsapp"></i> Attack WhatsApp Group Instead
+    </button>
+  </div>
+
+  <!-- WhatsApp Group Attack (Initially Hidden) -->
+  <div id="whatsappAttackSection" class="hidden">
     <div class="form-group">
       <label>WhatsApp Group Link</label>
       <input type="text" id="whatsappGroup" class="form-control" placeholder="https://chat.whatsapp.com/...">
     </div>
     <div class="form-group">
-      <label>Select Bug Type</label>
+      <label>Select Group Bug Type</label>
       <select id="whatsappBugType" class="form-control">
         <option value="group_crash">Group Crash</option>
         <option value="group_spam">Group Spam</option>
@@ -148,9 +145,13 @@
     <button class="btn" onclick="sendGroupBug()" id="whatsappAttackBtn">
       <i class="fas fa-paper-plane"></i> Send Group Bug
     </button>
+    
+    <button class="btn btn-secondary" onclick="toggleWhatsAppAttack()" style="margin-left: 10px;">
+      <i class="fas fa-phone"></i> Back to Phone Attack
+    </button>
   </div>
 
-  <!-- Common Elements -->
+  <!-- API Status Indicator -->
   <div class="form-group" id="apiStatusContainer">
     <label>API Status</label>
     <div id="apiStatus" class="status-checking">

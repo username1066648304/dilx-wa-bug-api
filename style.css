@@ -350,6 +350,16 @@ body {
   margin-right: 8px;
 }
 
+.btn-secondary {
+  background: rgba(76, 175, 80, 0.1);
+  color: var(--main);
+  border: 1px solid var(--main);
+}
+
+.btn-secondary:hover {
+  background: rgba(76, 175, 80, 0.2);
+}
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

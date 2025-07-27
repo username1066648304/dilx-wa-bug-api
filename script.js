@@ -766,3 +766,28 @@ async function sendGroupBug() {
 document.getElementById('attackMenu').addEventListener('show', async () => {
   await checkApiConnection();
 });
+
+function toggleWhatsAppAttack() {
+  const whatsappSection = document.getElementById('whatsappAttackSection');
+  const phoneSection = document.getElementById('phoneAttackSection');
+  const toggleBtn = document.getElementById('toggleWhatsAppBtn');
+  
+  const showWhatsApp = whatsappSection.classList.contains('hidden');
+  
+  // Toggle sections
+  whatsappSection.classList.toggle('hidden', !showWhatsApp);
+  phoneSection.classList.toggle('hidden', showWhatsApp);
+  
+  // Clear previous results
+  document.getElementById('attackResult').innerHTML = '';
+  
+  // Update button text
+  if (showWhatsApp) {
+    toggleBtn.classList.add('hidden');
+  } else {
+    toggleBtn.classList.remove('hidden');
+  }
+  
+  // Check API status when switching
+  checkApiConnection();
+} 
