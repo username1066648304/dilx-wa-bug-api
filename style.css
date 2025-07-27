@@ -350,7 +350,46 @@ body {
   margin-right: 8px;
 }
 
+/* Attack Type Toggle */
+.attack-type-toggle {
+  display: flex;
+  margin-bottom: 15px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 8px;
+  padding: 5px;
+}
 
+.toggle-option {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s;
+}
+
+.toggle-option input[type="radio"] {
+  display: none;
+}
+
+.toggle-option span {
+  display: block;
+  padding: 5px;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.toggle-option input[type="radio"]:checked + span {
+  background: var(--main);
+  color: white;
+  opacity: 1;
+  border-radius: 5px;
+}
+
+.launch-btn {
+  width: 100%;
+  margin-top: 10px;
+}
 
 /* Animations */
 @keyframes fadeIn {

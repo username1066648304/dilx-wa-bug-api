@@ -102,19 +102,21 @@
 <!-- Attack Menu -->
 <div class="card hidden fade-in" id="attackMenu">
   <h2><i class="fas fa-bug"></i> Attack Menu</h2>
-  
-  <!-- Target Selection Tabs -->
-  <div class="target-type-tabs">
-    <button class="tab-btn active" onclick="switchAttackTab('number')">
-      <i class="fas fa-phone"></i> Phone Number
-    </button>
-    <button class="tab-btn" onclick="switchAttackTab('whatsapp')">
-      <i class="fab fa-whatsapp"></i> WhatsApp Group
-    </button>
+
+  <!-- Attack Type Toggle -->
+  <div class="attack-type-toggle">
+    <label class="toggle-option">
+      <input type="radio" name="attackType" value="phone" checked onclick="switchAttackType('phone')">
+      <span><i class="fas fa-phone"></i> Phone Number</span>
+    </label>
+    <label class="toggle-option">
+      <input type="radio" name="attackType" value="whatsapp" onclick="switchAttackType('whatsapp')">
+      <span><i class="fab fa-whatsapp"></i> WhatsApp Group</span>
+    </label>
   </div>
 
-  <!-- Phone Number Target -->
-  <div class="target-content" id="numberTarget">
+  <!-- Phone Number Section -->
+  <div id="phoneAttackSection">
     <div class="form-group">
       <label>Target Number</label>
       <input type="text" id="targetNumber" class="form-control" placeholder="Example: 6281234567890">
@@ -127,13 +129,13 @@
         <option value="delay_msc">Delay MSC</option>
       </select>
     </div>
-    <button class="btn" onclick="launchAttack()" id="attackBtn">
+    <button class="btn launch-btn" onclick="launchAttack()" id="attackBtn">
       <i class="fas fa-rocket"></i> Launch Attack
     </button>
   </div>
 
-  <!-- WhatsApp Group Target -->
-  <div class="target-content hidden" id="whatsappTarget">
+  <!-- WhatsApp Group Section -->
+  <div id="whatsappAttackSection" class="hidden">
     <div class="form-group">
       <label>WhatsApp Group Link</label>
       <input type="text" id="whatsappGroup" class="form-control" placeholder="https://chat.whatsapp.com/...">
@@ -145,12 +147,12 @@
         <option value="group_spam">Group Spam</option>
       </select>
     </div>
-    <button class="btn" onclick="sendGroupBug()" id="whatsappAttackBtn">
+    <button class="btn launch-btn" onclick="sendGroupBug()" id="whatsappAttackBtn">
       <i class="fas fa-paper-plane"></i> Send Group Bug
     </button>
   </div>
 
-  <!-- Common Elements -->
+  <!-- Status and Close -->
   <div class="form-group" id="apiStatusContainer">
     <label>API Status</label>
     <div id="apiStatus" class="status-checking">

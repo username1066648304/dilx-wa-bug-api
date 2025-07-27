@@ -767,3 +767,19 @@ document.getElementById('attackMenu').addEventListener('show', async () => {
   await checkApiConnection();
 });
 
+function switchAttackType(type) {
+  const phoneSection = document.getElementById('phoneAttackSection');
+  const whatsappSection = document.getElementById('whatsappAttackSection');
+  
+  if (type === 'phone') {
+    phoneSection.classList.remove('hidden');
+    whatsappSection.classList.add('hidden');
+  } else {
+    phoneSection.classList.add('hidden');
+    whatsappSection.classList.remove('hidden');
+  }
+  
+  // Clear previous results
+  document.getElementById('attackResult').innerHTML = '';
+  checkApiConnection();
+}
