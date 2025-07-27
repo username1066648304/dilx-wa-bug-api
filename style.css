@@ -294,6 +294,62 @@ body {
   display: none;
 }
 
+/* Attack Menu Tabs */
+.target-type-tabs {
+  display: flex;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--main);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  text-align: center;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+}
+
+.tab-btn.active {
+  color: var(--main);
+  border-bottom: 3px solid var(--main);
+}
+
+.tab-btn:hover {
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.target-content {
+  display: block;
+}
+
+/* Status Indicators */
+.status-checking {
+  color: #FFC107;
+}
+
+.status-connected {
+  color: var(--main);
+}
+
+.status-disconnected {
+  color: #f44336;
+}
+
+#apiStatusContainer {
+  padding: 10px;
+  background: rgba(10, 10, 10, 0.5);
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+#apiStatus i {
+  margin-right: 8px;
+}
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
