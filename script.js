@@ -142,7 +142,7 @@ async function checkApiConnection() {
     const statusElement = document.getElementById('apiStatus');
     if (statusElement) {
       statusElement.className = 'status-disconnected';
-      statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Connection Failed';
+      statusElement.innerHTML = 'Connection Failed';
     }
     return false;
   }
