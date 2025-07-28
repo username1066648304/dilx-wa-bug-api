@@ -213,27 +213,34 @@ body {
 }
 
 /* Dashboard Info */
-.info-grid {
+./* Dashboard Styles */
+.dashboard-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  gap: 20px;
 }
 
-.info-item {
+.dashboard-section {
   background: rgba(76, 175, 80, 0.05);
-  border: 1px solid rgba(76, 175, 80, 0.1);
-  border-radius: 8px;
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  border-radius: 10px;
   padding: 15px;
 }
 
-.info-label {
+.dashboard-label {
   color: #aaa;
   font-size: 0.9rem;
   margin-bottom: 5px;
 }
 
-.info-value {
+.dashboard-value {
   font-size: 1.1rem;
+  margin-bottom: 15px;
+  word-break: break-all;
+}
+
+.dashboard-value:last-child {
+  margin-bottom: 0;
 }
 
 /* User List Table */
