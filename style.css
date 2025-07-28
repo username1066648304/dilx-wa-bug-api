@@ -391,6 +391,80 @@ body {
   margin-top: 10px;
 }
 
+/* Attack Menu Tabs */
+.attack-tabs {
+  display: flex;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--main);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  text-align: center;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+}
+
+.tab-btn.active {
+  color: var(--main);
+  border-bottom: 3px solid var(--main);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Attack Animation */
+.attack-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1001;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.attack-animation-content {
+  color: var(--main);
+  font-size: 1.5rem;
+  text-align: center;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* API Status */
+.api-status {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(10, 10, 10, 0.5);
+  border-radius: 8px;
+}
+
+/* Attack Button */
+.attack-btn {
+  margin-top: 10px;
+  width: 100%;
+} 
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

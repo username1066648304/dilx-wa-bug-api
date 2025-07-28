@@ -115,11 +115,24 @@
     </label>
   </div>
 
-  <!-- Phone Number Section -->
-  <div id="phoneAttackSection">
+<div class="card hidden fade-in" id="attackMenu">
+  <h2><i class="fas fa-bug"></i> Attack Menu</h2>
+
+  <!-- Attack Type Tabs -->
+  <div class="attack-tabs">
+    <button class="tab-btn active" onclick="switchTab('whatsappNumber')">
+      <i class="fas fa-phone"></i> WhatsApp Number
+    </button>
+    <button class="tab-btn" onclick="switchTab('whatsappGroup')">
+      <i class="fab fa-whatsapp"></i> WhatsApp Group
+    </button>
+  </div>
+
+  <!-- WhatsApp Number Section -->
+  <div id="whatsappNumberSection" class="tab-content">
     <div class="form-group">
-      <label>Target Number</label>
-      <input type="text" id="targetNumber" class="form-control" placeholder="Example: 6281234567890">
+      <label>WhatsApp Number</label>
+      <input type="text" id="whatsappNumber" class="form-control" placeholder="Example: 6281234567890">
     </div>
     <div class="form-group">
       <label>Select Bug Type</label>
@@ -129,28 +142,45 @@
         <option value="delay_msc">Delay MSC</option>
       </select>
     </div>
-    <button class="btn launch-btn" onclick="launchAttack()" id="attackBtn">
-      <i class="fas fa-rocket"></i> Launch Attack
+    <button class="btn attack-btn" onclick="launchWhatsAppNumberAttack()">
+      <i class="fas fa-paper-plane"></i> Send Attack
     </button>
   </div>
 
   <!-- WhatsApp Group Section -->
-  <div id="whatsappAttackSection" class="hidden">
+  <div id="whatsappGroupSection" class="tab-content hidden">
     <div class="form-group">
       <label>WhatsApp Group Link</label>
-      <input type="text" id="whatsappGroup" class="form-control" placeholder="https://chat.whatsapp.com/...">
+      <input type="text" id="whatsappGroupLink" class="form-control" placeholder="https://chat.whatsapp.com/...">
     </div>
     <div class="form-group">
       <label>Select Bug Type</label>
-      <select id="whatsappBugType" class="form-control">
+      <select id="groupBugType" class="form-control">
         <option value="group_crash">Group Crash</option>
         <option value="group_spam">Group Spam</option>
       </select>
     </div>
-    <button class="btn launch-btn" onclick="sendGroupBug()" id="whatsappAttackBtn">
+    <button class="btn attack-btn" onclick="launchWhatsAppGroupAttack()">
       <i class="fas fa-paper-plane"></i> Send Group Bug
     </button>
   </div>
+
+  <!-- API Status -->
+  <div class="api-status">
+    <label>API Status</label>
+    <div id="apiStatus">
+      <i class="fas fa-circle-notch fa-spin"></i> Checking...
+    </div>
+  </div>
+
+  <!-- Close Button -->
+  <button class="btn close-btn" onclick="hideAllMenus()">
+    <i class="fas fa-times"></i> Close Menu
+  </button>
+
+  <!-- Attack Animation Container -->
+  <div id="attackAnimation" class="attack-animation hidden"></div>
+</div>
 
   <!-- Status and Close -->
   <div class="form-group" id="apiStatusContainer">
