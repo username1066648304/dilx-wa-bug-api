@@ -116,26 +116,17 @@ body {
   margin: 0 auto;
 }
 
-/* Login Form Styles */
-
-.login-container {
+./* Login Page Specific Styles */
+.login-page {
   max-width: 350px;
   margin: 0 auto;
-  position: relative;
+  padding: 20px 0;
 }
 
-/* Card Styling */
-.card {
-  padding: 25px;
-  border-radius: 10px;
-  background: rgba(76, 175, 80, 0.03);
-  border: 1px solid rgba(76, 175, 80, 0.2);
-}
-
-/* Outer Telegram Link */
-.telegram-outer {
+.telegram-global {
   text-align: center;
-  margin-top: 20px;
+  margin: 25px auto 0;
+  padding: 15px;
 }
 
 .telegram-link {
@@ -144,8 +135,7 @@ body {
   font-size: 0.9rem;
   display: inline-flex;
   align-items: center;
-  transition: color 0.2s;
-  padding: 8px 15px;
+  transition: all 0.2s;
 }
 
 .telegram-link:hover {
