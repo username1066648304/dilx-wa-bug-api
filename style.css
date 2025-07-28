@@ -116,13 +116,44 @@ body {
   margin: 0 auto;
 }
 
+/* Login Form Styles */
+.login-container {
+  max-width: 350px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Card Styling */
 .card {
+  padding: 25px;
+  border-radius: 10px;
   background: rgba(76, 175, 80, 0.03);
   border: 1px solid rgba(76, 175, 80, 0.2);
-  border-radius: 15px;
-  padding: 20px;
-  margin-bottom: 20px;
-  backdrop-filter: blur(10px);
+}
+
+/* Outer Telegram Link */
+.telegram-outer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.telegram-link {
+  color: #0088cc;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s;
+  padding: 8px 15px;
+}
+
+.telegram-link:hover {
+  color: #0066a0;
+  text-decoration: underline;
+}
+
+.telegram-link i {
+  margin-right: 8px;
 }
 
 .card h2 {
@@ -191,28 +222,6 @@ body {
 
 .btn:hover {
   background: var(--second);
-}
-
-.btn-telegram {
-  background: transparent;
-  border: none;
-  color: #0088cc;
-  padding: 6px 12px;
-  font-size: 0.85rem;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  margin-top: 15px;
-  transition: color 0.2s;
-}
-
-.btn-telegram:hover {
-  color: #0066a0;
-}
-
-.btn-telegram i {
-  margin-right: 6px;
-  font-size: 0.9rem;
 }
 
 .btn-danger {
