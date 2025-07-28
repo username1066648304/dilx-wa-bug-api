@@ -116,35 +116,13 @@ body {
   margin: 0 auto;
 }
 
-./* Login Page Specific Styles */
-.login-page {
-  max-width: 350px;
-  margin: 0 auto;
-  padding: 20px 0;
-}
-
-.telegram-global {
-  text-align: center;
-  margin: 25px auto 0;
-  padding: 15px;
-}
-
-.telegram-link {
-  color: #0088cc;
-  text-decoration: none;
-  font-size: 0.9rem;
-  display: inline-flex;
-  align-items: center;
-  transition: all 0.2s;
-}
-
-.telegram-link:hover {
-  color: #0066a0;
-  text-decoration: underline;
-}
-
-.telegram-link i {
-  margin-right: 8px;
+.card {
+  background: rgba(76, 175, 80, 0.03);
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
 }
 
 .card h2 {
@@ -213,6 +191,37 @@ body {
 
 .btn:hover {
   background: var(--second);
+}
+
+.btn-telegram {
+  background: rgba(76, 175, 80, 0.1)
+  border: 1px solid var(--main);
+  color: var(--text); 
+  margin: 15px auto;
+  padding: 10px 15px;
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.btn-telegram:hover {
+  background: rgba(76, 175, 80, 0.2); 
+  border-color: var(--second);
+}
+
+.btn-telegram i {
+  margin-right: 8px;
+}
+
+/* Container for global positioning */
+.telegram-global {
+  text-align: center;
+  padding: 0 15px;
+  margin-top: 20px;
 }
 
 .btn-danger {
