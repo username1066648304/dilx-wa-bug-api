@@ -117,24 +117,28 @@ body {
 }
 
 /* Login Form Styles */
-.login-container {
+
+./* Login Page Specific Styles */
+.login-page {
   max-width: 350px;
   margin: 0 auto;
-  position: relative;
+  padding: 20px 0;
 }
 
-/* Card Styling */
-.card {
-  padding: 25px;
-  border-radius: 10px;
-  background: rgba(76, 175, 80, 0.03);
-  border: 1px solid rgba(76, 175, 80, 0.2);
+/* Hide Telegram link when not on login page */
+.dashboard ~ .telegram-outer,
+.myInfo ~ .telegram-outer,
+.attackMenu ~ .telegram-outer,
+.adminCreateUser ~ .telegram-outer,
+.adminListUsers ~ .telegram-outer {
+  display: none;
 }
 
-/* Outer Telegram Link */
+/* Telegram Link Styling */
 .telegram-outer {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 25px;
+  padding: 10px;
 }
 
 .telegram-link {
@@ -143,8 +147,7 @@ body {
   font-size: 0.9rem;
   display: inline-flex;
   align-items: center;
-  transition: color 0.2s;
-  padding: 8px 15px;
+  transition: all 0.2s;
 }
 
 .telegram-link:hover {
