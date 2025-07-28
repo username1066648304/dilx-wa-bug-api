@@ -196,7 +196,7 @@ body {
 .btn-telegram {
   background: rgba(76, 175, 80, 0.1)
   border: 1px solid var(--main);
-  color: var(--text); 
+  color: #0088cc; 
   margin: 15px auto;
   padding: 10px 15px;
   width: 100%;
