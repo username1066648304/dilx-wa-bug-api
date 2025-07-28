@@ -784,45 +784,27 @@ function switchAttackType(type) {
   checkApiConnection();
 }
 
-// Auto-attack configuration
-let autoAttackEnabled = false;
-let attackDebounceTimer;
-
-// Initialize attack menu
-function initAttackMenu() {
-  // WhatsApp Number auto-attack
-  document.getElementById('whatsappNumber').addEventListener('input', (e) => {
-    if (autoAttackEnabled && e.target.value.length >= 5) {
-      clearTimeout(attackDebounceTimer);
-      attackDebounceTimer = setTimeout(() => {
-        launchWhatsAppNumberAttack();
-      }, 1500); // 1.5 second delay after typing stops
-    }
+// Tab switching
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('onclick').includes(tabId));
   });
-
-  // WhatsApp Group auto-attack
-  document.getElementById('whatsappGroupLink').addEventListener('input', (e) => {
-    if (autoAttackEnabled && e.target.value.includes('whatsapp.com')) {
-      clearTimeout(attackDebounceTimer);
-      attackDebounceTimer = setTimeout(() => {
-        launchWhatsAppGroupAttack();
-      }, 1500);
-    }
+  
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.toggle('hidden', content.id !== tabId + 'Section');
   });
 }
 
-// Call this when menu loads
-initAttackMenu();
-
-// Enhanced attack functions with auto-send
+// WhatsApp Number Attack
 async function launchWhatsAppNumberAttack() {
   const number = document.getElementById('whatsappNumber').value.trim();
   const bugType = document.getElementById('bugType').value;
   
-  if (!number || number.length < 5) {
-    return; // Skip if number is invalid
+  if (!number) {
+    alert('Please enter WhatsApp number');
+    return;
   }
-
+  
   showAttackAnimation(`Attacking ${number}...`);
   
   try {
@@ -830,23 +812,25 @@ async function launchWhatsAppNumberAttack() {
     const result = await response.json();
     
     if (result.success) {
-      showAttackResult('success', `Attack sent to ${number} automatically!`);
+      showAttackResult('success', `Attack sent to ${number} successfully!`);
     } else {
-      showAttackResult('error', result.message || 'Auto-attack failed');
+      showAttackResult('error', result.message || 'Attack failed');
     }
   } catch (error) {
-    showAttackResult('error', `Auto-attack error: ${error.message}`);
+    showAttackResult('error', `Error: ${error.message}`);
   }
 }
 
+// WhatsApp Group Attack
 async function launchWhatsAppGroupAttack() {
   const groupLink = document.getElementById('whatsappGroupLink').value.trim();
   const bugType = document.getElementById('groupBugType').value;
   
-  if (!groupLink || !groupLink.includes('whatsapp.com')) {
-    return; // Skip if group link is invalid
+  if (!groupLink) {
+    alert('Please enter WhatsApp group link');
+    return;
   }
-
+  
   showAttackAnimation(`Attacking group...`);
   
   try {
@@ -854,18 +838,38 @@ async function launchWhatsAppGroupAttack() {
     const result = await response.json();
     
     if (result.success) {
-      showAttackResult('success', `Group attack sent automatically!`);
+      showAttackResult('success', `Group attack sent successfully!`);
     } else {
-      showAttackResult('error', result.message || 'Group auto-attack failed');
+      showAttackResult('error', result.message || 'Group attack failed');
     }
   } catch (error) {
-    showAttackResult('error', `Group attack error: ${error.message}`);
+    showAttackResult('error', `Error: ${error.message}`);
   }
 }
 
-// Toggle auto-attack feature
-function toggleAutoAttack() {
-  autoAttackEnabled = !autoAttackEnabled;
-  const status = autoAttackEnabled ? 'ON' : 'OFF';
-  alert(`Auto-attack mode is now ${status}`);
+// Animation functions
+function showAttackAnimation(message) {
+  const animation = document.getElementById('attackAnimation');
+  animation.innerHTML = `
+    <div class="attack-animation-content">
+      <i class="fas fa-bug fa-spin" style="font-size: 3rem; margin-bottom: 20px;"></i>
+      <div>${message}</div>
+    </div>
+  `;
+  animation.classList.remove('hidden');
+}
+
+function showAttackResult(type, message) {
+  const animation = document.getElementById('attackAnimation');
+  animation.innerHTML = `
+    <div class="attack-animation-content">
+      <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-times-circle'}" 
+         style="font-size: 3rem; margin-bottom: 20px; color: ${type === 'success' ? 'var(--main)' : '#f44336'};"></i>
+      <div>${message}</div>
+      <button class="btn" onclick="document.getElementById('attackAnimation').classList.add('hidden')" 
+              style="margin-top: 20px;">
+        <i class="fas fa-times"></i> Close
+      </button>
+    </div>
+  `;
 }
