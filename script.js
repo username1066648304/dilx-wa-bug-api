@@ -771,7 +771,7 @@ function switchAttackType(type) {
   const phoneSection = document.getElementById('phoneAttackSection');
   const whatsappSection = document.getElementById('whatsappAttackSection');
   
-  if (type === 'phone') {
+  if (type === 'android') {
     phoneSection.classList.remove('hidden');
     whatsappSection.classList.add('hidden');
   } else {
