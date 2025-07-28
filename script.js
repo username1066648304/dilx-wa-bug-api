@@ -734,6 +734,50 @@ function switchAttackType(type) {
 }
 
 /* ========== DASHBOARD FUNCTIONS ========== */
+/* Pairing Code Generation */
+async function generatePairing() {
+  if (!currentUser) {
+    showNotification('Please login first', 'error');
+    return;
+  }
+
+  const number = prompt(`Enter WhatsApp number for pairing (62xxx):`);
+  if (!number || !number.startsWith('62')) {
+    showNotification('Please enter a valid Indonesian number (62xxx)', 'error');
+    return;
+  }
+
+  const pairingResult = document.getElementById('pairingResult');
+  
+  try {
+    pairingResult.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating pairing code...';
+    
+    const response = await fetch(`/pairing-code?number=${encodeURIComponent(number)}&user=${currentUser.username}`);
+    
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    const data = await response.json();
+    
+    if (data.success) {
+      pairingResult.innerHTML = `
+        <div><strong>Code:</strong> ${data.code}</div>
+        <div><small>Expires in: 10 minutes</small></div>
+      `;
+      showNotification('Pairing code generated!', 'success');
+    } else {
+      pairingResult.textContent = `Error: ${data.message || 'Failed to generate code'}`;
+      showNotification(data.message || 'Pairing failed', 'error');
+    }
+  } catch (error) {
+    pairingResult.textContent = 'Connection error';
+    showNotification('Failed to connect to server', 'error');
+    console.error('Pairing error:', error);
+  }
+}
+
+/* Update showDashboard to maintain pairing status */
 function showDashboard() {
   header.classList.remove('hidden');
   loginCard.classList.add('hidden');
@@ -746,6 +790,9 @@ function showDashboard() {
   
   document.getElementById('myInfoUsername').value = currentUser.username;
   document.getElementById('myInfoRole').value = currentUser.role;
+  
+  // Reset pairing status when showing dashboard
+  document.getElementById('pairingResult').textContent = 'Status: Not paired';
   
   updateSideMenu();
   startInactivityTimer();
