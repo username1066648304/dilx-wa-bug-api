@@ -194,18 +194,25 @@ body {
 }
 
 .btn-telegram {
-  background: rgba(0, 136, 204, 0.2);
-  border: 1px solid rgba(0, 136, 204, 0.5); 
-  color: #0a0a0a; 
+  background: transparent;
+  border: none;
+  color: #0088cc;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
   margin-top: 15px;
-  width: 100%;
-  justify-content: center;
-  transition: all 0.3s ease;
+  transition: color 0.2s;
 }
 
 .btn-telegram:hover {
-  background: rgba(0, 136, 204, 0.3); /* Slightly more opaque on hover */
-  border-color: rgba(0, 136, 204, 0.7);
+  color: #0066a0;
+}
+
+.btn-telegram i {
+  margin-right: 6px;
+  font-size: 0.9rem;
 }
 
 .btn-danger {
