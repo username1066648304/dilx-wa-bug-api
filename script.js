@@ -196,7 +196,6 @@ function copyToClipboard(text) {
 }
 
 /* ========== SESSION MANAGEMENT ========== */
-/* ========== SESSION MANAGEMENT ========== */
 async function verifySession() {
   try {
     const response = await getUsers();
@@ -229,17 +228,7 @@ async function verifySession() {
 }
 
 /* ========== API FUNCTIONS ========== */
-async function getUsers() {
-  try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
-    const data = await response.json();
-    // Return the record array directly
-    return data.record || [];
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    return [];
-  }
-}
+
 
 async function updateUsers(users) {
   try {
@@ -396,6 +385,29 @@ async function updateUsers(users) {
   }
 }
 
+/* ========== API FUNCTIONS ========== */
+async function getUsers() {
+  try {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
+    const data = await response.json();
+    
+    // Ensure we always return an array
+    if (Array.isArray(data)) {
+      return data;
+    } else if (Array.isArray(data.record)) {
+      return data.record;
+    } else if (typeof data.record === 'object' && data.record !== null) {
+      // If record is an object, convert it to an array
+      return Object.values(data.record);
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return [];
+  }
+}
+
 /* ========== AUTH FUNCTIONS ========== */
 async function login() {
   const username = document.getElementById('username').value.trim();
@@ -422,6 +434,9 @@ async function login() {
   try {
     const users = await getUsers();
     
+    // Debugging: Log the users data to see its structure
+    console.log('Users data:', users);
+    
     // Check hardcoded owner credentials
     if (username === ROLE_CONFIG.OWNER.username && password === ROLE_CONFIG.OWNER.password) {
       currentUser = {
@@ -437,6 +452,11 @@ async function login() {
       showSuccess(loginResult, `Welcome back, Owner!`);
       setTimeout(showDashboard, 1000);
       return;
+    }
+
+    // Ensure users is an array before calling find()
+    if (!Array.isArray(users)) {
+      throw new Error('Invalid users data format');
     }
 
     const user = users.find(u => u.username === username && u.password === password);
