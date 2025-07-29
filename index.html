@@ -16,10 +16,7 @@
       <div class="hamburger-line"></div>
     </div>
     <div class="logo">UltraXweb</div>
-    <div class="user-badge hidden" id="userBadge">
-      <span id="currentRole"></span>
-      <i class="fas fa-circle status-indicator" id="connectionStatus"></i>
-    </div>
+    <div></div>
   </div>
 
   <!-- Side Menu -->
@@ -30,15 +27,13 @@
   <div class="main-content">
     <!-- Login Form -->
     <div class="card" id="loginCard">
-      <div class="card-header pulse">
-        <h2><i class="fas fa-lock"></i> UltraXweb Authentication</h2>
-      </div>
+      <h2 style="text-align: center;">Welcome To UltraXweb</h2>
       <div class="form-group">
-        <label><i class="fas fa-user"></i> Username</label>
+        <label>Username</label>
         <input type="text" id="username" class="form-control" placeholder="Enter your username">
       </div>
       <div class="form-group">
-        <label><i class="fas fa-key"></i> Password</label>
+        <label>Password</label>
         <div class="password-container">
           <input type="password" id="password" class="form-control" placeholder="Enter your password">
           <button type="button" class="password-toggle" onclick="togglePassword('password')">
@@ -46,170 +41,107 @@
           </button>
         </div>
       </div>
-      <button class="btn btn-login" onclick="login()" id="loginBtn">
+      <button class="btn" onclick="login()" id="loginBtn">
         <i class="fas fa-sign-in-alt"></i> Login
       </button>
       
-      <div class="telegram-global">
-        <a href="https://t.me/dilxVXII" target="_blank" class="btn btn-telegram">
-          <i class="fab fa-telegram"></i> Buy Access via Telegram
-        </a>
-      </div>
+      <a href="https://t.me/dilxVXII" target="_blank" class="btn btn-telegram">
+        <i class="fab fa-telegram"></i> Buy Access via Telegram
+      </a>
       
-      <div id="loginResult" class="result-message"></div>
-      
-      <div class="system-status">
-        <div class="status-item">
-          <span>API Status:</span>
-          <span id="apiLoginStatus" class="status-checking">
-            <i class="fas fa-circle-notch fa-spin"></i> Checking...
-          </span>
-        </div>
-        <div class="status-item">
-          <span>Maintenance:</span>
-          <span id="maintenanceStatus" class="status-disconnected">
-            <i class="fas fa-times-circle"></i> Unknown
-          </span>
-        </div>
-      </div>
+      <div id="loginResult" style="margin-top: 15px; text-align: center;"></div>
     </div>
 
-    <!-- Dashboard -->
-    <div class="card hidden" id="dashboard">
-      <div class="card-header">
-        <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
-        <div class="card-subtitle" id="welcomeMessage">Welcome back!</div>
-      </div>
-      
-      <div class="info-box-container">
-        <div class="info-box">
-          <div class="info-box-icon"><i class="fas fa-user"></i></div>
-          <div class="info-box-label">Username</div>
-          <div class="info-box-value" id="infoUsername">-</div>
-        </div>
-        
-        <div class="info-box">
-          <div class="info-box-icon"><i class="fas fa-user-tag"></i></div>
-          <div class="info-box-label">Role</div>
-          <div class="info-box-value" id="infoRole">-</div>
-        </div>
-        
-        <div class="info-box">
-          <div class="info-box-icon"><i class="fas fa-mobile-alt"></i></div>
-          <div class="info-box-label">Device ID</div>
-          <div class="info-box-value" id="infoDeviceId">-</div>
-        </div>
-        
-        <div class="info-box">
-          <div class="info-box-icon"><i class="fas fa-clock"></i></div>
-          <div class="info-box-label">Expired</div>
-          <div class="info-box-value" id="infoExpired">-</div>
-        </div>
-        
-        <div class="info-box">
-          <div class="info-box-icon"><i class="fas fa-plug"></i></div>
-          <div class="info-box-label">API Status</div>
-          <div class="info-box-value" id="infoApiStatus">-</div>
-        </div>
-        
-        <div class="info-box">
-          <div class="info-box-icon"><i class="fas fa-key"></i></div>
-          <div class="info-box-label">Token</div>
-          <div class="info-box-value" id="infoToken">Not generated</div>
-        </div>
-      </div>
+<!-- Dashboard -->
+<div class="card hidden" id="dashboard">
+  <h2 style="text-align: center; margin-bottom: 25px;">Dashboard</h2>
+  
+  <div class="info-box-container">
+    <div class="info-box">
+      <div class="info-box-label">Username</div>
+      <div class="info-box-value" id="infoUsername">-</div>
     </div>
-
-    <!-- My Info Card -->
-    <div class="card hidden fade-in" id="myInfo">
-      <div class="card-header">
-        <h2><i class="fas fa-user-circle"></i> My Account</h2>
-      </div>
-      <div class="form-group">
-        <label><i class="fas fa-user"></i> Username</label>
-        <input type="text" id="myInfoUsername" class="form-control" readonly>
-      </div>
-      <div class="form-group">
-        <label><i class="fas fa-user-tag"></i> Role</label>
-        <input type="text" id="myInfoRole" class="form-control" readonly>
-      </div>
-      
-      <!-- Device Pairing Section -->
-      <div class="pairing-section">
-        <h4><i class="fas fa-link"></i> WhatsApp Pairing</h4>
-        <p class="pairing-description">Pair your WhatsApp number to enable API access</p>
-        
-        <div class="pairing-progress hidden" id="pairingProgress">
-          <div class="progress-bar">
-            <div class="progress-fill" id="pairingProgressFill"></div>
-          </div>
-          <div class="progress-text" id="pairingProgressText">Initializing...</div>
-        </div>
-        
-        <button class="btn pairing-btn" onclick="generatePairing()" id="pairingBtn">
-          <i class="fas fa-qrcode"></i> Generate Pairing Code
-        </button>
-        
-        <div id="pairingResult" class="pairing-status">
-          <div class="status-header">Status: <span class="status-value">Not paired</span></div>
-          <div class="token-display hidden" id="tokenDisplay">
-            <div class="token-label">Your API Token:</div>
-            <div class="token-value" id="tokenValue"></div>
-            <button class="btn btn-copy" onclick="copyToken()">
-              <i class="fas fa-copy"></i> Copy
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Password Reset Section -->
-      <div class="form-group">
-        <label><i class="fas fa-key"></i> Reset Password</label>
-        <div class="password-container">
-          <input type="password" id="newPassword" class="form-control" placeholder="New password">
-          <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
-            <i class="fas fa-eye"></i>
-          </button>
-        </div>
-      </div>
-      
-      <div class="action-buttons">
-        <button class="btn" onclick="resetPassword()" id="resetPassBtn">
-          <i class="fas fa-sync-alt"></i> Update Password
-        </button>
-        <button class="btn btn-close" onclick="hideAllMenus()">
-          <i class="fas fa-times"></i> Close
-        </button>
-      </div>
-      <div id="myInfoResult" class="result-message"></div>
+    
+    <div class="info-box">
+      <div class="info-box-label">Role</div>
+      <div class="info-box-value" id="infoRole">-</div>
     </div>
+    
+    <div class="info-box">
+      <div class="info-box-label">Device ID</div>
+      <div class="info-box-value" id="infoDeviceId">-</div>
+    </div>
+    
+    <div class="info-box">
+      <div class="info-box-label">Expired</div>
+      <div class="info-box-value" id="infoExpired">-</div>
+    </div>
+  </div>
+</div>
+
+<!-- My Info Card -->
+<div class="card hidden fade-in" id="myInfo">
+  <h2><i class="fas fa-user"></i> My Info</h2>
+  <div class="form-group">
+    <label>Username</label>
+    <input type="text" id="myInfoUsername" class="form-control" readonly>
+  </div>
+  <div class="form-group">
+    <label>Role</label>
+    <input type="text" id="myInfoRole" class="form-control" readonly>
+  </div>
+  
+  <!-- Device Pairing Section -->
+  <div class="pairing-section">
+    <h4><i class="fas fa-link"></i> Device Pairing</h4>
+    <button class="btn pairing-btn" onclick="generatePairing()">
+      <i class="fas fa-key"></i> Generate Pairing Code
+    </button>
+    <p id="pairingResult" class="pairing-status">Status: Not paired</p>
+  </div>
+
+  <div class="form-group">
+    <label>Reset Password</label>
+    <div class="password-container">
+      <input type="password" id="newPassword" class="form-control" placeholder="New password">
+      <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
+        <i class="fas fa-eye"></i>
+      </button>
+    </div>
+  </div>
+  
+  <button class="btn" onclick="resetPassword()" id="resetPassBtn">
+    <i class="fas fa-key"></i> Reset Password
+  </button>
+  <button class="btn" onclick="hideAllMenus()" style="margin-left: 10px;">
+    <i class="fas fa-times"></i> Close
+  </button>
+  <div id="myInfoResult" style="margin-top: 15px;"></div>
+</div>
 
     <!-- Attack Menu -->
     <div class="card hidden fade-in" id="attackMenu">
-      <div class="card-header">
-        <h2><i class="fas fa-bug"></i> Attack Panel</h2>
-        <div class="card-subtitle">Select target type and parameters</div>
-      </div>
+      <h2><i class="fas fa-bug"></i> Attack Menu</h2>
 
       <div class="attack-type-toggle">
         <label class="toggle-option">
           <input type="radio" name="attackType" value="phone" checked onclick="switchAttackType('phone')">
-          <span><i class="fas fa-mobile-alt"></i> Phone Number</span>
+          <span><i class="fab fa-whatsapp"></i> WhatsApp Number</span>
         </label>
         <label class="toggle-option">
           <input type="radio" name="attackType" value="whatsapp" onclick="switchAttackType('whatsapp')">
-          <span><i class="fas fa-users"></i> WhatsApp Group</span>
+          <span><i class="fab fa-whatsapp"></i> WhatsApp Group</span>
         </label>
       </div>
 
       <div id="phoneAttackSection">
         <div class="form-group">
-          <label><i class="fas fa-phone"></i> Target Number</label>
+          <label>Target Number</label>
           <input type="text" id="targetNumber" class="form-control" placeholder="Example: 6281234567890">
           <small class="input-hint">10-15 digits, no spaces or special characters</small>
         </div>
         <div class="form-group">
-          <label><i class="fas fa-bug"></i> Select Bug Type</label>
+          <label>Select Bug Type</label>
           <select id="bugType" class="form-control">
             <option value="invisible_crash">Invisible Crash</option>
             <option value="invisible_ios">Invisible IOS</option>
@@ -224,12 +156,12 @@
 
       <div id="whatsappAttackSection" class="hidden">
         <div class="form-group">
-          <label><i class="fab fa-whatsapp"></i> WhatsApp Group Link</label>
+          <label>WhatsApp Group Link</label>
           <input type="text" id="whatsappGroup" class="form-control" placeholder="https://chat.whatsapp.com/...">
           <small class="input-hint">Valid WhatsApp group invite link</small>
         </div>
         <div class="form-group">
-          <label><i class="fas fa-bug"></i> Select Bug Type</label>
+          <label>Select Bug Type</label>
           <select id="whatsappBugType" class="form-control">
             <option value="group_crash">Group Crash</option>
             <option value="group_spam">Group Spam</option>
@@ -241,38 +173,29 @@
         </button>
       </div>
 
-      <div class="api-status-container">
-        <div class="status-header"><i class="fas fa-server"></i> API Connection</div>
+      <div class="form-group" id="apiStatusContainer">
+        <label>API Status</label>
         <div id="apiStatus" class="status-checking">
-          <i class="fas fa-circle-notch fa-spin"></i> Checking API status...
-        </div>
-        <div class="rate-limit">
-          <i class="fas fa-stopwatch"></i> Rate Limit: 
-          <span id="rateLimitCounter">0</span>/<span>5</span> requests per minute
+          <i class="fas fa-circle-notch fa-spin"></i> Checking...
         </div>
       </div>
       
-      <div class="action-buttons">
-        <button class="btn btn-close" onclick="hideAllMenus()">
-          <i class="fas fa-times"></i> Close Panel
-        </button>
-      </div>
+      <button class="btn" onclick="hideAllMenus()" style="margin-top: 15px;">
+        <i class="fas fa-times"></i> Close Menu
+      </button>
       
-      <div id="attackResult" class="result-message"></div>
+      <div id="attackResult" style="margin-top: 15px;"></div>
     </div>
 
     <!-- Admin: Create User -->
     <div class="card hidden fade-in" id="adminCreateUser">
-      <div class="card-header">
-        <h2><i class="fas fa-user-plus"></i> Create New User</h2>
-        <div class="card-subtitle">Fill all required fields</div>
-      </div>
+      <h2><i class="fas fa-user-plus"></i> Create User</h2>
       <div class="form-group">
-        <label><i class="fas fa-user"></i> Username</label>
+        <label>Username</label>
         <input type="text" id="newUsername" class="form-control" placeholder="3-20 characters (a-z, 0-9, _)">
       </div>
       <div class="form-group">
-        <label><i class="fas fa-key"></i> Password</label>
+        <label>Password</label>
         <div class="password-container">
           <input type="password" id="newUserPassword" class="form-control" placeholder="User password">
           <button type="button" class="password-toggle" onclick="togglePassword('newUserPassword')">
@@ -281,7 +204,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label><i class="fas fa-user-tag"></i> Role</label>
+        <label>Role</label>
         <select id="newUserRole" class="form-control">
           <option value="admin">Admin</option>
           <option value="reseller">Reseller</option>
@@ -289,111 +212,38 @@
         </select>
       </div>
       <div class="form-group">
-        <label><i class="fas fa-calendar-alt"></i> Expiration Days</label>
+        <label>Expiration Days</label>
         <input type="number" id="newUserDays" class="form-control" min="1" value="30">
       </div>
-      <div class="action-buttons">
-        <button class="btn" onclick="createUser()" id="createUserBtn">
-          <i class="fas fa-save"></i> Create User
-        </button>
-        <button class="btn btn-close" onclick="hideAllMenus()">
-          <i class="fas fa-times"></i> Close
-        </button>
-      </div>
-      <div id="createUserResult" class="result-message"></div>
+      <button class="btn" onclick="createUser()" id="createUserBtn">
+        <i class="fas fa-save"></i> Create User
+      </button>
+      <button class="btn" onclick="hideAllMenus()" style="margin-left: 10px;">
+        <i class="fas fa-times"></i> Close
+      </button>
+      <div id="createUserResult" style="margin-top: 15px;"></div>
     </div>
 
     <!-- Admin: List Users -->
     <div class="card hidden fade-in" id="adminListUsers">
-      <div class="card-header">
-        <h2><i class="fas fa-users"></i> User Management</h2>
-        <div class="card-subtitle">All registered users</div>
-      </div>
-      <div class="table-container">
+      <h2><i class="fas fa-users"></i> User List</h2>
+      <div style="overflow-x: auto;">
         <table class="user-table">
           <thead>
             <tr>
-              <th><i class="fas fa-user"></i> Username</th>
-              <th><i class="fas fa-user-tag"></i> Role</th>
-              <th><i class="fas fa-clock"></i> Expired</th>
-              <th><i class="fas fa-mobile-alt"></i> Device ID</th>
-              <th><i class="fas fa-cog"></i> Actions</th>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Expired</th>
+              <th>Device ID</th>
+              <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="userListBody">
-            <tr>
-              <td colspan="5" class="loading-text">
-                <i class="fas fa-circle-notch fa-spin"></i> Loading user data...
-              </td>
-            </tr>
-          </tbody>
+          <tbody id="userListBody"></tbody>
         </table>
       </div>
-      <div class="action-buttons">
-        <button class="btn btn-close" onclick="hideAllMenus()">
-          <i class="fas fa-times"></i> Close
-        </button>
-      </div>
-    </div>
-
-    <!-- Owner Panel -->
-    <div class="card hidden fade-in" id="ownerPanel">
-      <div class="card-header">
-        <h2><i class="fas fa-crown"></i> Owner Control Panel</h2>
-        <div class="card-subtitle">System configuration</div>
-      </div>
-      
-      <div class="system-controls">
-        <div class="control-group">
-          <h4><i class="fas fa-plug"></i> API Mode</h4>
-          <div class="toggle-switch">
-            <input type="checkbox" id="apiModeToggle" onchange="toggleApiMode()">
-            <label for="apiModeToggle" class="toggle-label">
-              <span class="toggle-text">Public API</span>
-              <span class="toggle-handle"></span>
-            </label>
-          </div>
-          <p class="control-description">When enabled, all users can access API without pairing</p>
-        </div>
-        
-        <div class="control-group">
-          <h4><i class="fas fa-tools"></i> Maintenance Mode</h4>
-          <div class="toggle-switch">
-            <input type="checkbox" id="maintenanceToggle" onchange="toggleMaintenance()">
-            <label for="maintenanceToggle" class="toggle-label">
-              <span class="toggle-text">Maintenance</span>
-              <span class="toggle-handle"></span>
-            </label>
-          </div>
-          <p class="control-description">When enabled, only owner can login</p>
-        </div>
-        
-        <div class="control-group">
-          <h4><i class="fas fa-bolt"></i> System Actions</h4>
-          <button class="btn btn-system" onclick="clearAllSessions()">
-            <i class="fas fa-trash-alt"></i> Clear All Sessions
-          </button>
-          <button class="btn btn-system" onclick="regenerateMasterToken()">
-            <i class="fas fa-key"></i> Regenerate Master Token
-          </button>
-        </div>
-      </div>
-      
-      <div class="action-buttons">
-        <button class="btn btn-close" onclick="hideAllMenus()">
-          <i class="fas fa-times"></i> Close Panel
-        </button>
-      </div>
-      
-      <div id="ownerPanelResult" class="result-message"></div>
-    </div>
-  </div>
-
-  <!-- Session Timeout Warning -->
-  <div class="modal hidden" id="timeoutWarning">
-    <div class="modal-content">
-      <h3><i class="fas fa-exclamation-triangle"></i> Session Expiring Soon</h3>
-      <p>Your session will expire in <span id="timeoutCounter">5:00</span>. Click anywhere to extend.</p>
+      <button class="btn" onclick="hideAllMenus()" style="margin-top: 15px;">
+        <i class="fas fa-times"></i> Close
+      </button>
     </div>
   </div>
 
