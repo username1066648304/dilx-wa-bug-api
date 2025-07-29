@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/backend.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "creds/**",
+          "public/**"
+        ]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "src/backend.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "public/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "MASTER_TOKEN": "@ultraxweb-master-token",
+    "TELEGRAM_BOT_TOKEN": "@ultraxweb-telegram-token",
+    "API_BASE_URL": "https://ultraxweb.vercel.app"
+  }
+}
