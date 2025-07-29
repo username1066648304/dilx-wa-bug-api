@@ -387,6 +387,82 @@
       
       <div id="ownerPanelResult" class="result-message"></div>
     </div>
+
+    <!-- Owner: Session Tools -->
+    <div class="card hidden fade-in" id="sessionTools">
+      <div class="card-header">
+        <h2><i class="fas fa-users-cog"></i> Session Tools</h2>
+        <div class="card-subtitle">Manage all active sessions</div>
+      </div>
+      
+      <div class="table-container">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th><i class="fas fa-user"></i> Username</th>
+              <th><i class="fas fa-mobile-alt"></i> Device ID</th>
+              <th><i class="fas fa-link"></i> Status</th>
+              <th><i class="fas fa-key"></i> Token</th>
+              <th><i class="fas fa-cog"></i> Actions</th>
+            </tr>
+          </thead>
+          <tbody id="sessionListBody">
+            <tr>
+              <td colspan="5" class="loading-text">
+                <i class="fas fa-circle-notch fa-spin"></i> Loading session data...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="action-buttons">
+        <button class="btn btn-close" onclick="hideAllMenus()">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+    </div>
+
+    <!-- Owner: Token Management -->
+    <div class="card hidden fade-in" id="tokenManagement">
+      <div class="card-header">
+        <h2><i class="fas fa-key"></i> Token Management</h2>
+        <div class="card-subtitle">View and manage all user tokens</div>
+      </div>
+      
+      <div class="form-group">
+        <label><i class="fas fa-filter"></i> Filter by Username</label>
+        <select id="tokenFilter" class="form-control" onchange="filterTokens()">
+          <option value="">All Users</option>
+        </select>
+      </div>
+      
+      <div class="table-container">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th><i class="fas fa-user"></i> Username</th>
+              <th><i class="fas fa-key"></i> Token</th>
+              <th><i class="fas fa-clock"></i> Generated At</th>
+              <th><i class="fas fa-copy"></i> Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tokenListBody">
+            <tr>
+              <td colspan="4" class="loading-text">
+                <i class="fas fa-circle-notch fa-spin"></i> Loading token data...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="action-buttons">
+        <button class="btn btn-close" onclick="hideAllMenus()">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Session Timeout Warning -->

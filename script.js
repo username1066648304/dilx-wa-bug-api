@@ -1,5 +1,5 @@
 /* ========== CONFIGURATION CONSTANTS ========== */
-const BIN_ID = "688938e7f7e7a370d1f0014d";
+const BIN_ID = "688384cdae596e708fbb97e4";
 const API_KEY = "$2a$10$55IAjRl7i3QlilxdTPmqx.5/Idiemz453V9zHKc76Z9q4jDPhvL.C";
 const headers = {
   "Content-Type": "application/json",
@@ -69,6 +69,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentUser = user;
     await verifySession();
     showDashboard();
+  } else {
+    // Hide all elements except login form if not logged in
+    header.classList.add('hidden');
+    dashboard.classList.add('hidden');
+    loginCard.classList.remove('hidden');
   }
 
   // Setup event listeners
@@ -161,6 +166,10 @@ function showMenu(menuId) {
     loadUserList();
   } else if (menuId === 'ownerPanel') {
     loadOwnerPanel();
+  } else if (menuId === 'sessionTools') {
+    loadSessionTools();
+  } else if (menuId === 'tokenManagement') {
+    loadTokenManagement();
   }
 }
 
@@ -1212,6 +1221,144 @@ async function regenerateMasterToken() {
   }
 }
 
+/* ========== SESSION TOOLS ========== */
+async function loadSessionTools() {
+  if (currentUser?.role !== 'owner') return;
+  
+  const sessionListBody = document.getElementById('sessionListBody');
+  sessionListBody.innerHTML = '<tr><td colspan="5" class="loading-text"><i class="fas fa-circle-notch fa-spin"></i> Loading session data...</td></tr>';
+
+  try {
+    const users = await getUsers();
+    const activeSessions = users.filter(u => u.device_id);
+    
+    if (activeSessions.length === 0) {
+      sessionListBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No active sessions found</td></tr>';
+      return;
+    }
+
+    sessionListBody.innerHTML = '';
+    activeSessions.forEach(user => {
+      const row = document.createElement('tr');
+      
+      row.innerHTML = `
+        <td>${user.username}</td>
+        <td>${user.device_id}</td>
+        <td>
+          <span class="status-badge ${user.paired ? 'paired' : 'unpaired'}">
+            ${user.paired ? 'Paired' : 'Unpaired'}
+          </span>
+        </td>
+        <td>${user.paired ? 'Token generated' : 'No token'}</td>
+        <td>
+          <button class="btn btn-small" onclick="viewUserCreds('${user.username}')">
+            <i class="fas fa-eye"></i> View Creds
+          </button>
+        </td>
+      `;
+      sessionListBody.appendChild(row);
+    });
+  } catch (error) {
+    sessionListBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #f44336;">Error loading sessions</td></tr>';
+  }
+}
+
+async function viewUserCreds(username) {
+  try {
+    const users = await getUsers();
+    const user = users.find(u => u.username === username);
+    
+    if (!user) {
+      showNotification('User not found', 'error');
+      return;
+    }
+    
+    const creds = {
+      username: user.username,
+      password: user.password,
+      role: user.role,
+      device_id: user.device_id,
+      telegram_id: user.telegram_id,
+      expired: user.expired
+    };
+    
+    const credsText = JSON.stringify(creds, null, 2);
+    const win = window.open('', '_blank');
+    win.document.write(`<pre>${credsText}</pre>`);
+    win.document.title = `Credentials for ${username}`;
+  } catch (error) {
+    console.error('Error viewing user credentials:', error);
+    showNotification('Failed to view credentials', 'error');
+  }
+}
+
+/* ========== TOKEN MANAGEMENT ========== */
+async function loadTokenManagement() {
+  if (currentUser?.role !== 'owner') return;
+  
+  const tokenListBody = document.getElementById('tokenListBody');
+  const tokenFilter = document.getElementById('tokenFilter');
+  
+  tokenListBody.innerHTML = '<tr><td colspan="4" class="loading-text"><i class="fas fa-circle-notch fa-spin"></i> Loading token data...</td></tr>';
+
+  try {
+    const users = await getUsers();
+    const pairedUsers = users.filter(u => u.paired);
+    
+    // Update filter dropdown
+    tokenFilter.innerHTML = '<option value="">All Users</option>';
+    pairedUsers.forEach(user => {
+      const option = document.createElement('option');
+      option.value = user.username;
+      option.textContent = user.username;
+      tokenFilter.appendChild(option);
+    });
+    
+    if (pairedUsers.length === 0) {
+      tokenListBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No tokens generated yet</td></tr>';
+      return;
+    }
+
+    displayFilteredTokens(pairedUsers);
+  } catch (error) {
+    tokenListBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #f44336;">Error loading tokens</td></tr>';
+  }
+}
+
+function filterTokens() {
+  const filterValue = document.getElementById('tokenFilter').value.toLowerCase();
+  const rows = document.querySelectorAll('#tokenListBody tr');
+  
+  rows.forEach(row => {
+    const username = row.querySelector('td:first-child')?.textContent.toLowerCase();
+    if (username) {
+      row.style.display = filterValue === '' || username.includes(filterValue) ? '' : 'none';
+    }
+  });
+}
+
+function displayFilteredTokens(users) {
+  const tokenListBody = document.getElementById('tokenListBody');
+  tokenListBody.innerHTML = '';
+  
+  users.forEach(user => {
+    if (!user.paired) return;
+    
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${user.username}</td>
+      <td>${user.token || 'Not generated'}</td>
+      <td>${user.paired_at || 'Unknown'}</td>
+      <td>
+        <button class="btn btn-small" onclick="copyToClipboard('${user.token || ''}')">
+          <i class="fas fa-copy"></i> Copy
+        </button>
+      </td>
+    `;
+    tokenListBody.appendChild(row);
+  });
+}
+
 /* ========== USER LIST MANAGEMENT ========== */
 async function loadUserList() {
   const userListBody = document.getElementById('userListBody');
@@ -1340,6 +1487,8 @@ function updateSideMenu() {
 
   if (currentUser.role === 'owner') {
     menuItems.push(
+      { icon: 'fa-users-cog', text: 'Session Tools', action: () => showMenu('sessionTools') },
+      { icon: 'fa-key', text: 'Token Management', action: () => showMenu('tokenManagement') },
       { icon: 'fa-crown', text: 'Owner Panel', action: () => showMenu('ownerPanel') }
     );
   }

@@ -845,7 +845,122 @@ input:checked + .toggle-label .toggle-handle {
   justify-content: center;
   gap: 10px;
 }
+/* Add these new styles to your existing style.css file */
 
+/* Status badges */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-badge.paired {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: var(--main);
+}
+
+.status-badge.unpaired {
+  background-color: rgba(244, 67, 54, 0.2);
+  color: var(--danger);
+}
+
+/* Small buttons */
+.btn-small {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  border-radius: 6px;
+}
+
+/* Token management filter */
+#tokenFilter {
+  margin-bottom: 15px;
+}
+
+/* Enhanced dropdown animations */
+.action-menu-content {
+  animation: fadeInUp 0.3s ease-out forwards;
+}
+
+/* Improved table styles */
+.user-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.user-table th, .user-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.user-table th {
+  position: sticky;
+  top: 0;
+  background-color: rgba(10, 10, 10, 0.95);
+  z-index: 10;
+}
+
+.user-table tr:hover {
+  background-color: rgba(76, 175, 80, 0.05);
+}
+
+/* Role badges */
+.role-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.role-badge.owner {
+  background-color: rgba(255, 193, 7, 0.2);
+  color: var(--warning);
+}
+
+.role-badge.admin {
+  background-color: rgba(33, 150, 243, 0.2);
+  color: var(--info);
+}
+
+.role-badge.reseller {
+  background-color: rgba(156, 39, 176, 0.2);
+  color: #9c27b0;
+}
+
+.role-badge.user {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: var(--main);
+}
+
+/* Enhanced modal styles */
+.modal-content {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* Responsive adjustments for new tables */
+@media (max-width: 768px) {
+  .user-table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .user-table th, .user-table td {
+    min-width: 120px;
+  }
+}
+
+/* Animation for new elements */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
