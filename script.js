@@ -196,9 +196,13 @@ function copyToClipboard(text) {
 }
 
 /* ========== SESSION MANAGEMENT ========== */
+/* ========== SESSION MANAGEMENT ========== */
 async function verifySession() {
   try {
-    const users = await getUsers();
+    const response = await getUsers();
+    // Ensure we're working with an array of users
+    const users = Array.isArray(response) ? response : response.record || [];
+    
     const user = users.find(u => u.username === currentUser.username);
     
     if (!user || user.device_id !== localDeviceId) {
@@ -221,6 +225,35 @@ async function verifySession() {
   } catch (error) {
     console.error('Session verification failed:', error);
     return false;
+  }
+}
+
+/* ========== API FUNCTIONS ========== */
+async function getUsers() {
+  try {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
+    const data = await response.json();
+    // Return the record array directly
+    return data.record || [];
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return [];
+  }
+}
+
+async function updateUsers(users) {
+  try {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(users)
+    });
+    const data = await response.json();
+    // Return the updated record array
+    return data.record || [];
+  } catch (error) {
+    console.error('Error updating users:', error);
+    return null;
   }
 }
 
@@ -347,16 +380,7 @@ async function checkApiConnection() {
   }
 }
 
-async function getUsers() {
-  try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
-    const data = await response.json();
-    return data.record || [];
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    return [];
-  }
-}
+
 
 async function updateUsers(users) {
   try {
