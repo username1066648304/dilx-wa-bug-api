@@ -1,5 +1,5 @@
 /* ========== CONFIGURATION CONSTANTS ========== */
-const BIN_ID = "688384cdae596e708fbb97e4";
+const BIN_ID = "688938e7f7e7a370d1f0014d";
 const API_KEY = "$2a$10$55IAjRl7i3QlilxdTPmqx.5/Idiemz453V9zHKc76Z9q4jDPhvL.C";
 const headers = {
   "Content-Type": "application/json",
