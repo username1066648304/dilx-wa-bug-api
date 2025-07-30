@@ -79,52 +79,34 @@
   </div>
 </div>
 
-<!-- My Info Card -->
-<div class="card hidden fade-in" id="myInfo">
-  <h2><i class="fas fa-user"></i> My Info</h2>
-  <div class="form-group">
-    <label>Username</label>
-    <input type="text" id="myInfoUsername" class="form-control" readonly>
-  </div>
-  <div class="form-group">
-    <label>Role</label>
-    <input type="text" id="myInfoRole" class="form-control" readonly>
-  </div>
-  
-  <!-- Device Pairing Section -->
-<div class="card hidden fade-in" id="pairingMenu">
-  <h2><i class="fab fa-whatsapp"></i> WhatsApp Pairing</h2>
-  
-  <div class="pairing-status-container">
-    <div class="status-item">
-      <span class="status-label">Current Status:</span>
-      <span id="pairingStatusText" class="status-value">Not Paired</span>
-    </div>
-    <div class="status-item">
-      <span class="status-label">Token Expiry:</span>
-      <span id="tokenExpiryText" class="status-value">-</span>
-    </div>
-  </div>
-
-  <button class="btn pairing-btn" id="generatePairingBtn">
-    <i class="fas fa-key"></i> Generate Pairing Code
-  </button>
-
-  <div id="tokenContainer" class="hidden">
-    <div class="token-display">
-      <input type="text" id="pairingTokenDisplay" readonly class="token-input">
-      <button class="btn copy-btn" onclick="copyToken()">
-        <i class="far fa-copy"></i> Copy
+    <!-- My Info -->
+    <div class="card hidden fade-in" id="myInfo">
+      <h2><i class="fas fa-user"></i> My Info</h2>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="myInfoUsername" class="form-control" readonly>
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <input type="text" id="myInfoRole" class="form-control" readonly>
+      </div>
+      <div class="form-group">
+        <label>Reset Password</label>
+        <div class="password-container">
+          <input type="password" id="newPassword" class="form-control" placeholder="New password">
+          <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      <button class="btn" onclick="resetPassword()" id="resetPassBtn">
+        <i class="fas fa-key"></i> Reset Password
       </button>
-    </div>
-    
-    <div class="token-actions">
-      <button class="btn extend-btn" onclick="extendToken()">
-        <i class="fas fa-calendar-plus"></i> Add 30 Days
+      <button class="btn" onclick="hideAllMenus()" style="margin-left: 10px;">
+        <i class="fas fa-times"></i> Close
       </button>
+      <div id="myInfoResult" style="margin-top: 15px;"></div>
     </div>
-  </div>
-</div>
 
     <!-- Attack Menu -->
     <div class="card hidden fade-in" id="attackMenu">
