@@ -197,41 +197,53 @@ async function checkApiConnection() {
   }
 }
 
+/* ========== CONSTANTS ========== */
+const AUTH_API = {
+  GET: `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`,
+  UPDATE: `https://api.jsonbin.io/v3/b/${BIN_ID}`
+};
+
+/* ========== USER FUNCTIONS ========== */
 async function getUsers() {
   try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
-    const data = await response.json();
-    return data.record;
+    const response = await fetch(AUTH_API.GET, { headers });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    
+    const { record } = await response.json();
+    return Array.isArray(record) ? record : [];
   } catch (error) {
-    console.error('Error fetching users:', error);
+    console.error('Failed to fetch users:', error);
+    showNotification('Connection error. Please try again.', 'error');
     return [];
   }
 }
 
 async function updateUsers(users) {
   try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+    const response = await fetch(AUTH_API.UPDATE, {
       method: 'PUT',
       headers,
-      body: JSON.stringify(users)
+      body: JSON.stringify({ record: users })
     });
-    return await response.json();
+    
+    if (!response.ok) throw new Error(`Update failed: ${response.status}`);
+    return true;
   } catch (error) {
-    console.error('Error updating users:', error);
-    return null;
+    console.error('Failed to update users:', error);
+    showNotification('Failed to save changes.', 'error');
+    return false;
   }
 }
 
 /* ========== AUTH FUNCTIONS ========== */
 async function login() {
+  // Input elements
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value.trim();
   const loginResult = document.getElementById('loginResult');
   const loginBtn = document.getElementById('loginBtn');
 
-  loginResult.innerHTML = '';
-  loginResult.style.color = '';
-
+  // Validation
   if (!username || !password) {
     showError(loginResult, 'Please enter both username and password');
     return;
@@ -240,80 +252,66 @@ async function login() {
   setButtonLoading(loginBtn, true);
 
   try {
-    // 1. Check user credentials
+    // Fetch users
     const users = await getUsers();
     const user = users.find(u => u.username === username && u.password === password);
 
+    // Validate user
     if (!user) {
-      showError(loginResult, 'Invalid username or password');
+      showError(loginResult, 'Invalid credentials');
       return;
     }
 
-    // 2. Check device ID
+    // Security checks
     if (user.device_id && user.device_id !== localDeviceId) {
-      showError(loginResult, `Account is active on another device (ID: ${user.device_id})`);
+      showError(loginResult, `Active session on another device (ID: ${user.device_id})`);
       return;
     }
 
-    // 3. Check account expiration (for non-admin users)
-    if (user.role !== 'admin' && user.expired) {
-      const today = new Date();
-      const expiryDate = new Date(user.expired);
-      if (expiryDate < today) {
-        showError(loginResult, `Account expired on ${user.expired}. Please renew.`);
+    if (!['admin', 'owner'].includes(user.role)) {
+      if (user.expired && new Date(user.expired) < new Date()) {
+        showError(loginResult, `Account expired on ${user.expired}`);
+        return;
+      }
+      if (user.token_expiry && new Date(user.token_expiry) < new Date()) {
+        showError(loginResult, 'Session expired. Please re-pair.');
         return;
       }
     }
 
-    // 4. Check pairing status from creds.json
-    const userCreds = await loadUserCreds(username);
-    if (user.role !== 'admin' && (!userCreds || new Date(userCreds.token_expiry) < new Date())) {
-      showError(loginResult, 'Device not paired or token expired. Please pair first.');
-      return;
-    }
-
-    // 5. Update user data
+    // Update user
     const updatedUser = { 
-      ...user, 
+      ...user,
       device_id: localDeviceId,
       last_login: new Date().toISOString()
     };
-    
-    const updatedUsers = users.map(u => u.username === username ? updatedUser : u);
-    await updateUsers(updatedUsers);
 
-    // 6. Set current user and update UI
+    const success = await updateUsers(
+      users.map(u => u.username === username ? updatedUser : u)
+    );
+
+    if (!success) return;
+
+    // Set session
     currentUser = updatedUser;
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
     
-    showSuccess(loginResult, `Welcome back, ${username}!`);
+    showSuccess(loginResult, `Welcome, ${username}!`);
     
-    // 7. Redirect to dashboard or pairing page based on role
-    if (user.role === 'admin' || userCreds) {
-      setTimeout(showDashboard, 1000);
-    } else {
-      setTimeout(() => showMenu('pairingMenu'), 1000);
-    }
+    // Redirect
+    setTimeout(() => {
+      if (['admin', 'owner'].includes(user.role) || user.paired_at) {
+        showDashboard();
+      } else {
+        showMenu('pairingMenu');
+      }
+    }, 1000);
 
   } catch (error) {
     console.error('Login error:', error);
-    showError(loginResult, `System error: ${error.message || 'Please try again later'}`);
+    showError(loginResult, 'System error. Please try again.');
   } finally {
     setButtonLoading(loginBtn, false);
-  }
-}
-
-// Helper function to load user creds from JSONBin
-async function loadUserCreds(username) {
-  try {
-    const response = await fetch(`https://api.jsonbin.io/v3/b/${CREDS_BIN_ID}/latest`, {
-      headers: CREDS_HEADERS
-    });
-    const data = await response.json();
-    return data.record.find(u => u.username === username) || null;
-  } catch (error) {
-    console.error('Error loading user creds:', error);
-    return null;
   }
 }
 
@@ -321,19 +319,20 @@ async function logout() {
   try {
     if (currentUser) {
       const users = await getUsers();
-      const updatedUsers = users.map(u => {
-        if (u.username === currentUser.username) {
-          return { ...u, device_id: '' };
-        }
-        return u;
-      });
+      const updatedUsers = users.map(u => 
+        u.username === currentUser.username ? { ...u, device_id: '' } : u
+      );
+      
       await updateUsers(updatedUsers);
     }
   } catch (error) {
-    console.error('Error during logout:', error);
+    console.error('Logout error:', error);
   } finally {
+    // Clear session
     currentUser = null;
     localStorage.removeItem('currentUser');
+    
+    // Reset UI
     header.classList.add('hidden');
     loginCard.classList.remove('hidden');
     dashboard.classList.add('hidden');
@@ -343,31 +342,27 @@ async function logout() {
   }
 }
 
-/* ========== USER MANAGEMENT ========== */
 async function resetPassword() {
   const newPassword = document.getElementById('newPassword').value;
   const resetPassBtn = document.getElementById('resetPassBtn');
   const myInfoResult = document.getElementById('myInfoResult');
 
-  if (!newPassword) {
-    myInfoResult.innerHTML = 'Please enter new password';
+  if (!newPassword || newPassword.length < 6) {
+    myInfoResult.innerHTML = 'Password must be at least 6 characters';
     myInfoResult.style.color = '#f44336';
     return;
   }
 
-  resetPassBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Updating...';
-  resetPassBtn.disabled = true;
+  setButtonLoading(resetPassBtn, true);
 
   try {
     const users = await getUsers();
-    const updatedUsers = users.map(u => {
-      if (u.username === currentUser.username) {
-        return { ...u, password: newPassword };
-      }
-      return u;
-    });
+    const updatedUsers = users.map(u => 
+      u.username === currentUser.username ? { ...u, password: newPassword } : u
+    );
 
-    await updateUsers(updatedUsers);
+    const success = await updateUsers(updatedUsers);
+    if (!success) return;
 
     currentUser.password = newPassword;
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -376,11 +371,10 @@ async function resetPassword() {
     myInfoResult.style.color = 'var(--main)';
     document.getElementById('newPassword').value = '';
   } catch (error) {
-    myInfoResult.innerHTML = 'Error updating password: ' + error.message;
+    myInfoResult.innerHTML = 'Error: ' + (error.message || 'Failed to update');
     myInfoResult.style.color = '#f44336';
   } finally {
-    resetPassBtn.innerHTML = '<i class="fas fa-key"></i> Reset Password';
-    resetPassBtn.disabled = false;
+    setButtonLoading(resetPassBtn, false);
   }
 }
 
