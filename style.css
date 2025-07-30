@@ -457,55 +457,6 @@ body {
   line-height: 1.4;
 }
 
-/* Pairing Section Styles */
-.pairing-section {
-  margin: 20px 0;
-  padding: 15px;
-  background: rgba(76, 175, 80, 0.05);
-  border: 1px solid rgba(76, 175, 80, 0.2);
-  border-radius: 8px;
-}
-
-.pairing-section h4 {
-  color: var(--main);
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1rem;
-}
-
-.pairing-btn {
-  background: rgba(76, 175, 80, 0.1);
-  border: 1px solid var(--main);
-  color: var(--text);
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.3s;
-}
-
-.pairing-btn:hover {
-  background: rgba(76, 175, 80, 0.2);
-}
-
-.pairing-status {
-  font-size: 0.85rem;
-  color: #aaa;
-  text-align: center;
-  margin-top: 10px;
-  line-height: 1.5;
-}
-
-.pairing-status strong {
-  color: var(--text);
-  font-weight: normal;
-}
-
 .tooltip-container:hover .tooltip-text {
   visibility: visible;
   opacity: 1;

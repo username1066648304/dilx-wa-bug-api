@@ -1,5 +1,5 @@
 /* ========== CONFIGURATION CONSTANTS ========== */
-const BIN_ID = "688938e7f7e7a370d1f0014d";
+const BIN_ID = "688384cdae596e708fbb97e4";
 const API_KEY = "$2a$10$55IAjRl7i3QlilxdTPmqx.5/Idiemz453V9zHKc76Z9q4jDPhvL.C";
 const headers = {
   "Content-Type": "application/json",
@@ -197,53 +197,41 @@ async function checkApiConnection() {
   }
 }
 
-/* ========== CONSTANTS ========== */
-const AUTH_API = {
-  GET: `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`,
-  UPDATE: `https://api.jsonbin.io/v3/b/${BIN_ID}`
-};
-
-/* ========== USER FUNCTIONS ========== */
 async function getUsers() {
   try {
-    const response = await fetch(AUTH_API.GET, { headers });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    
-    const { record } = await response.json();
-    return Array.isArray(record) ? record : [];
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers });
+    const data = await response.json();
+    return data.record;
   } catch (error) {
-    console.error('Failed to fetch users:', error);
-    showNotification('Connection error. Please try again.', 'error');
+    console.error('Error fetching users:', error);
     return [];
   }
 }
 
 async function updateUsers(users) {
   try {
-    const response = await fetch(AUTH_API.UPDATE, {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
       method: 'PUT',
       headers,
-      body: JSON.stringify({ record: users })
+      body: JSON.stringify(users)
     });
-    
-    if (!response.ok) throw new Error(`Update failed: ${response.status}`);
-    return true;
+    return await response.json();
   } catch (error) {
-    console.error('Failed to update users:', error);
-    showNotification('Failed to save changes.', 'error');
-    return false;
+    console.error('Error updating users:', error);
+    return null;
   }
 }
 
 /* ========== AUTH FUNCTIONS ========== */
 async function login() {
-  // Input elements
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value.trim();
   const loginResult = document.getElementById('loginResult');
   const loginBtn = document.getElementById('loginBtn');
 
-  // Validation
+  loginResult.innerHTML = '';
+  loginResult.style.color = '';
+
   if (!username || !password) {
     showError(loginResult, 'Please enter both username and password');
     return;
@@ -252,64 +240,41 @@ async function login() {
   setButtonLoading(loginBtn, true);
 
   try {
-    // Fetch users
     const users = await getUsers();
     const user = users.find(u => u.username === username && u.password === password);
 
-    // Validate user
     if (!user) {
-      showError(loginResult, 'Invalid credentials');
+      showError(loginResult, 'Invalid username or password');
       return;
     }
 
-    // Security checks
     if (user.device_id && user.device_id !== localDeviceId) {
-      showError(loginResult, `Active session on another device (ID: ${user.device_id})`);
+      showError(loginResult, `Account is active on another device (ID: ${user.device_id})`);
       return;
     }
 
-    if (!['admin', 'owner'].includes(user.role)) {
-      if (user.expired && new Date(user.expired) < new Date()) {
-        showError(loginResult, `Account expired on ${user.expired}`);
-        return;
-      }
-      if (user.token_expiry && new Date(user.token_expiry) < new Date()) {
-        showError(loginResult, 'Session expired. Please re-pair.');
+    if (user.role !== 'admin' && user.expired) {
+      const today = new Date();
+      const expiryDate = new Date(user.expired);
+      if (expiryDate < today) {
+        showError(loginResult, `Account expired on ${user.expired}. Please renew.`);
         return;
       }
     }
 
-    // Update user
-    const updatedUser = { 
-      ...user,
-      device_id: localDeviceId,
-      last_login: new Date().toISOString()
-    };
+    const updatedUser = { ...user, device_id: localDeviceId };
+    const updatedUsers = users.map(u => u.username === username ? updatedUser : u);
+    await updateUsers(updatedUsers);
 
-    const success = await updateUsers(
-      users.map(u => u.username === username ? updatedUser : u)
-    );
-
-    if (!success) return;
-
-    // Set session
     currentUser = updatedUser;
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
     
-    showSuccess(loginResult, `Welcome, ${username}!`);
-    
-    // Redirect
-    setTimeout(() => {
-      if (['admin', 'owner'].includes(user.role) || user.paired_at) {
-        showDashboard();
-      } else {
-        showMenu('pairingMenu');
-      }
-    }, 1000);
+    showSuccess(loginResult, `Welcome back, ${username}!`);
+    setTimeout(showDashboard, 1000);
 
   } catch (error) {
     console.error('Login error:', error);
-    showError(loginResult, 'System error. Please try again.');
+    showError(loginResult, `System error: ${error.message || 'Please try again later'}`);
   } finally {
     setButtonLoading(loginBtn, false);
   }
@@ -319,20 +284,19 @@ async function logout() {
   try {
     if (currentUser) {
       const users = await getUsers();
-      const updatedUsers = users.map(u => 
-        u.username === currentUser.username ? { ...u, device_id: '' } : u
-      );
-      
+      const updatedUsers = users.map(u => {
+        if (u.username === currentUser.username) {
+          return { ...u, device_id: '' };
+        }
+        return u;
+      });
       await updateUsers(updatedUsers);
     }
   } catch (error) {
-    console.error('Logout error:', error);
+    console.error('Error during logout:', error);
   } finally {
-    // Clear session
     currentUser = null;
     localStorage.removeItem('currentUser');
-    
-    // Reset UI
     header.classList.add('hidden');
     loginCard.classList.remove('hidden');
     dashboard.classList.add('hidden');
@@ -342,27 +306,31 @@ async function logout() {
   }
 }
 
+/* ========== USER MANAGEMENT ========== */
 async function resetPassword() {
   const newPassword = document.getElementById('newPassword').value;
   const resetPassBtn = document.getElementById('resetPassBtn');
   const myInfoResult = document.getElementById('myInfoResult');
 
-  if (!newPassword || newPassword.length < 6) {
-    myInfoResult.innerHTML = 'Password must be at least 6 characters';
+  if (!newPassword) {
+    myInfoResult.innerHTML = 'Please enter new password';
     myInfoResult.style.color = '#f44336';
     return;
   }
 
-  setButtonLoading(resetPassBtn, true);
+  resetPassBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Updating...';
+  resetPassBtn.disabled = true;
 
   try {
     const users = await getUsers();
-    const updatedUsers = users.map(u => 
-      u.username === currentUser.username ? { ...u, password: newPassword } : u
-    );
+    const updatedUsers = users.map(u => {
+      if (u.username === currentUser.username) {
+        return { ...u, password: newPassword };
+      }
+      return u;
+    });
 
-    const success = await updateUsers(updatedUsers);
-    if (!success) return;
+    await updateUsers(updatedUsers);
 
     currentUser.password = newPassword;
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -371,10 +339,11 @@ async function resetPassword() {
     myInfoResult.style.color = 'var(--main)';
     document.getElementById('newPassword').value = '';
   } catch (error) {
-    myInfoResult.innerHTML = 'Error: ' + (error.message || 'Failed to update');
+    myInfoResult.innerHTML = 'Error updating password: ' + error.message;
     myInfoResult.style.color = '#f44336';
   } finally {
-    setButtonLoading(resetPassBtn, false);
+    resetPassBtn.innerHTML = '<i class="fas fa-key"></i> Reset Password';
+    resetPassBtn.disabled = false;
   }
 }
 
@@ -765,50 +734,6 @@ function switchAttackType(type) {
 }
 
 /* ========== DASHBOARD FUNCTIONS ========== */
-/* Pairing Code Generation */
-async function generatePairing() {
-  if (!currentUser) {
-    showNotification('Please login first', 'error');
-    return;
-  }
-
-  const number = prompt(`Enter WhatsApp number for pairing (62xxx):`);
-  if (!number || !number.startsWith('62')) {
-    showNotification('Please enter a valid Indonesian number (62xxx)', 'error');
-    return;
-  }
-
-  const pairingResult = document.getElementById('pairingResult');
-  
-  try {
-    pairingResult.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating pairing code...';
-    
-    const response = await fetch(`/pairing-code?number=${encodeURIComponent(number)}&user=${currentUser.username}`);
-    
-    if (!response.ok) {
-      throw new Error(await response.text());
-    }
-
-    const data = await response.json();
-    
-    if (data.success) {
-      pairingResult.innerHTML = `
-        <div><strong>Code:</strong> ${data.code}</div>
-        <div><small>Expires in: 10 minutes</small></div>
-      `;
-      showNotification('Pairing code generated!', 'success');
-    } else {
-      pairingResult.textContent = `Error: ${data.message || 'Failed to generate code'}`;
-      showNotification(data.message || 'Pairing failed', 'error');
-    }
-  } catch (error) {
-    pairingResult.textContent = 'Connection error';
-    showNotification('Failed to connect to server', 'error');
-    console.error('Pairing error:', error);
-  }
-}
-
-/* Update showDashboard to maintain pairing status */
 function showDashboard() {
   header.classList.remove('hidden');
   loginCard.classList.add('hidden');
@@ -822,14 +747,10 @@ function showDashboard() {
   document.getElementById('myInfoUsername').value = currentUser.username;
   document.getElementById('myInfoRole').value = currentUser.role;
   
-  // Reset pairing status when showing dashboard
-  document.getElementById('pairingResult').textContent = 'Status: Not paired';
-  
   updateSideMenu();
   startInactivityTimer();
 }
 
-// Tambahkan di bagian updateSideMenu()
 function updateSideMenu() {
   sideMenu.innerHTML = '';
   
@@ -837,9 +758,7 @@ function updateSideMenu() {
 
   const menuItems = [
     { icon: 'fa-user', text: 'My Info', action: () => showMenu('myInfo') },
-    { icon: 'fa-link', text: 'Pairing', action: () => showMenu('pairingMenu') },
-    { icon: 'fa-bug', text: 'Attack Menu', action: () => showMenu('attackMenu') },
-    { icon: 'fa-cog', text: 'API Settings', action: () => showMenu('apiSettingsMenu') }
+    { icon: 'fa-bug', text: 'Attack Menu', action: () => showMenu('attackMenu') }
   ];
 
   if (currentUser.role === 'admin') {
@@ -850,10 +769,6 @@ function updateSideMenu() {
   } else if (currentUser.role === 'reseller') {
     menuItems.push(
       { icon: 'fa-user-plus', text: 'Create User', action: () => showMenu('adminCreateUser') }
-    );
-  } else if (currentUser.role === 'owner') {
-    menuItems.push(
-      { icon: 'fa-crown', text: 'Owner Panel', action: () => showMenu('ownerPanel') }
     );
   }
 
@@ -877,179 +792,4 @@ function updateSideMenu() {
   logoutItem.style.marginTop = '20px';
   logoutItem.style.color = '#f44336';
   sideMenu.appendChild(logoutItem);
-}
-
-// func.js
-
-/* ========== PAIRING SYSTEM FUNCTIONS ========== */
-async function generatePairingCode() {
-  const number = document.getElementById('pairingNumber').value.trim();
-  const pairingResult = document.getElementById('pairingResult');
-  const generateBtn = document.getElementById('generatePairingBtn');
-
-  if (!number || !/^\d{6,15}$/.test(number)) {
-    showNotification('Invalid WhatsApp number format (6-15 digits required)', 'error');
-    return;
-  }
-
-  generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
-  generateBtn.disabled = true;
-
-  try {
-    // Simulate API call to generate pairing code
-    const code = `${Math.floor(100 + Math.random() * 900)}-${Math.floor(100 + Math.random() * 900)}`;
-    
-    // Store the pairing code temporarily
-    localStorage.setItem('tempPairingCode', code);
-    localStorage.setItem('tempPairingNumber', number);
-
-    showNotification(`Pairing code generated: ${code}`, 'success');
-    document.getElementById('pairingCodeInput').value = code;
-    pairingResult.innerHTML = `Code sent to ${number}. Valid for 10 minutes.`;
-    pairingResult.style.color = 'var(--main)';
-  } catch (error) {
-    showNotification('Failed to generate pairing code', 'error');
-    pairingResult.innerHTML = 'Error generating code: ' + error.message;
-    pairingResult.style.color = '#f44336';
-  } finally {
-    generateBtn.innerHTML = '<i class="fas fa-key"></i> Get Pairing Code';
-    generateBtn.disabled = false;
-  }
-}
-
-async function verifyPairing() {
-  const codeInput = document.getElementById('pairingCodeInput').value.trim();
-  const storedCode = localStorage.getItem('tempPairingCode');
-  const pairingResult = document.getElementById('pairingResult');
-  const verifyBtn = document.getElementById('verifyPairingBtn');
-
-  if (!codeInput) {
-    showNotification('Please enter pairing code', 'error');
-    return;
-  }
-
-  verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
-  verifyBtn.disabled = true;
-
-  try {
-    if (codeInput !== storedCode) {
-      throw new Error('Invalid pairing code');
-    }
-
-    // Generate pairing token
-    const token = generateToken();
-    
-    // Store the token and pairing status
-    localStorage.setItem('pairingToken', token);
-    localStorage.setItem('isPaired', 'true');
-    
-    // Show the token section
-    document.getElementById('pairingTokenSection').classList.remove('hidden');
-    document.getElementById('pairingToken').value = token;
-    
-    showNotification('Pairing successful!', 'success');
-    pairingResult.innerHTML = 'Device paired successfully. Token generated.';
-    pairingResult.style.color = 'var(--main)';
-    
-    // Save to creds.json (simulated)
-    saveCreds(token);
-  } catch (error) {
-    showNotification('Pairing failed: ' + error.message, 'error');
-    pairingResult.innerHTML = 'Error: ' + error.message;
-    pairingResult.style.color = '#f44336';
-  } finally {
-    verifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify Pairing';
-    verifyBtn.disabled = false;
-  }
-}
-
-function generateToken() {
-  return 'ultrax_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-}
-
-function copyPairingToken() {
-  const tokenInput = document.getElementById('pairingToken');
-  tokenInput.select();
-  document.execCommand('copy');
-  showNotification('Token copied to clipboard!', 'success');
-}
-
-function saveCreds(token) {
-  // In a real implementation, this would save to creds.json on the server
-  const creds = {
-    username: currentUser.username,
-    token: token,
-    pairedAt: new Date().toISOString(),
-    deviceId: localDeviceId
-  };
-  console.log('Simulating save to creds.json:', creds);
-}
-
-/* ========== API MODE FUNCTIONS ========== */
-function toggleApiMode(mode) {
-  localStorage.setItem('apiMode', mode);
-  const publicSettings = document.getElementById('publicModeSettings');
-  
-  if (mode === 'public') {
-    publicSettings.classList.remove('hidden');
-    showNotification('API set to Public Mode. Token required.', 'warning');
-  } else {
-    publicSettings.classList.add('hidden');
-    showNotification('API set to Private Mode. No restrictions.', 'success');
-  }
-}
-
-/* ========== OWNER PANEL FUNCTIONS ========== */
-function toggleMaintenanceMode(enabled) {
-  localStorage.setItem('maintenanceMode', enabled ? 'on' : 'off');
-  showNotification(`Maintenance mode ${enabled ? 'enabled' : 'disabled'}`, 'success');
-  
-  if (enabled && currentUser.role !== 'owner') {
-    showNotification('Situs dalam pemeliharaan', 'warning');
-    // In a real implementation, would redirect or disable features
-  }
-}
-
-function toggleGlobalApiMode(mode) {
-  localStorage.setItem('globalApiMode', mode);
-  showNotification(`Global API mode set to ${mode}`, 'success');
-}
-
-function showActiveSessions() {
-  // In a real implementation, would fetch from server
-  alert('Active sessions feature would display here');
-}
-
-function showActiveTokens() {
-  // In a real implementation, would fetch from server
-  alert('Active tokens feature would display here');
-}
-
-function createNewToken() {
-  const type = document.getElementById('newTokenType').value;
-  const duration = document.getElementById('tokenDuration').value;
-  const cooldown = document.getElementById('tokenCooldown').value;
-  const resultElement = document.getElementById('ownerPanelResult');
-
-  if (!duration || !cooldown) {
-    resultElement.innerHTML = 'Please fill all fields';
-    resultElement.style.color = '#f44336';
-    return;
-  }
-
-  // Generate token based on type
-  const token = type === 'pairing' 
-    ? generateToken()
-    : 'import_' + Math.random().toString(36).substring(2, 9);
-
-  resultElement.innerHTML = `
-    <strong>New ${type} token created:</strong><br>
-    <code>${token}</code><br><br>
-    <strong>Details:</strong><br>
-    Duration: ${duration} days<br>
-    Cooldown: ${cooldown} seconds
-  `;
-  resultElement.style.color = 'var(--main)';
-
-  showNotification(`${type} token created successfully`, 'success');
 }

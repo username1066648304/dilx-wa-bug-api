@@ -90,6 +90,15 @@
     <label>Role</label>
     <input type="text" id="myInfoRole" class="form-control" readonly>
   </div>
+  
+  <!-- Device Pairing Section -->
+  <div class="pairing-section">
+    <h4><i class="fas fa-link"></i> Device Pairing</h4>
+    <button class="btn pairing-btn" onclick="generatePairing()">
+      <i class="fas fa-key"></i> Generate Pairing Code
+    </button>
+    <p id="pairingResult" class="pairing-status">Status: Not paired</p>
+  </div>
 
   <div class="form-group">
     <label>Reset Password</label>
@@ -237,152 +246,6 @@
       </button>
     </div>
   </div>
-
-<!-- Pairing Menu -->
-<div class="card hidden fade-in" id="pairingMenu">
-  <h2><i class="fas fa-link"></i> Pairing System</h2>
-  
-  <div class="form-group">
-    <label>WhatsApp Number</label>
-    <input type="text" id="pairingNumber" class="form-control" placeholder="Example: 60108995561">
-    <small class="input-hint">6-15 digits, no spaces or special characters</small>
-  </div>
-  
-  <button class="btn" onclick="generatePairingCode()" id="generatePairingBtn">
-    <i class="fas fa-key"></i> Get Pairing Code
-  </button>
-  
-  <div class="form-group" style="margin-top: 20px;">
-    <label>Pairing Code</label>
-    <input type="text" id="pairingCodeInput" class="form-control" placeholder="123-456">
-  </div>
-  
-  <button class="btn" onclick="verifyPairing()" id="verifyPairingBtn">
-    <i class="fas fa-check-circle"></i> Verify Pairing
-  </button>
-  
-  <div id="pairingTokenSection" class="hidden" style="margin-top: 20px;">
-    <div class="form-group">
-      <label>Your Pairing Token</label>
-      <div class="password-container">
-        <input type="text" id="pairingToken" class="form-control" readonly>
-        <button type="button" class="password-toggle" onclick="copyPairingToken()">
-          <i class="fas fa-copy"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-  
-  <div id="pairingResult" style="margin-top: 15px;"></div>
-  
-  <button class="btn" onclick="hideAllMenus()" style="margin-top: 15px;">
-    <i class="fas fa-times"></i> Close
-  </button>
-</div>
-
-<!-- API Mode Toggle -->
-<div class="card hidden fade-in" id="apiSettingsMenu">
-  <h2><i class="fas fa-cog"></i> API Settings</h2>
-  
-  <div class="form-group">
-    <label>API Mode</label>
-    <div class="attack-type-toggle">
-      <label class="toggle-option">
-        <input type="radio" name="apiMode" value="private" checked onclick="toggleApiMode('private')">
-        <span><i class="fas fa-lock"></i> Private Mode</span>
-      </label>
-      <label class="toggle-option">
-        <input type="radio" name="apiMode" value="public" onclick="toggleApiMode('public')">
-        <span><i class="fas fa-globe"></i> Public Mode</span>
-      </label>
-    </div>
-  </div>
-  
-  <div id="publicModeSettings" class="hidden">
-    <div class="form-group">
-      <label>API Token</label>
-      <div class="password-container">
-        <input type="text" id="apiToken" class="form-control" placeholder="Enter public API token">
-        <button type="button" class="password-toggle" onclick="togglePassword('apiToken')">
-          <i class="fas fa-eye"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-  
-  <button class="btn" onclick="hideAllMenus()" style="margin-top: 15px;">
-    <i class="fas fa-times"></i> Close
-  </button>
-</div>
-
-<!-- Owner Panel -->
-<div class="card hidden fade-in" id="ownerPanel">
-  <h2><i class="fas fa-crown"></i> Owner Panel</h2>
-  
-  <div class="form-group">
-    <label>Maintenance Mode</label>
-    <div class="attack-type-toggle">
-      <label class="toggle-option">
-        <input type="radio" name="maintenanceMode" value="on" onclick="toggleMaintenanceMode(true)">
-        <span><i class="fas fa-power-off"></i> ON</span>
-      </label>
-      <label class="toggle-option">
-        <input type="radio" name="maintenanceMode" value="off" checked onclick="toggleMaintenanceMode(false)">
-        <span><i class="fas fa-power-off"></i> OFF</span>
-      </label>
-    </div>
-  </div>
-  
-  <div class="form-group">
-    <label>Global API Mode</label>
-    <div class="attack-type-toggle">
-      <label class="toggle-option">
-        <input type="radio" name="globalApiMode" value="private" onclick="toggleGlobalApiMode('private')">
-        <span><i class="fas fa-lock"></i> Private</span>
-      </label>
-      <label class="toggle-option">
-        <input type="radio" name="globalApiMode" value="public" checked onclick="toggleGlobalApiMode('public')">
-        <span><i class="fas fa-globe"></i> Public</span>
-      </label>
-    </div>
-  </div>
-  
-  <button class="btn" onclick="showActiveSessions()">
-    <i class="fas fa-users"></i> View Active Sessions
-  </button>
-  
-  <button class="btn" onclick="showActiveTokens()" style="margin-top: 10px;">
-    <i class="fas fa-key"></i> View Active Tokens
-  </button>
-  
-  <div class="form-group" style="margin-top: 20px;">
-    <h3><i class="fas fa-plus-circle"></i> Create New Token</h3>
-    <div class="form-group">
-      <label>Token Type</label>
-      <select id="newTokenType" class="form-control">
-        <option value="pairing">Pairing Token</option>
-        <option value="import">Import from creds.json</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Duration (Days)</label>
-      <input type="number" id="tokenDuration" class="form-control" min="1" value="30">
-    </div>
-    <div class="form-group">
-      <label>Cooldown (Seconds)</label>
-      <input type="number" id="tokenCooldown" class="form-control" min="0" value="60">
-    </div>
-    <button class="btn" onclick="createNewToken()">
-      <i class="fas fa-plus"></i> Create Token
-    </button>
-  </div>
-  
-  <div id="ownerPanelResult" style="margin-top: 15px;"></div>
-  
-  <button class="btn" onclick="hideAllMenus()" style="margin-top: 15px;">
-    <i class="fas fa-times"></i> Close
-  </button>
-</div>
 
   <script src="script.js"></script>
 </body>
