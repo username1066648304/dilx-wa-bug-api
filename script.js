@@ -240,6 +240,7 @@ async function login() {
   setButtonLoading(loginBtn, true);
 
   try {
+    // 1. Check user credentials
     const users = await getUsers();
     const user = users.find(u => u.username === username && u.password === password);
 
@@ -248,11 +249,13 @@ async function login() {
       return;
     }
 
+    // 2. Check device ID
     if (user.device_id && user.device_id !== localDeviceId) {
       showError(loginResult, `Account is active on another device (ID: ${user.device_id})`);
       return;
     }
 
+    // 3. Check account expiration (for non-admin users)
     if (user.role !== 'admin' && user.expired) {
       const today = new Date();
       const expiryDate = new Date(user.expired);
@@ -262,21 +265,55 @@ async function login() {
       }
     }
 
-    const updatedUser = { ...user, device_id: localDeviceId };
+    // 4. Check pairing status from creds.json
+    const userCreds = await loadUserCreds(username);
+    if (user.role !== 'admin' && (!userCreds || new Date(userCreds.token_expiry) < new Date())) {
+      showError(loginResult, 'Device not paired or token expired. Please pair first.');
+      return;
+    }
+
+    // 5. Update user data
+    const updatedUser = { 
+      ...user, 
+      device_id: localDeviceId,
+      last_login: new Date().toISOString()
+    };
+    
     const updatedUsers = users.map(u => u.username === username ? updatedUser : u);
     await updateUsers(updatedUsers);
 
+    // 6. Set current user and update UI
     currentUser = updatedUser;
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
     
     showSuccess(loginResult, `Welcome back, ${username}!`);
-    setTimeout(showDashboard, 1000);
+    
+    // 7. Redirect to dashboard or pairing page based on role
+    if (user.role === 'admin' || userCreds) {
+      setTimeout(showDashboard, 1000);
+    } else {
+      setTimeout(() => showMenu('pairingMenu'), 1000);
+    }
 
   } catch (error) {
     console.error('Login error:', error);
     showError(loginResult, `System error: ${error.message || 'Please try again later'}`);
   } finally {
     setButtonLoading(loginBtn, false);
+  }
+}
+
+// Helper function to load user creds from JSONBin
+async function loadUserCreds(username) {
+  try {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${CREDS_BIN_ID}/latest`, {
+      headers: CREDS_HEADERS
+    });
+    const data = await response.json();
+    return data.record.find(u => u.username === username) || null;
+  } catch (error) {
+    console.error('Error loading user creds:', error);
+    return null;
   }
 }
 
