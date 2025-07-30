@@ -734,6 +734,122 @@ function switchAttackType(type) {
 }
 
 /* ========== DASHBOARD FUNCTIONS ========== */
+async function generatePairing() {
+  if (!currentUser) {
+    showNotification('Please login first', 'error');
+    return;
+  }
+
+  // International number validation (supports all WhatsApp numbers)
+  const number = prompt('Enter WhatsApp number for pairing (e.g., 6281234567890):');
+  if (!number || !/^\d{6,15}$/.test(number)) {
+    showNotification('Please enter a valid WhatsApp number (6-15 digits)', 'error');
+    return;
+  }
+
+  const pairingResult = document.getElementById('pairingResult');
+  const pairingBtn = document.getElementById('generatePairingBtn');
+  
+  try {
+    // UI feedback
+    pairingResult.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating pairing code...';
+    if (pairingBtn) pairingBtn.disabled = true;
+
+    // Generate secure pairing code (client-side fallback)
+    const code = `${Math.floor(100 + Math.random() * 900)}-${Math.floor(100 + Math.random() * 900)}`;
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
+
+    // Save pairing data to JSONBin
+    const pairingData = {
+      username: currentUser.username,
+      number,
+      code,
+      expiresAt: expiresAt.toISOString(),
+      deviceId: localDeviceId,
+      verified: false
+    };
+
+    const saveResponse = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify({ 
+        ...(await getUsers()),
+        pairingData 
+      })
+    });
+
+    if (!saveResponse.ok) throw new Error('Failed to save pairing data');
+
+    // Display results
+    pairingResult.innerHTML = `
+      <div><strong>Pairing Code:</strong> ${code}</div>
+      <div><small>Expires at: ${expiresAt.toLocaleTimeString()}</small></div>
+      <div class="input-group" style="margin-top:10px">
+        <input type="text" id="pairingCodeInput" placeholder="Enter code here" class="form-control">
+        <button onclick="verifyPairing('${code}')" class="btn" style="margin-left:5px">
+          <i class="fas fa-check"></i> Verify
+        </button>
+      </div>
+    `;
+    
+    showNotification('Pairing code generated!', 'success');
+
+  } catch (error) {
+    console.error('Pairing error:', error);
+    pairingResult.innerHTML = 'Failed to generate code';
+    showNotification(error.message || 'Pairing service unavailable', 'error');
+  } finally {
+    if (pairingBtn) pairingBtn.disabled = false;
+  }
+}
+
+async function verifyPairing(expectedCode) {
+  const enteredCode = document.getElementById('pairingCodeInput').value.trim();
+  if (!enteredCode || enteredCode !== expectedCode) {
+    showNotification('Invalid pairing code', 'error');
+    return;
+  }
+
+  try {
+    // Generate and save token
+    const token = `ultrax_${generateToken()}`;
+    const users = await getUsers();
+    const updatedUsers = users.map(u => 
+      u.username === currentUser.username 
+        ? { 
+            ...u, 
+            paired_at: new Date().toISOString(),
+            token,
+            token_expiry: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days
+          } 
+        : u
+    );
+
+    await updateUsers(updatedUsers);
+    
+    // Update current session
+    currentUser = {
+      ...currentUser,
+      paired_at: new Date().toISOString(),
+      token
+    };
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+    showNotification('Device paired successfully!', 'success');
+    showDashboard();
+    
+  } catch (error) {
+    console.error('Verification error:', error);
+    showNotification('Failed to verify pairing', 'error');
+  }
+}
+
+function generateToken() {
+  return crypto.getRandomValues(new Uint32Array(1))[0].toString(36) + 
+         Date.now().toString(36);
+}
+
+/* Update showDashboard to maintain pairing status */
 function showDashboard() {
   header.classList.remove('hidden');
   loginCard.classList.add('hidden');
@@ -746,6 +862,9 @@ function showDashboard() {
   
   document.getElementById('myInfoUsername').value = currentUser.username;
   document.getElementById('myInfoRole').value = currentUser.role;
+  
+  // Reset pairing status when showing dashboard
+  document.getElementById('pairingResult').textContent = 'Status: Not paired';
   
   updateSideMenu();
   startInactivityTimer();

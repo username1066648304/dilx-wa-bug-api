@@ -92,31 +92,38 @@
   </div>
   
   <!-- Device Pairing Section -->
-  <div class="pairing-section">
-    <h4><i class="fas fa-link"></i> Device Pairing</h4>
-    <button class="btn pairing-btn" onclick="generatePairing()">
-      <i class="fas fa-key"></i> Generate Pairing Code
-    </button>
-    <p id="pairingResult" class="pairing-status">Status: Not paired</p>
+<div class="card hidden fade-in" id="pairingMenu">
+  <h2><i class="fab fa-whatsapp"></i> WhatsApp Pairing</h2>
+  
+  <div class="pairing-status-container">
+    <div class="status-item">
+      <span class="status-label">Current Status:</span>
+      <span id="pairingStatusText" class="status-value">Not Paired</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">Token Expiry:</span>
+      <span id="tokenExpiryText" class="status-value">-</span>
+    </div>
   </div>
 
-  <div class="form-group">
-    <label>Reset Password</label>
-    <div class="password-container">
-      <input type="password" id="newPassword" class="form-control" placeholder="New password">
-      <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
-        <i class="fas fa-eye"></i>
+  <button class="btn pairing-btn" id="generatePairingBtn">
+    <i class="fas fa-key"></i> Generate Pairing Code
+  </button>
+
+  <div id="tokenContainer" class="hidden">
+    <div class="token-display">
+      <input type="text" id="pairingTokenDisplay" readonly class="token-input">
+      <button class="btn copy-btn" onclick="copyToken()">
+        <i class="far fa-copy"></i> Copy
+      </button>
+    </div>
+    
+    <div class="token-actions">
+      <button class="btn extend-btn" onclick="extendToken()">
+        <i class="fas fa-calendar-plus"></i> Add 30 Days
       </button>
     </div>
   </div>
-  
-  <button class="btn" onclick="resetPassword()" id="resetPassBtn">
-    <i class="fas fa-key"></i> Reset Password
-  </button>
-  <button class="btn" onclick="hideAllMenus()" style="margin-left: 10px;">
-    <i class="fas fa-times"></i> Close
-  </button>
-  <div id="myInfoResult" style="margin-top: 15px;"></div>
 </div>
 
     <!-- Attack Menu -->
