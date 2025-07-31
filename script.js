@@ -173,17 +173,25 @@ function resetInactivityTimer() {
 /* ========== API FUNCTIONS ========== */
 async function checkApiConnection() {
   const statusElement = document.getElementById('apiStatus');
-  
+
+  console.log('[CHECK API] Memulai pengecekan koneksi API...');
+
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.REQUEST_TIMEOUT);
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      console.warn('[CHECK API] Permintaan dibatalkan karena timeout.');
+    }, API_CONFIG.REQUEST_TIMEOUT);
 
     const response = await fetch(API_CONFIG.STATUS_URL, { signal: controller.signal });
 
     clearTimeout(timeoutId);
-    
+
     const data = await response.json();
     const isConnected = data.status === 'connected';
+
+    console.log('[CHECK API] Respons dari API:', data);
+    console.log(`[CHECK API] Status koneksi: ${isConnected ? 'Connected' : 'Disconnected'}`);
 
     if (statusElement) {
       statusElement.className = isConnected ? 'status-connected' : 'status-disconnected';
@@ -192,7 +200,7 @@ async function checkApiConnection() {
 
     return isConnected;
   } catch (error) {
-    console.error('API connection check failed:', error);
+    console.error('[CHECK API] Gagal mengecek koneksi API:', error);
     if (statusElement) {
       statusElement.className = 'status-disconnected';
       statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Connection Failed';
