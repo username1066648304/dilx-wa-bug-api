@@ -179,6 +179,7 @@ async function checkApiConnection() {
     const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.REQUEST_TIMEOUT);
 
     const response = await fetch(API_CONFIG.STATUS_URL, { signal: controller.signal });
+
     clearTimeout(timeoutId);
     
     const data = await response.json();
