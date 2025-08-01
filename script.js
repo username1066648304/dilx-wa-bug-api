@@ -7,10 +7,10 @@ const headers = {
 };
 
 const API_CONFIG = {
-  STATUS_URL: "http://178.128.24.51:2001/status",
-  ATTACK_URL: "http://178.128.24.51:2001/UltraXwebAPI",
+  STATUS_URL: "https://ultraxwebapi.my.id/status",
+  ATTACK_URL: "https://ultraxwebapi.my.id/UltraXwebAPI/sendbug",
   MAX_REQUESTS_PER_MINUTE: 5,
-  REQUEST_TIMEOUT: 5000
+  REQUEST_TIMEOUT: 9000
 };
 
 const SESSION_CONFIG = {
@@ -177,6 +177,8 @@ async function checkApiConnection() {
   console.log('[CHECK API] Memulai pengecekan koneksi API...');
 
   try {
+    console.log(`[CHECK API] Mengirim request ke: ${API_CONFIG.STATUS_URL}`);
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
       controller.abort();
@@ -199,12 +201,18 @@ async function checkApiConnection() {
     }
 
     return isConnected;
+
   } catch (error) {
-    console.error('[CHECK API] Gagal mengecek koneksi API:', error);
+    console.error('[CHECK API] Gagal mengecek koneksi API:');
+    console.error('Nama Error:', error.name);
+    console.error('Pesan Error:', error.message);
+    console.error('Stack Trace:', error.stack);
+
     if (statusElement) {
       statusElement.className = 'status-disconnected';
       statusElement.innerHTML = '<i class="fas fa-times-circle"></i> Connection Failed';
     }
+
     return false;
   }
 }
